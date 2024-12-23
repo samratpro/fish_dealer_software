@@ -1,29 +1,90 @@
-import datetime
-import calendar
+from PyQt6.QtWidgets import QApplication, QLineEdit, QCompleter, QPushButton, QVBoxLayout, QWidget, QMessageBox
+from PyQt6.QtCore import Qt
+import sqlite3
 
-# Get today's date
-today = datetime.date.today()
+class SellerApp(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Seller Entry")
+        self.setGeometry(200, 200, 400, 200)
 
-# 1. Days in the running month
-_, days_in_month = calendar.monthrange(today.year, today.month)
-print(f"Days in the running month: {days_in_month}")
+        self.layout = QVBoxLayout()
 
-# 2. Days in the running week
-# Get the start of the week (Monday) and the end of the week (Sunday)
-start_of_week = today - datetime.timedelta(days=today.weekday())  # Monday
-end_of_week = start_of_week + datetime.timedelta(days=6)  # Sunday
+        # Input field for seller name
+        self.seller_input = QLineEdit(self)
+        self.seller_input.setPlaceholderText("Search or Enter Seller Name")
 
-print(f"Start of the week: {start_of_week}")
-print(f"End of the week: {end_of_week}")
-print(f"Days in the running week: {7}")  # Always 7 days in a week
+        # Autocomplete for seller names
+        self.completer = QCompleter(self.get_seller_names(), self)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)  # Case-insensitive matching
+        self.seller_input.setCompleter(self.completer)
 
-# Additional Info (Optional): Calculate days elapsed and remaining
-days_elapsed_in_month = today.day
-days_remaining_in_month = days_in_month - today.day
-print(f"Days elapsed in the running month: {days_elapsed_in_month}")
-print(f"Days remaining in the running month: {days_remaining_in_month}")
+        # Connect `editingFinished` signal to `handle_seller_entry`   
+        # self.seller_input.textChanged.connect(self.handle_seller_entry)    # Handle validation
+        self.seller_input.editingFinished.connect(self.handle_seller_entry)  # Handle validation
 
-days_elapsed_in_week = (today - start_of_week).days + 1
-days_remaining_in_week = 7 - days_elapsed_in_week
-print(f"Days elapsed in the running week: {days_elapsed_in_week}")
-print(f"Days remaining in the running week: {days_remaining_in_week}")
+        # Button to save or confirm seller
+        self.save_button = QPushButton("Confirm Seller", self)
+        self.save_button.clicked.connect(self.handle_seller_entry)
+
+        # Add widgets to layout
+        self.layout.addWidget(self.seller_input)
+        self.layout.addWidget(self.save_button)
+
+        self.setLayout(self.layout)
+
+    def get_seller_names(self):
+        """Fetch all seller names from the database for autocomplete."""
+        conn = sqlite3.connect("sellers.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT name FROM sellers")
+        result = cursor.fetchall()
+        conn.close()
+        return [row[0] for row in result]
+
+    def handle_seller_entry(self):
+        seller_name = self.seller_input.text().strip()
+        if not seller_name:
+            QMessageBox.warning(self, "Input Error", "Please enter a seller name.")
+            return
+
+        if seller_name in self.get_seller_names():
+            QMessageBox.information(self, "Existing Seller", f"Seller '{seller_name}' already exists. Selected.")
+        else:
+            # Add the new seller to the database
+            self.add_seller(seller_name)
+            QMessageBox.information(self, "New Seller", f"Seller '{seller_name}' has been added.")
+
+        # Clear input field and update completer
+        self.seller_input.clear()
+        self.completer.setModel(self.get_seller_names())
+
+    def add_seller(self, name):
+        """Add a new seller to the database."""
+        conn = sqlite3.connect("sellers.db")
+        cursor = conn.cursor()
+        try:
+            cursor.execute("INSERT INTO sellers (name) VALUES (?)", (name,))
+            conn.commit()
+        except sqlite3.IntegrityError:
+            QMessageBox.warning(self, "Database Error", "Failed to add seller.")
+        finally:
+            conn.close()
+
+if __name__ == "__main__":
+    # Create or connect to the database
+    conn = sqlite3.connect("sellers.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS sellers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT UNIQUE
+    )
+    """)
+    conn.commit()
+    conn.close()
+
+    app = QApplication([])
+    window = SellerApp()
+    window.show()
+    app.exec()

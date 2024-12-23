@@ -7,6 +7,7 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from pages.form import Ui_SellerInformation
 
 
 class Ui_memoPageMain(object):
@@ -22,7 +23,7 @@ class Ui_memoPageMain(object):
                                                         border:1px solid #B8B8B8;
                                                         padding:2px;}
                                    QPushButton{background-color:#2D221B;color:white;
-                                                padding:3px 12px 0px 8px;
+                                                padding:5px 8px;
                                                 border-radius:9px;}
                                    QDateEdit::drop-down {
                                             image: url('./images/down-arrow.png');
@@ -212,17 +213,20 @@ class Ui_memoPageMain(object):
         font.setPointSize(12)
         self.addBuyerBtn.setFont(font)
         self.addBuyerBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.addBuyerBtn.setStyleSheet("QPushButton{\n"
-"background-color:#2D221B;\n"
-"color:white;\n"
-"padding:3px 8px;\n"
-"border-radius:9px;\n"
-"}")
+
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("./icons/user-plus.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.addBuyerBtn.setIcon(icon)
         self.addBuyerBtn.setIconSize(QtCore.QSize(22, 22))
         self.addBuyerBtn.setObjectName("addBuyerBtn")
+
+
+
+
+        self.addBuyerBtn.clicked.connect(self.open_seller_information)
+        # *******************  Click event ****************
+
+
         self.buyerAddFrame_Layout.addWidget(self.addBuyerBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.memoHeaderRight_Layout.addWidget(self.buyerAddFrame)
         self.memoHeader_Layout.addWidget(self.memoHeaderRight)
@@ -246,13 +250,27 @@ class Ui_memoPageMain(object):
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
-        self.tableWidget.setStyleSheet("QHeaderView::section, QHeaderView{\n"
-"    background-color: #2D221B;\n"
-"    color: white;   \n"
-"    font-size: 12pt;  \n"
-"    text-align: center; \n"
-"}\n"
-"")
+        # Apply the stylesheet for row headers
+        # self.tableWidget.horizontalHeader().setStyleSheet("""
+        #     QHeaderView::section {
+        #         background-color: #000000;  /* Black row header background */
+        #         color: white;
+        #         font-size: 12pt;
+        #         text-align: center;
+        #     }
+        # """)
+
+        # # Apply the stylesheet for selected cells
+        # self.tableWidget.setStyleSheet("""
+        #     QTableWidget::item:selected {
+        #         background-color: #000000;  /* Black background for selected cells */
+        #         color: white;  /* White text color for selected cells */
+        #     }
+
+        #     QTableCornerButton::section {
+        #         background-color: #ffffff;  /* White background for the top-left corner */
+        #     }
+        # """)
         self.tableWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragDrop)
         self.tableWidget.setGridStyle(QtCore.Qt.PenStyle.SolidLine)
         self.tableWidget.setObjectName("tableWidget")
@@ -271,10 +289,12 @@ class Ui_memoPageMain(object):
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, item)
         item = QtWidgets.QTableWidgetItem()
+
         self.tableWidget.setHorizontalHeaderItem(6, item)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(115)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(80)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(150)
+
         self.memoBody_Layout.addWidget(self.tableWidget)
         self.memoPageMain_Layout.addWidget(self.memoBody)
         self.memoBottom = QtWidgets.QWidget(parent=memoPageMain)
@@ -282,9 +302,7 @@ class Ui_memoPageMain(object):
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.memoBottom.setFont(font)
-        self.memoBottom.setStyleSheet("QLabel{\n"
-"text-aligen:center;\n"
-"}")
+        self.memoBottom.setStyleSheet("QLabel{text-aligen:center;}")
         self.memoBottom.setObjectName("memoBottom")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.memoBottom)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
@@ -591,6 +609,106 @@ class Ui_memoPageMain(object):
 
         self.retranslateUi(memoPageMain)
         QtCore.QMetaObject.connectSlotsByName(memoPageMain)
+
+
+
+    ## Open dialog to get seller information *************
+    def cell_edited(self, row, column):
+        # Reconnect the delete button after a cell is edited
+        if column < 6:  # Only do this for data columns, not the button column
+            delete_button = self.tableWidget.cellWidget(row, 6)
+            if delete_button is not None:
+                delete_button.clicked.disconnect()
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+
+
+    def delete_row(self, row):
+        total_price = int(self.tableWidget.item(row, 5).text())  # Get the total price of the row
+        self.tableWidget.removeRow(row)
+        self.reconnect_delete_buttons()
+        # Update the total price
+        self.totalTakaInput.setText(str(int(self.totalTakaInput.text()) - total_price))
+
+
+    def reconnect_delete_buttons(self):
+        # Reconnect all delete buttons after a row is deleted
+        row_count = self.tableWidget.rowCount()
+        for row in range(row_count):
+            delete_button = self.tableWidget.cellWidget(row, 6)
+            if delete_button is not None:
+                delete_button.clicked.disconnect()
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+
+    def open_seller_information(self):
+        # Create and show the SellerInformation dialog
+        self.dialog = QtWidgets.QDialog()
+        self.ui = Ui_SellerInformation()
+        self.ui.setupUi(self.dialog)
+        self.ui.addBtn.clicked.connect(self.accept_information)
+        self.ui.cancelBtn.clicked.connect(self.dialog.close)
+        self.dialog.exec()
+
+
+    def accept_information(self):
+        # Handle the information acceptance logic here
+        buyer_name = self.ui.buyerName.text().strip()
+        fish_name = self.ui.fishName.text().strip()
+        fish_rate = self.ui.fishRate.text().strip()
+        raw_price = self.ui.rawPrice.text().strip()
+        final_price = self.ui.finalPrice.text().strip()
+        total_price = self.ui.totalPrice.text().strip()
+
+        # Check if all fields are filled
+        if buyer_name and fish_name and fish_rate and raw_price and final_price and total_price:
+                if total_price.isdigit():
+                        row_position = self.tableWidget.rowCount()
+                        self.tableWidget.insertRow(row_position)
+                        self.tableWidget.setItem(row_position, 0, QtWidgets.QTableWidgetItem(buyer_name))
+                        self.tableWidget.setItem(row_position, 1, QtWidgets.QTableWidgetItem(fish_name))
+                        self.tableWidget.setItem(row_position, 2, QtWidgets.QTableWidgetItem(fish_rate))
+                        self.tableWidget.setItem(row_position, 3, QtWidgets.QTableWidgetItem(raw_price))
+                        self.tableWidget.setItem(row_position, 4, QtWidgets.QTableWidgetItem(final_price))
+                        self.tableWidget.setItem(row_position, 5, QtWidgets.QTableWidgetItem(total_price))
+
+                        # Add a delete button in the last column
+                        delete_button = QtWidgets.QPushButton("")
+                        delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
+                        delete_button.setIcon(delete_icon)
+                        delete_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                        delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                        delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                        delete_button.clicked.connect(lambda _, r=row_position: self.delete_row(r))
+                        self.tableWidget.setCellWidget(row_position, 6, delete_button)
+
+                        print(f"Buyer Name: {buyer_name}")
+                        print(f"Fish Name: {fish_name}")
+                        print(f"Fish Rate: {fish_rate}")
+                        print(f"Raw Price: {raw_price}")
+                        print(f"Final Price: {final_price}")
+                        print(f"Total Price: {total_price}")
+
+
+                        # Update the total price
+                        self.totalTakaInput.setText(
+                        str(int(self.totalTakaInput.text() or "0") + int(total_price))
+                        )
+                        # Close the dialog
+                        self.dialog.close()
+                else:
+                        # Show error message if any field is empty
+                        error_dialog = QtWidgets.QMessageBox(self.dialog)
+                        error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                        error_dialog.setWindowTitle("Input Error")
+                        error_dialog.setText("Totat Price must be number.")
+                        error_dialog.exec()
+                     
+        else:
+                # Show error message if any field is empty
+                error_dialog = QtWidgets.QMessageBox(self.dialog)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText("Please fill in all information.")
+                error_dialog.exec()
 
     def retranslateUi(self, memoPageMain):
         _translate = QtCore.QCoreApplication.translate

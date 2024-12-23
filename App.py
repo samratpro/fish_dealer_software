@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt6.QtCore import pyqtSignal
-from pages.login import Ui_LoginForm
+from login import Ui_LoginForm
 from dashboard import Ui_MainWindow
 import sys
 

@@ -515,21 +515,22 @@ class Ui_MainWindow:
         self.logoutBtn.setText(_translate("MainWindow", "লগ আউট"))
         self.tag.setText(_translate("MainWindow", "মেসার্স ওসমান ফিশ "))
 
-
+        
+        # Page switching 
         try:
-                self.homeIconBtn.clicked.connect(lambda: self.switch_page("home"))
-                self.homeBtn.clicked.connect(lambda: self.switch_page("home"))
+            self.homeIconBtn.clicked.connect(lambda: self.switch_page("home"))
+            self.homeBtn.clicked.connect(lambda: self.switch_page("home"))
 
-                self.memoIconBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
-                self.memoBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
+            self.memoIconBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
+            self.memoBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
 
-                self.cashReportBtn.clicked.connect(lambda: self.switch_page("cash_report"))
-                self.cashReportIconBtn.clicked.connect(lambda: self.switch_page("cash_report"))
+            self.cashReportBtn.clicked.connect(lambda: self.switch_page("cash_report"))
+            self.cashReportIconBtn.clicked.connect(lambda: self.switch_page("cash_report"))
 
-                self.costEntryIconBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
-                self.costEntryBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
+            self.costEntryIconBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
+            self.costEntryBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
         except AttributeError as e:
-                print(f"Error connecting button: {e}")
+            print(f"Error connecting button: {e}")
 
     def switch_page(self, page_name):
         try:
