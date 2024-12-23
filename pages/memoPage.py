@@ -17,20 +17,19 @@ class Ui_memoPageMain(object):
         font.setFamily("Arial")
         font.setPointSize(12)
         memoPageMain.setFont(font)
-        memoPageMain.setStyleSheet("*{\n"
-"  text-align: left;\n"
-"}\n"
-"QLineEdit, QDateEdit{\n"
-"border-radius:10px;\n"
-"border:1px solid #B8B8B8;\n"
-"padding:2px;\n"
-"}\n"
-"QPushButton{\n"
-"background-color:#2D221B;\n"
-"color:white;\n"
-"padding:3px 12px 0px 8px;\n"
-"border-radius:9px;\n"
-"}")
+        memoPageMain.setStyleSheet("""*{text-align: left;}
+                                   QLineEdit, QDateEdit{border-radius:10px;
+                                                        border:1px solid #B8B8B8;
+                                                        padding:2px;}
+                                   QPushButton{background-color:#2D221B;color:white;
+                                                padding:3px 12px 0px 8px;
+                                                border-radius:9px;}
+                                   QDateEdit::drop-down {
+                                            image: url('./images/down-arrow.png');
+                                            margin:3px 4px 0 0;
+                                            border:1px solid #DEDEDE;
+                                           }
+                                   """)
         self.memoPageMain_Layout = QtWidgets.QVBoxLayout(memoPageMain)
         self.memoPageMain_Layout.setContentsMargins(15, 15, 15, 15)
         self.memoPageMain_Layout.setSpacing(6)

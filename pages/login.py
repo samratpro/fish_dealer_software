@@ -96,6 +96,8 @@ class Ui_LoginForm(QWidget):
         font.setPointSize(12)
         self.passwordInput.setFont(font)
         self.passwordInput.setObjectName("passwordInput")
+        self.passwordInput.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+
         self.LoginBody_Layout.addWidget(self.passwordInput)
         self.loginBtn = QtWidgets.QPushButton(parent=self.LoginBody)
         font = QtGui.QFont()

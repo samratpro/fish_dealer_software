@@ -18,61 +18,24 @@ class Ui_MainWindow:
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(969, 600)
-        MainWindow.setStyleSheet("*{\n"
-"background:none;\n"
-"border:none;\n"
-"margin:0;\n"
-"padding:0;\n"
-"}\n"
-"\n"
-"QDateEdit, QLineEdit{\n"
-"border-radius:10px;\n"
-"padding:2px;\n"
-"margin:1px 6px;\n"
-"}\n"
-"\n"
-"\n"
-"#centralwidget{\n"
-"background:\n"
-"}\n"
-"#IconMenu, #SideMenu{\n"
-"background-color:#221402;\n"
-"padding:0px;\n"
-"margin:0px;\n"
-"}\n"
-"\n"
-"\n"
-"#IconMenu QPushButton, #IconMenu QLabel, #SideMenu QPushButton, #SideMenu QLabel{\n"
-"background-color:#221402;\n"
-"color:#C6CDCA;\n"
-"text-align: left;\n"
-"padding:14px 12px;\n"
-"\n"
-"}\n"
-"\n"
-"#IconMenuItems QPushButton, #MenuItems QPushButton{\n"
-"               border-radius:10px;\n"
-"            }\n"
-"\n"
-"#IconMenuItems QPushButton:checked, #MenuItems QPushButton:checked,#IconMenuItems QPushButton:hover, #MenuItems QPushButton:hover {\n"
-"                background-color: #010905;\n"
-"            }\n"
-"\n"
-"\n"
-"#header{\n"
-"background-color:#2D221B\n"
-"}\n"
-"#header QLabel, #header QPushButton{\n"
-"color:#C6CDCA;\n"
-"font-size:16px\n"
-"}\n"
-"#header #userBtn{\n"
-"      margin-right:20px;\n"
-"}\n"
-"\n"
-"#body{\n"
-"background-color:#F0F0F0\n"
-"}")
+        MainWindow.setStyleSheet("""*{background:none;border:none;margin:0;padding:0;}
+                                 QDateEdit, QLineEdit{border-radius:10px;padding:2px;margin:1px 6px;}
+                                 #IconMenu, #SideMenu{background-color:#221402;padding:0px;margin:0px;}
+                                 #IconMenu QPushButton, #IconMenu QLabel, #SideMenu QPushButton, #SideMenu QLabel{
+                                    background-color:#221402;
+                                    color:#C6CDCA;
+                                    text-align: left;
+                                    padding:14px 12px;
+                                    }
+                                 #IconMenuItems QPushButton, #MenuItems QPushButton{border-radius:10px;}
+                                 #IconMenuItems QPushButton:checked, #MenuItems QPushButton:checked,#IconMenuItems QPushButton:hover, #MenuItems QPushButton:hover {
+                                    background-color: #010905;
+                                    }
+                                 #header{background-color:#2D221B}
+                                 #header QLabel, #header QPushButton{color:#C6CDCA;font-size:16px;}
+                                 #header #userBtn{margin-right:20px;}
+                                 #body{background-color:#F0F0F0}
+                                 """)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget_Layout = QtWidgets.QHBoxLayout(self.centralwidget)

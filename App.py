@@ -10,7 +10,7 @@ class Dashboard(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Dashboard")
-        self.setMinimumSize(800, 600)
+        self.setMinimumSize(1000, 500)
 
         # Initialize the dashboard UI
         self.dashboard_ui = Ui_MainWindow()

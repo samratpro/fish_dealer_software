@@ -13,26 +13,22 @@ class Ui_costExpenseMain(object):
     def setupUi(self, costExpenseMain):
         costExpenseMain.setObjectName("costExpenseMain")
         costExpenseMain.resize(944, 650)
-        costExpenseMain.setStyleSheet("*{\n"
-"  text-align: left;\n"
-"}\n"
-"QLineEdit, QComboBox{\n"
-"border-radius:10px;\n"
-"border:1px solid #B8B8B8;\n"
-"padding:2px;\n"
-"}\n"
-"QPushButton{\n"
-"background-color:#150E0A;\n"
-"color:white;\n"
-"padding:3px 12px 0px 8px;\n"
-"border-radius:9px;\n"
-"text-align:center;\n"
-"}\n"
-"QDateEdit{\n"
-"border:1px solid #B8B8B8;\n"
-"border-radius:5px;\n"
-"}\n"
-"")
+        costExpenseMain.setStyleSheet("""*{text-align: left;}
+                                      QLineEdit, QComboBox{border-radius:10px;
+                                                           border:1px solid #B8B8B8;
+                                                           padding:2px;}
+                                      QPushButton{background-color:#150E0A;
+                                                  color:white;
+                                                  padding:3px 12px 0px 8px;
+                                                  border-radius:9px;
+                                                  text-align:center;}
+                                      QDateEdit{border:1px solid #B8B8B8;border-radius:5px;}
+                                      QDateEdit::drop-down {
+                                            image: url('./images/down-arrow.png');
+                                            margin:3px 4px 0 0;
+                                            border:1px solid #DEDEDE;
+                                           }
+                                      """)
         self.verticalLayout = QtWidgets.QVBoxLayout(costExpenseMain)
         self.verticalLayout.setContentsMargins(15, 15, 15, 15)
         self.verticalLayout.setObjectName("verticalLayout")
