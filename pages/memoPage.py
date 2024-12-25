@@ -353,6 +353,8 @@ class Ui_memoPageMain(object):
         self.mosqueLabel.setObjectName("mosqueLabel")
         self.mosqueFrame_Layout.addWidget(self.mosqueLabel)
         self.mosqueInput = QtWidgets.QLineEdit(parent=self.mosqueFrame)
+        self.mosqueInput.setText('10')
+
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(10)
@@ -385,6 +387,8 @@ class Ui_memoPageMain(object):
         font.setPointSize(10)
         self.somitiInput.setFont(font)
         self.somitiInput.setObjectName("somitiInput")
+        self.somitiInput.setText('10')
+
         self.somitiFrame_Layout.addWidget(self.somitiInput)
         self.horizontalLayout_2.addWidget(self.somitiFrame)
         self.otherCostFrame = QtWidgets.QFrame(parent=self.memoBottom)
@@ -412,6 +416,8 @@ class Ui_memoPageMain(object):
         font.setPointSize(10)
         self.otherInput.setFont(font)
         self.otherInput.setObjectName("otherInput")
+        self.otherInput.setText('0')
+
         self.otherCostFrame_Layout.addWidget(self.otherInput)
         self.horizontalLayout_2.addWidget(self.otherCostFrame)
         self.totalTakaFrame = QtWidgets.QFrame(parent=self.memoBottom)
@@ -520,6 +526,8 @@ class Ui_memoPageMain(object):
         font.setPointSize(10)
         self.sellerPaidTakaInput.setFont(font)
         self.sellerPaidTakaInput.setObjectName("sellerPaidTakaInput")
+        self.sellerPaidTakaInput.setText('0')
+
         self.sellerPaidFrame_Layout.addWidget(self.sellerPaidTakaInput)
         self.horizontalLayout_2.addWidget(self.sellerPaidFrame)
         self.remainFrame = QtWidgets.QFrame(parent=self.memoBottom)
@@ -547,6 +555,8 @@ class Ui_memoPageMain(object):
         font.setPointSize(10)
         self.remainTakaInput.setFont(font)
         self.remainTakaInput.setObjectName("remainTakaInput")
+        self.remainTakaInput.setText('0')
+
         self.remainFrame_Layout.addWidget(self.remainTakaInput)
         self.horizontalLayout_2.addWidget(self.remainFrame)
         self.memoPageMain_Layout.addWidget(self.memoBottom)
@@ -690,8 +700,38 @@ class Ui_memoPageMain(object):
 
                         # Update the total price
                         self.totalTakaInput.setText(
-                        str(int(self.totalTakaInput.text() or "0") + int(total_price))
+                                str(
+                                     int(self.totalTakaInput.text() or "0") + int(total_price)
+                                    )
+                                )
+                        self.commissionInput.setText(
+                                    str(
+                                         (int(self.totalTakaInput.text() or "0") + int(total_price)) * 0.04 
+                                        ) 
+                                )
+
+
+                        self.totalCostInput.setText(
+                            str(
+                                int(float(self.commissionInput.text()) +  # Convert to float first
+                                    float(self.mosqueInput.text()) +
+                                    float(self.somitiInput.text()) +
+                                    float(self.otherInput.text()))
+                            )
                         )
+
+                        self.finalTakaInput.setText(
+                            str(
+                                int(float(self.totalTakaInput.text()) - float(self.totalCostInput.text()))
+                            )
+                        )
+                        
+                        self.remainTakaInput.setText(
+                             str(
+                                  int(self.finalTakaInput.text()) - int(self.sellerPaidTakaInput.text())
+                             )
+                        )
+
                         # Close the dialog
                         self.dialog.close()
                 else:
