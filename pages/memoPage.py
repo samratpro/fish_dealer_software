@@ -250,15 +250,22 @@ class Ui_memoPageMain(object):
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
+        font.setPointSize(12)  # Set the font size to 12 points
+        self.tableWidget.setFont(font)
         # Apply the stylesheet for row headers
-        # self.tableWidget.horizontalHeader().setStyleSheet("""
-        #     QHeaderView::section {
-        #         background-color: #000000;  /* Black row header background */
-        #         color: white;
-        #         font-size: 12pt;
-        #         text-align: center;
-        #     }
-        # """)
+        self.tableWidget.horizontalHeader().setStyleSheet("""
+            QHeaderView::section {
+                background-color: #000000;  /* Black row header background */
+                color: white;
+                font-size: 12pt;
+                text-align: center;
+            }
+            QHeaderView::item {
+            font-size: 12pt;
+            }
+        """)
+
+
 
         # # Apply the stylesheet for selected cells
         # self.tableWidget.setStyleSheet("""
@@ -292,8 +299,8 @@ class Ui_memoPageMain(object):
 
         self.tableWidget.setHorizontalHeaderItem(6, item)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(150)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(180)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(180)
 
         self.memoBody_Layout.addWidget(self.tableWidget)
         self.memoPageMain_Layout.addWidget(self.memoBody)
@@ -622,33 +629,30 @@ class Ui_memoPageMain(object):
 
 
 
+
+
+
+        # Update Cost change by user interact    **********************************
+        self.commissionInput.textChanged.connect(self.cost_update)
+        self.somitiInput.textChanged.connect(self.cost_update)
+        self.mosqueInput.textChanged.connect(self.cost_update)
+        self.otherInput.textChanged.connect(self.cost_update)
+
+        # Total taka or total cost update
+        self.totalTakaInput.textChanged.connect(self.total_taka_update)
+        self.totalCostInput.textChanged.connect(self.total_taka_update)
+
+        # final taka or paying taka update
+        self.finalTakaInput.textChanged.connect(self.final_taka_update)
+        self.sellerPaidTakaInput.textChanged.connect(self.final_taka_update)
+
+        # if change cell price   ****************************************************
+        self.tableWidget.itemChanged.connect(self.handle_change_in_column_5)
+
+
+
+
     ## Open dialog to get seller information *************
-    def cell_edited(self, row, column):
-        # Reconnect the delete button after a cell is edited
-        if column < 6:  # Only do this for data columns, not the button column
-            delete_button = self.tableWidget.cellWidget(row, 6)
-            if delete_button is not None:
-                delete_button.clicked.disconnect()
-                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-
-
-    def delete_row(self, row):
-        total_price = int(self.tableWidget.item(row, 5).text())  # Get the total price of the row
-        self.tableWidget.removeRow(row)
-        self.reconnect_delete_buttons()
-        # Update the total price
-        self.totalTakaInput.setText(str(int(self.totalTakaInput.text()) - total_price))
-
-
-    def reconnect_delete_buttons(self):
-        # Reconnect all delete buttons after a row is deleted
-        row_count = self.tableWidget.rowCount()
-        for row in range(row_count):
-            delete_button = self.tableWidget.cellWidget(row, 6)
-            if delete_button is not None:
-                delete_button.clicked.disconnect()
-                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-
     def open_seller_information(self):
         # Create and show the SellerInformation dialog
         self.dialog = QtWidgets.QDialog()
@@ -690,47 +694,12 @@ class Ui_memoPageMain(object):
                         delete_button.clicked.connect(lambda _, r=row_position: self.delete_row(r))
                         self.tableWidget.setCellWidget(row_position, 6, delete_button)
 
-                        print(f"Buyer Name: {buyer_name}")
-                        print(f"Fish Name: {fish_name}")
-                        print(f"Fish Rate: {fish_rate}")
-                        print(f"Raw Price: {raw_price}")
-                        print(f"Final Price: {final_price}")
-                        print(f"Total Price: {total_price}")
-
-
                         # Update the total price
-                        self.totalTakaInput.setText(
-                                str(
-                                     int(self.totalTakaInput.text() or "0") + int(total_price)
-                                    )
-                                )
-                        self.commissionInput.setText(
-                                    str(
-                                         (int(self.totalTakaInput.text() or "0") + int(total_price)) * 0.04 
-                                        ) 
-                                )
-
-
-                        self.totalCostInput.setText(
-                            str(
-                                int(float(self.commissionInput.text()) +  # Convert to float first
-                                    float(self.mosqueInput.text()) +
-                                    float(self.somitiInput.text()) +
-                                    float(self.otherInput.text()))
-                            )
-                        )
-
-                        self.finalTakaInput.setText(
-                            str(
-                                int(float(self.totalTakaInput.text()) - float(self.totalCostInput.text()))
-                            )
-                        )
-                        
-                        self.remainTakaInput.setText(
-                             str(
-                                  int(self.finalTakaInput.text()) - int(self.sellerPaidTakaInput.text())
-                             )
-                        )
+                        self.totalTakaInput.setText(str(int(self.totalTakaInput.text() or "0") + int(total_price)))
+                        self.commissionInput.setText(str((int(self.totalTakaInput.text() or "0")) * 0.04))
+                        self.totalCostInput.setText(str(int(float(self.commissionInput.text()) +float(self.mosqueInput.text()) +float(self.somitiInput.text()) +float(self.otherInput.text()))))
+                        self.finalTakaInput.setText(str(int(float(self.totalTakaInput.text()) - float(self.totalCostInput.text()))))
+                        self.remainTakaInput.setText(str(int(self.finalTakaInput.text()) - int(self.sellerPaidTakaInput.text())))
 
                         # Close the dialog
                         self.dialog.close()
@@ -749,6 +718,102 @@ class Ui_memoPageMain(object):
                 error_dialog.setWindowTitle("Input Error")
                 error_dialog.setText("Please fill in all information.")
                 error_dialog.exec()
+
+
+
+    # Cost Update Function -> Update total cost and finalTaka
+    # Cost Update Function -> Update total cost and finalTaka
+    def cost_update(self):
+        try:
+            # Get current values from the fields, handle float to int conversion
+            commission_value = float(self.commissionInput.text()) if self.commissionInput.text().strip() else 0
+            mosqe_value = float(self.mosqueInput.text()) if self.mosqueInput.text().strip() else 0
+            somiti_value = float(self.somitiInput.text()) if self.somitiInput.text().strip() else 0
+            other_value = float(self.otherInput.text()) if self.otherInput.text().strip() else 0
+
+            # Round and convert values to integers
+            total_cost_taka = int(round(commission_value + mosqe_value + somiti_value + other_value))
+            self.totalCostInput.setText(str(total_cost_taka))  # Update total cost input
+
+            # Get Total Taka (updated from re_calculate)
+            total_taka = float(self.totalTakaInput.text()) if self.totalTakaInput.text().strip() else 0
+
+            # Calculate the final taka
+            final_taka = int(round(total_taka - total_cost_taka))
+            self.finalTakaInput.setText(str(final_taka))  # Update final taka input
+
+        except Exception as e:
+            print(f"Error in cost_update: {e}")
+
+    # Total Taka Update -> Update finalTaka
+    def total_taka_update(self):
+        try:
+            total_taka_value = int(self.totalTakaInput.text()) if self.totalTakaInput.text().strip() else 0
+            total_cost_value = int(self.totalCostInput.text()) if self.totalCostInput.text().strip() else 0
+            self.finalTakaInput.setText(
+                str(total_taka_value - total_cost_value))  # Update final taka based on total cost
+        except Exception as e:
+            print(f"Error in total_taka_update: {e}")
+
+    # Final Taka Update -> Update remaining taka
+    def final_taka_update(self):
+        try:
+            final_taka_value = int(self.finalTakaInput.text()) if self.finalTakaInput.text().strip() else 0
+            paying_value = int(self.sellerPaidTakaInput.text()) if self.sellerPaidTakaInput.text().strip() else 0
+            self.remainTakaInput.setText(str(final_taka_value - paying_value))  # Update remaining taka
+        except Exception as e:
+            print(f"Error in final_taka_update: {e}")
+
+    # When edit 5 number price column **************************************
+    def handle_change_in_column_5(self, item):
+        if item.column() == 5:
+            self.re_calculate()
+
+    def re_calculate(self):
+        total_sum = 0
+        row_count = self.tableWidget.rowCount()
+
+        # Calculate the total sum from column 5 cells
+        for row in range(row_count):
+            cell_item = self.tableWidget.item(row, 5)
+            if cell_item and cell_item.text().isdigit():
+                total_sum += int(cell_item.text())
+
+        # Update the totalTakaInput field
+        self.totalTakaInput.setText(str(total_sum))  # Update totalTakaInput from table
+
+        try:
+            total_taka = int(self.totalTakaInput.text() or "0")
+            self.commissionInput.setText(str(total_taka * 0.04))  # Commission update based on totalTakaInput
+        except ValueError as e:
+            print(f"Error in commission calculation: {e}")
+
+        # Update the cost and finalTaka after recalculating the total
+        self.cost_update()  # Calls cost_update which recalculates totalCostInput, finalTakaInput, etc.
+
+    # Edit or Delete Cell **************************************
+    def delete_row(self, row):
+        total_price = int(self.tableWidget.item(row, 5).text())  # Get the total price of the row
+        self.tableWidget.removeRow(row)
+        self.reconnect_delete_buttons()
+        self.re_calculate()
+    def cell_edited(self, row, column):
+        # Reconnect the delete button after a cell is edited
+        if column < 6:  # Only do this for data columns, not the button column
+            delete_button = self.tableWidget.cellWidget(row, 6)
+            if delete_button is not None:
+                delete_button.clicked.disconnect()
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+    def reconnect_delete_buttons(self):
+        # Reconnect all delete buttons after a row is deleted
+        row_count = self.tableWidget.rowCount()
+        for row in range(row_count):
+            delete_button = self.tableWidget.cellWidget(row, 6)
+            if delete_button is not None:
+                delete_button.clicked.disconnect()
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+
+
 
     def retranslateUi(self, memoPageMain):
         _translate = QtCore.QCoreApplication.translate

@@ -1,4 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import pyqtSignal
 from login import Ui_LoginForm
 from dashboard import Ui_MainWindow
@@ -10,7 +11,7 @@ class Dashboard(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Dashboard")
-        self.setMinimumSize(1000, 500)
+        self.setMinimumSize(1000, 600)
 
         # Initialize the dashboard UI
         self.dashboard_ui = Ui_MainWindow()
@@ -27,8 +28,8 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Login System")
-        self.setMinimumSize(921, 563)
-
+        self.setMinimumSize(1200, 700)
+        self.setWindowIcon(QIcon("images/logo.png"))
         # Initialize login form and dashboard attributes
         self.login_widget = None
         self.dashboard = None

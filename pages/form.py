@@ -1,16 +1,23 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-
+from PyQt6.QtGui import QIcon
 
 class Ui_SellerInformation(object):
     def setupUi(self, SellerInformation):
         SellerInformation.setObjectName("SellerInformation")
         SellerInformation.resize(471, 506)
-        SellerInformation.setStyleSheet("QLineEdit, QDateEdit{border-radius:10px;\n"
-" border:1px solid #B8B8B8;\n"
-" padding:2px;}\n"
-"QPushButton{background-color:#2D221B;color:white;\n"
-"padding:3px 12px 0px 8px;\n"
-" border-radius:9px;}")
+        SellerInformation.setWindowIcon(QIcon("images/logo.png"))
+
+        SellerInformation.setStyleSheet("""QLineEdit, QDateEdit{
+                                                                border-radius:10px;
+                                                                border:1px solid #B8B8B8;
+                                                                padding:2px;
+                                                                }
+                                        QPushButton{
+                                        background-color:#2D221B;
+                                        color:white;
+                                        padding:3px 12px 0px 8px;
+                                        border-radius:9px;}
+                                        """)
         self.cancelBtn = QtWidgets.QPushButton(parent=SellerInformation)
         self.cancelBtn.setGeometry(QtCore.QRect(300, 410, 111, 41))
         font = QtGui.QFont()

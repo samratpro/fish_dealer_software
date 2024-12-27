@@ -132,6 +132,7 @@ class Ui_LoginForm(QWidget):
             # Emit the login success signal when login is successful
             self.login_success_signal.emit()
         else:
+            self.errorMessage.setText('ভুল ইউজারনেম বা পাসওয়ার্ড!')
             print("Invalid credentials")
 
     def retranslateUi(self, LoginForm):
@@ -141,7 +142,6 @@ class Ui_LoginForm(QWidget):
         self.username_label.setText(_translate("LoginForm", "ইউজারনেম"))
         self.password_Label.setText(_translate("LoginForm", "পাসওয়ার্ড"))
         self.loginBtn.setText(_translate("LoginForm", "লগইন"))
-        self.errorMessage.setText(_translate("LoginForm", "মেসেজ !"))
 
 
 
