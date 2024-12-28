@@ -7,6 +7,8 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from datetime import datetime
+from PyQt6.QtCore import QDate
 
 
 class Ui_costExpenseMain(object):
@@ -113,7 +115,15 @@ class Ui_costExpenseMain(object):
         self.startDateInput.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.startDateInput.setCorrectionMode(QtWidgets.QAbstractSpinBox.CorrectionMode.CorrectToNearestValue)
         self.startDateInput.setCalendarPopup(True)
-        self.startDateInput.setDate(QtCore.QDate(2025, 1, 1))
+
+        # Set current date ************************
+        self.today_date_raw = datetime.now()
+        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
+        # Convert the date string to QDate
+        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
+        self.startDateInput.setDate(self.qdate_today)
+
+
         self.startDateInput.setObjectName("startDateInput")
         self.startDateFrame_Layout.addWidget(self.startDateInput)
         self.costExpenseHeader_Layout.addWidget(self.startDateFrame)
@@ -385,6 +395,17 @@ class Ui_costExpenseMain(object):
 
         self.retranslateUi(costExpenseMain)
         QtCore.QMetaObject.connectSlotsByName(costExpenseMain)
+
+
+        # Set current date ****************
+        self.startDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.endDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.today_date_raw = datetime.now()
+        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
+        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
+        self.startDateInput.setDate(self.qdate_today)
+        self.endDateInput.setDate(self.qdate_today)
+
 
     def retranslateUi(self, costExpenseMain):
         _translate = QtCore.QCoreApplication.translate

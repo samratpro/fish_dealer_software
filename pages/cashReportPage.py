@@ -7,10 +7,22 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-
+from datetime import datetime
+from PyQt6.QtCore import QDate
+from sqlalchemy.orm import sessionmaker
+from models import Seller, Buyer, Dealer, Base
+from sqlalchemy import create_engine
+import logging
 
 class Ui_cashReportMain(object):
     def setupUi(self, cashReportMain):
+
+        # Database setup
+        self.engine = create_engine('sqlite:///business.db')
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
         cashReportMain.setObjectName("cashReportMain")
         cashReportMain.resize(935, 570)
         cashReportMain.setMinimumSize(QtCore.QSize(300, 0))
@@ -132,7 +144,6 @@ class Ui_cashReportMain(object):
         self.startDateInput.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.startDateInput.setCorrectionMode(QtWidgets.QAbstractSpinBox.CorrectionMode.CorrectToNearestValue)
         self.startDateInput.setCalendarPopup(True)
-        self.startDateInput.setDate(QtCore.QDate(2025, 1, 1))
         self.startDateInput.setObjectName("startDateInput")
         self.startDateFrame_Layout.addWidget(self.startDateInput)
         self.cashReportHeader_Layout.addWidget(self.startDateFrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
@@ -163,7 +174,6 @@ class Ui_cashReportMain(object):
         font.setPointSize(12)
         self.endDateInput.setFont(font)
         self.endDateInput.setCalendarPopup(True)
-        self.endDateInput.setDate(QtCore.QDate(2025, 1, 1))
         self.endDateInput.setObjectName("endDateInput")
         self.endDateFrame_Layout.addWidget(self.endDateInput)
         self.cashReportHeader_Layout.addWidget(self.endDateFrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
@@ -215,13 +225,13 @@ class Ui_cashReportMain(object):
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
-        self.tableWidget.setStyleSheet("QHeaderView::section, QHeaderView{\n"
-"    background-color: #2D221B;\n"
-"    color: white;   \n"
-"    font-size: 12pt;  \n"
-"    text-align: center; \n"
-"}\n"
-"")
+        self.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
+                                                background-color: #2D221B;
+                                                color: white;
+                                                font-size: 12pt;
+                                                text-align: center;
+                                                }
+                                                """)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(9)
         self.tableWidget.setRowCount(0)
@@ -245,6 +255,11 @@ class Ui_cashReportMain(object):
         self.tableWidget.setHorizontalHeaderItem(8, item)
         self.tableWidget.horizontalHeader().setDefaultSectionSize(120)
         self.tableWidget.horizontalHeader().setMinimumSectionSize(120)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.tableWidget.setFont(font)
+        font.setPointSize(12)  # Set the font size to 12 points
+        self.tableWidget.setFont(font)
         self.cashReportBody_Layout.addWidget(self.tableWidget)
         self.cashReportMain_Layout.addWidget(self.cashReportBody)
         self.cashReportBottom = QtWidgets.QWidget(parent=cashReportMain)
@@ -372,6 +387,21 @@ class Ui_cashReportMain(object):
         self.retranslateUi(cashReportMain)
         QtCore.QMetaObject.connectSlotsByName(cashReportMain)
 
+
+        # Set current date ****************
+        self.startDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.endDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.today_date_raw = datetime.now()
+        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
+        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
+        self.startDateInput.setDate(self.qdate_today)
+        self.endDateInput.setDate(self.qdate_today)
+
+        self.engine = create_engine('sqlite:///business.db')
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
     def retranslateUi(self, cashReportMain):
         _translate = QtCore.QCoreApplication.translate
         cashReportMain.setWindowTitle(_translate("cashReportMain", "Form"))
@@ -409,7 +439,56 @@ class Ui_cashReportMain(object):
         self.creditRevenueAmount.setText(_translate("cashReportMain", "1000"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
+        self.filter_data()
 
+    def filter_data(self):
+        try:
+            start_date = self.startDateInput.date().toPyDate()
+            end_date = self.endDateInput.date().toPyDate()
+            seller_filter = self.sellerFilterInput.text()
+            buyer_filter = self.buyerFilterInput.text()
+
+            logging.debug(f"Filtering data from {start_date} to {end_date}")
+            logging.debug(f"Seller Filter: {seller_filter}")
+            logging.debug(f"Buyer Filter: {buyer_filter}")
+
+            sellers = self.session.query(Seller).all()
+            buyers = self.session.query(Buyer).all()
+
+            # Clear existing table data
+            self.tableWidget.clearContents()
+            self.tableWidget.setRowCount(0)
+
+            # Populate the table with queried data
+            row = 0
+            for seller in sellers:
+                self.tableWidget.insertRow(row)
+                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(seller.date)))  # Selling date
+                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(""))  # Buyer name
+                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(seller.seller_name))
+                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(""))  # Fish name
+                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(""))  # Price
+                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.sell_amount)))  # Payable amount
+                self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.get_paid_amount)))  # Getable amount
+                self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(seller.commission_amount)))  # Commission
+                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.entry_by)))  # Entry by
+                row += 1
+
+            for buyer in buyers:
+                self.tableWidget.insertRow(row)
+                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(buyer.date)))  # Selling date
+                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(buyer.buyer_name))
+                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(""))  # Seller name
+                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(buyer.fish_name))
+                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(buyer.final_rate)))  # Price
+                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(buyer.buying_amount)))  # Payable amount
+                self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(""))  # Getable amount
+                self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(""))  # Commission
+                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(buyer.entry_by)))  # Entry by
+                row += 1
+        except Exception as e:
+            logging.error(f"Error in filter_data: {e}")
+            QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred while filtering data: {e}")
 
 if __name__ == "__main__":
     import sys

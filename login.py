@@ -7,10 +7,11 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget
+from time import sleep
 
 
 class Ui_LoginForm(QWidget):
-    login_success_signal = pyqtSignal()
+    login_success_signal = pyqtSignal(str)
 
     def setupUi(self, LoginForm):
         LoginForm.setObjectName("LoginForm")
@@ -124,16 +125,28 @@ class Ui_LoginForm(QWidget):
         QtCore.QMetaObject.connectSlotsByName(LoginForm)
 
     def handle_login(self):
-        username = self.usernameInput.text()
-        password = self.passwordInput.text()
+        try:
+            username = self.usernameInput.text()
+            password = self.passwordInput.text()
 
-        # For simplicity, just validate with hardcoded values
-        if username == "admin" and password == "admin":
-            # Emit the login success signal when login is successful
-            self.login_success_signal.emit()
-        else:
-            self.errorMessage.setText('ভুল ইউজারনেম বা পাসওয়ার্ড!')
-            print("Invalid credentials")
+            # For simplicity, just validate with hardcoded values
+            if username == "admin" and password == "admin":
+                # Emit the login success signal when login is successful
+                self.errorMessage.setText('')
+                print("Login successful, emitting signal")
+                self.login_success_signal.emit('admin1')
+            else:
+                self.errorMessage.setText('ভুল ইউজারনেম বা পাসওয়ার্ড!')
+                print("Invalid credentials")
+                self.retry_login()
+        except Exception as e:
+            print(f"Error in handle_login: {e}")
+
+    def retry_login(self):
+        try:
+            self.loginBtn.setEnabled(True)
+        except Exception as e:
+            print(f"Error in retry_login: {e}")
 
     def retranslateUi(self, LoginForm):
         _translate = QtCore.QCoreApplication.translate

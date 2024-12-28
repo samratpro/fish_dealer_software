@@ -8,10 +8,27 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from pages.form import Ui_SellerInformation
+from PyQt6.QtCore import QDate
+from datetime import datetime
+from sqlalchemy.orm import sessionmaker
+from models import Seller, Buyer, Dealer, Base
+from sqlalchemy import create_engine
+import logging
 
 
 class Ui_memoPageMain(object):
-    def setupUi(self, memoPageMain):
+
+    def setupUi(self, memoPageMain, username):
+
+        self.username = username
+        print('memo page username : ', self.username)
+        # Database setup
+        self.engine = create_engine('sqlite:///business.db')
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
+
         memoPageMain.setObjectName("memoPageMain")
         memoPageMain.resize(814, 647)
         font = QtGui.QFont()
@@ -166,7 +183,6 @@ class Ui_memoPageMain(object):
         font.setWeight(75)
         self.sellingDateInput.setFont(font)
         self.sellingDateInput.setCalendarPopup(True)
-        self.sellingDateInput.setDate(QtCore.QDate(2025, 1, 1))
         self.sellingDateInput.setObjectName("sellingDateInput")
         self.memoDateFrame_Layout.addWidget(self.sellingDateInput)
         self.memoHeaderRight_Layout.addWidget(self.memoDateFrame)
@@ -219,14 +235,6 @@ class Ui_memoPageMain(object):
         self.addBuyerBtn.setIcon(icon)
         self.addBuyerBtn.setIconSize(QtCore.QSize(22, 22))
         self.addBuyerBtn.setObjectName("addBuyerBtn")
-
-
-
-
-        self.addBuyerBtn.clicked.connect(self.open_seller_information)
-        # *******************  Click event ****************
-
-
         self.buyerAddFrame_Layout.addWidget(self.addBuyerBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter)
         self.memoHeaderRight_Layout.addWidget(self.buyerAddFrame)
         self.memoHeader_Layout.addWidget(self.memoHeaderRight)
@@ -253,31 +261,13 @@ class Ui_memoPageMain(object):
         font.setPointSize(12)  # Set the font size to 12 points
         self.tableWidget.setFont(font)
         # Apply the stylesheet for row headers
-        self.tableWidget.horizontalHeader().setStyleSheet("""
-            QHeaderView::section {
-                background-color: #000000;  /* Black row header background */
-                color: white;
-                font-size: 12pt;
-                text-align: center;
-            }
-            QHeaderView::item {
-            font-size: 12pt;
-            }
-        """)
-
-
-
-        # # Apply the stylesheet for selected cells
-        # self.tableWidget.setStyleSheet("""
-        #     QTableWidget::item:selected {
-        #         background-color: #000000;  /* Black background for selected cells */
-        #         color: white;  /* White text color for selected cells */
-        #     }
-
-        #     QTableCornerButton::section {
-        #         background-color: #ffffff;  /* White background for the top-left corner */
-        #     }
-        # """)
+        self.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
+                                                        background-color: #2D221B;
+                                                        color: white;
+                                                        font-size: 12pt;
+                                                        text-align: center;
+                                                        }
+                                                """)
         self.tableWidget.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragDrop)
         self.tableWidget.setGridStyle(QtCore.Qt.PenStyle.SolidLine)
         self.tableWidget.setObjectName("tableWidget")
@@ -577,36 +567,36 @@ class Ui_memoPageMain(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.memoFooter)
         self.horizontalLayout.setContentsMargins(20, -1, 20, 20)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.clearBtn = QtWidgets.QPushButton(parent=self.memoFooter)
-        self.clearBtn.setMinimumSize(QtCore.QSize(0, 30))
+        self.save_db_Btn = QtWidgets.QPushButton(parent=self.memoFooter)
+        self.save_db_Btn.setMinimumSize(QtCore.QSize(0, 30))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
-        self.clearBtn.setFont(font)
-        self.clearBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.save_db_Btn.setFont(font)
+        self.save_db_Btn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap("./icons/database.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.clearBtn.setIcon(icon1)
-        self.clearBtn.setIconSize(QtCore.QSize(22, 22))
-        self.clearBtn.setCheckable(True)
-        self.clearBtn.setAutoExclusive(True)
-        self.clearBtn.setObjectName("clearBtn")
-        self.horizontalLayout.addWidget(self.clearBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.saveBtn = QtWidgets.QPushButton(parent=self.memoFooter)
-        self.saveBtn.setMinimumSize(QtCore.QSize(0, 30))
+        self.save_db_Btn.setIcon(icon1)
+        self.save_db_Btn.setIconSize(QtCore.QSize(22, 22))
+        self.save_db_Btn.setCheckable(True)
+        self.save_db_Btn.setAutoExclusive(True)
+        self.save_db_Btn.setObjectName("save_db_Btn")
+        self.horizontalLayout.addWidget(self.save_db_Btn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.saveExcelBtn = QtWidgets.QPushButton(parent=self.memoFooter)
+        self.saveExcelBtn.setMinimumSize(QtCore.QSize(0, 30))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
-        self.saveBtn.setFont(font)
-        self.saveBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.saveExcelBtn.setFont(font)
+        self.saveExcelBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("./icons/save.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.saveBtn.setIcon(icon2)
-        self.saveBtn.setIconSize(QtCore.QSize(22, 22))
-        self.saveBtn.setCheckable(True)
-        self.saveBtn.setAutoExclusive(True)
-        self.saveBtn.setObjectName("saveBtn")
-        self.horizontalLayout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.saveExcelBtn.setIcon(icon2)
+        self.saveExcelBtn.setIconSize(QtCore.QSize(22, 22))
+        self.saveExcelBtn.setCheckable(True)
+        self.saveExcelBtn.setAutoExclusive(True)
+        self.saveExcelBtn.setObjectName("saveExcelBtn")
+        self.horizontalLayout.addWidget(self.saveExcelBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         self.printBtn = QtWidgets.QPushButton(parent=self.memoFooter)
         self.printBtn.setMinimumSize(QtCore.QSize(90, 30))
         font = QtGui.QFont()
@@ -628,9 +618,16 @@ class Ui_memoPageMain(object):
         QtCore.QMetaObject.connectSlotsByName(memoPageMain)
 
 
+        # Set current date ****************
+        self.sellingDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.today_date_raw = datetime.now()
+        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
+        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
+        self.sellingDateInput.setDate(self.qdate_today)
 
 
-
+        # open seller dialog
+        self.addBuyerBtn.clicked.connect(self.open_seller_information)
 
         # Update Cost change by user interact    **********************************
         self.commissionInput.textChanged.connect(self.cost_update)
@@ -649,7 +646,12 @@ class Ui_memoPageMain(object):
         # if change cell price   ****************************************************
         self.tableWidget.itemChanged.connect(self.handle_change_in_column_5)
 
+        # save all data
+        self.save_db_Btn.clicked.connect(self.save_data)
 
+        # # Username recived
+        # username = userBtn.text()
+        # print("User name :", username)
 
 
     ## Open dialog to get seller information *************
@@ -664,60 +666,65 @@ class Ui_memoPageMain(object):
 
 
     def accept_information(self):
-        # Handle the information acceptance logic here
-        buyer_name = self.ui.buyerName.text().strip()
-        fish_name = self.ui.fishName.text().strip()
-        fish_rate = self.ui.fishRate.text().strip()
-        raw_price = self.ui.rawPrice.text().strip()
-        final_price = self.ui.finalPrice.text().strip()
-        total_price = self.ui.totalPrice.text().strip()
+        try:
+            # Handle the information acceptance logic here
+            buyer_name = self.ui.buyerName.text().strip()
+            fish_name = self.ui.fishName.text().strip()
+            fish_rate = self.ui.fishRate.text().strip()
+            raw_price = self.ui.rawPrice.text().strip()
+            final_price = self.ui.finalPrice.text().strip()
+            total_price = self.ui.totalPrice.text().strip()
 
-        # Check if all fields are filled
-        if buyer_name and fish_name and fish_rate and raw_price and final_price and total_price:
-                if total_price.isdigit():
-                        row_position = self.tableWidget.rowCount()
-                        self.tableWidget.insertRow(row_position)
-                        self.tableWidget.setItem(row_position, 0, QtWidgets.QTableWidgetItem(buyer_name))
-                        self.tableWidget.setItem(row_position, 1, QtWidgets.QTableWidgetItem(fish_name))
-                        self.tableWidget.setItem(row_position, 2, QtWidgets.QTableWidgetItem(fish_rate))
-                        self.tableWidget.setItem(row_position, 3, QtWidgets.QTableWidgetItem(raw_price))
-                        self.tableWidget.setItem(row_position, 4, QtWidgets.QTableWidgetItem(final_price))
-                        self.tableWidget.setItem(row_position, 5, QtWidgets.QTableWidgetItem(total_price))
+            # Check if all fields are filled
+            if buyer_name and fish_name and fish_rate and raw_price and final_price and total_price:
+                    if total_price.isdigit():
+                            row_position = self.tableWidget.rowCount()
+                            self.tableWidget.insertRow(row_position)
+                            self.tableWidget.setItem(row_position, 0, QtWidgets.QTableWidgetItem(buyer_name))
+                            self.tableWidget.setItem(row_position, 1, QtWidgets.QTableWidgetItem(fish_name))
+                            self.tableWidget.setItem(row_position, 2, QtWidgets.QTableWidgetItem(fish_rate))
+                            self.tableWidget.setItem(row_position, 3, QtWidgets.QTableWidgetItem(raw_price))
+                            self.tableWidget.setItem(row_position, 4, QtWidgets.QTableWidgetItem(final_price))
+                            self.tableWidget.setItem(row_position, 5, QtWidgets.QTableWidgetItem(total_price))
 
-                        # Add a delete button in the last column
-                        delete_button = QtWidgets.QPushButton("")
-                        delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
-                        delete_button.setIcon(delete_icon)
-                        delete_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
-                        delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
-                        delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-                        delete_button.clicked.connect(lambda _, r=row_position: self.delete_row(r))
-                        self.tableWidget.setCellWidget(row_position, 6, delete_button)
+                            # Add a delete button in the last column
+                            delete_button = QtWidgets.QPushButton("")
+                            delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
+                            delete_button.setIcon(delete_icon)
+                            delete_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                            delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                            delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                            delete_button.clicked.connect(lambda _, r=row_position: self.delete_row(r))
+                            self.tableWidget.setCellWidget(row_position, 6, delete_button)
 
-                        # Update the total price
-                        self.totalTakaInput.setText(str(int(self.totalTakaInput.text() or "0") + int(total_price)))
-                        self.commissionInput.setText(str((int(self.totalTakaInput.text() or "0")) * 0.04))
-                        self.totalCostInput.setText(str(int(float(self.commissionInput.text()) +float(self.mosqueInput.text()) +float(self.somitiInput.text()) +float(self.otherInput.text()))))
-                        self.finalTakaInput.setText(str(int(float(self.totalTakaInput.text()) - float(self.totalCostInput.text()))))
-                        self.remainTakaInput.setText(str(int(self.finalTakaInput.text()) - int(self.sellerPaidTakaInput.text())))
+                            # Update the total price
+                            print('self.totalTakaInput.text() : ', self.totalTakaInput.text())
+                            print('total_price : ', total_price)
+                            self.totalTakaInput.setText(str(int(self.totalTakaInput.text() or "0")))
+                            self.commissionInput.setText(str((int(self.totalTakaInput.text() or "0")) * 0.04))
+                            self.totalCostInput.setText(str(int(float(self.commissionInput.text()) +float(self.mosqueInput.text()) +float(self.somitiInput.text()) +float(self.otherInput.text()))))
+                            self.finalTakaInput.setText(str(int(float(self.totalTakaInput.text()) - float(self.totalCostInput.text()))))
+                            self.remainTakaInput.setText(str(int(self.finalTakaInput.text()) - int(self.sellerPaidTakaInput.text())))
 
-                        # Close the dialog
-                        self.dialog.close()
-                else:
-                        # Show error message if any field is empty
-                        error_dialog = QtWidgets.QMessageBox(self.dialog)
-                        error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
-                        error_dialog.setWindowTitle("Input Error")
-                        error_dialog.setText("Totat Price must be number.")
-                        error_dialog.exec()
-                     
-        else:
-                # Show error message if any field is empty
-                error_dialog = QtWidgets.QMessageBox(self.dialog)
-                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
-                error_dialog.setWindowTitle("Input Error")
-                error_dialog.setText("Please fill in all information.")
-                error_dialog.exec()
+                            # Close the dialog
+                            self.dialog.close()
+                    else:
+                            # Show error message if any field is empty
+                            error_dialog = QtWidgets.QMessageBox(self.dialog)
+                            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                            error_dialog.setWindowTitle("Input Error")
+                            error_dialog.setText("Totat Price must be number.")
+                            error_dialog.exec()
+
+            else:
+                    # Show error message if any field is empty
+                    error_dialog = QtWidgets.QMessageBox(self.dialog)
+                    error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                    error_dialog.setWindowTitle("Input Error")
+                    error_dialog.setText("Please fill in all information.")
+                    error_dialog.exec()
+        except Exception as e:
+            print(f"Error in seller infor : {e}")
 
 
 
@@ -793,7 +800,6 @@ class Ui_memoPageMain(object):
 
     # Edit or Delete Cell **************************************
     def delete_row(self, row):
-        total_price = int(self.tableWidget.item(row, 5).text())  # Get the total price of the row
         self.tableWidget.removeRow(row)
         self.reconnect_delete_buttons()
         self.re_calculate()
@@ -812,6 +818,101 @@ class Ui_memoPageMain(object):
             if delete_button is not None:
                 delete_button.clicked.disconnect()
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+
+    # Clear the tableWidget, including all widgets and items
+    def clear_table_widget(self):
+        for row in range(self.tableWidget.rowCount()):
+            for column in range(self.tableWidget.columnCount()):
+                cell_widget = self.tableWidget.cellWidget(row, column)
+                if cell_widget:  # If there's a widget, delete it
+                    cell_widget.deleteLater()
+                self.tableWidget.takeItem(row, column)  # Remove the QTableWidgetItem if it exists
+        self.tableWidget.setRowCount(0)  # Reset the row count to 0
+
+    # Configure logging  ->   *************** Save in database
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    def save_data(self):
+        try:
+            logging.debug("Starting save_data method")
+
+            # Get data from inputs
+            voucher_no = self.voucharInput.text()
+            seller_name = self.sellerNameInput.text()
+            selling_date = self.sellingDateInput.date().toPyDate()
+            address = self.sellerAddressInput.text()
+            phone = self.sellerMobileInput.text()
+            commission_amount = float(self.commissionInput.text())
+            total_cost_amount = int(self.totalCostInput.text())
+            sell_amount = int(self.totalTakaInput.text())
+            seller_paid_amount = int(self.sellerPaidTakaInput.text())
+            remaining_get_paid_amount = int(self.remainTakaInput.text())
+
+            # logging.debug(f"Collected data - Voucher No: {voucher_no}, Seller Name: {seller_name}, Selling Date: {selling_date}")
+
+            # Validate required fields
+            if not voucher_no or not seller_name or not selling_date:
+                QtWidgets.QMessageBox.warning(None, "Input Error", "Please fill all required fields.")
+                return
+
+            # Create a new Seller record
+            seller = Seller(voucher_no=voucher_no,seller_name=seller_name,date=selling_date,address=address,phone=phone,
+                            sell_amount=sell_amount,commission_amount=commission_amount,total_cost_amount=total_cost_amount,
+                            get_paid_amount=seller_paid_amount,remaining_get_paid_amount=remaining_get_paid_amount,
+                            entry_by=self.username
+                            )
+            self.session.add(seller)
+            self.session.commit()
+            logging.debug("Seller record saved successfully")
+
+            dealer = Dealer(entry_name="Seller Entry", date=selling_date, paying_amount=seller_paid_amount,
+                            receiving_amount=0, commission_amount=commission_amount, seller_id=seller.id,
+                            buyer_id=None, seller=seller, buyer=None, entry_by=self.username)
+            self.session.add(dealer)
+            self.session.commit()
+            logging.debug("Seller record saved successfully in Dealer")
+
+            # Loop through tableWidget rows to save Buyer data
+            for row in range(self.tableWidget.rowCount()):
+                buyer_name = self.tableWidget.item(row, 0).text()
+                fish_name = self.tableWidget.item(row, 1).text()
+                fish_rate = self.tableWidget.item(row, 2).text()
+                raw_rate = self.tableWidget.item(row, 3).text()
+                final_rate = self.tableWidget.item(row, 4).text()
+                buying_amount = int(self.tableWidget.item(row, 5).text())
+
+                logging.debug(f"Row {row} - Buyer Name: {buyer_name}, Fish Name: {fish_name}")
+
+                # Create a new Buyer record linked to the seller
+                buyer = Buyer(voucher_no=voucher_no,date=selling_date,buyer_name=buyer_name,fish_name=fish_name,
+                              fish_rate=fish_rate,raw_rate=raw_rate,final_rate=final_rate,buying_amount=buying_amount,
+                              sellers=[seller],paid_amount=0.0,remaining_amount=buying_amount,entry_by=self.username)
+                self.session.add(buyer)
+                self.session.commit()
+                dealer = Dealer(entry_name="Buyer Entry", date=selling_date, paying_amount=0,
+                            receiving_amount=0, commission_amount=0, seller_id=None,
+                            buyer_id=buyer.id, seller=None, buyer=buyer, entry_by=self.username)
+                self.session.add(dealer)
+
+            self.session.commit()
+            logging.debug("All Buyer records saved successfully")
+            QtWidgets.QMessageBox.information(None, "Success", "Data saved successfully.")
+            # Clear the table widget
+            self.clear_table_widget()
+            self.totalTakaInput.setText("0")
+            self.commissionInput.setText("0.0")
+            self.totalCostInput.setText("0")
+            self.sellerPaidTakaInput.setText("0")
+            self.remainTakaInput.setText("0")
+            self.otherInput.setText("0")
+            self.voucharInput.clear()
+            self.sellerNameInput.clear()
+            self.sellerAddressInput.clear()
+            self.sellerMobileInput.clear()
+
+        except Exception as e:
+            logging.error(f"An error occurred: {e}", exc_info=True)
+            QtWidgets.QMessageBox.critical(None, "Error", f"An error occurred: {str(e)}")
+            print(f"Error: {e}")
 
 
 
@@ -847,8 +948,8 @@ class Ui_memoPageMain(object):
         self.finalTakaLabel.setText(_translate("memoPageMain", "সর্বমোট টাকা"))
         self.sellerPaidTakaLabel.setText(_translate("memoPageMain", "প্রদান"))
         self.remainTakaLabel.setText(_translate("memoPageMain", "বাকি"))
-        self.clearBtn.setText(_translate("memoPageMain", "সেভ ইন ডাটাবেস"))
-        self.saveBtn.setText(_translate("memoPageMain", "সেভ এক্সেল ফাইল"))
+        self.save_db_Btn.setText(_translate("memoPageMain", "সেভ ইন ডাটাবেস"))
+        self.saveExcelBtn.setText(_translate("memoPageMain", "সেভ এক্সেল ফাইল"))
         self.printBtn.setText(_translate("memoPageMain", "প্রিন্ট মেমো"))
 
 

@@ -14,7 +14,7 @@ from pages.costExpenseEntryPage import  Ui_costExpenseMain
 
 
 class Ui_MainWindow:
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, username):
 
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(969, 600)
@@ -446,7 +446,8 @@ class Ui_MainWindow:
         self.cashMemoStack.setObjectName("Cash Memo page")
         self.stackedWidget.addWidget(self.cashMemoStack)
         self.cashMemoPage = Ui_memoPageMain()
-        self.cashMemoPage.setupUi(self.cashMemoStack)
+        print('user name in dasboard : ', username)
+        self.cashMemoPage.setupUi(self.cashMemoStack, username)
 
         # ************ cash report page
         self.cashReportStack = QtWidgets.QWidget()

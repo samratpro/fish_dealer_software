@@ -1,0 +1,19 @@
+1. QDate
+2. table operation
+3. autofilling
+4. Page connection
+5. authentication
+6. DB Query
+7. Logging
+8. data save, field clear and setText
+
+
+
+
+        table font
+	table css
+	font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.tableWidget.setFont(font)
+        font.setPointSize(12)  # Set the font size to 12 points
+        self.tableWidget.setFont(font)

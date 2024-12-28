@@ -8,14 +8,16 @@ import sys
 class Dashboard(QMainWindow):
     logout_signal = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, username):
         super().__init__()
         self.setWindowTitle("Dashboard")
         self.setMinimumSize(1000, 600)
 
         # Initialize the dashboard UI
         self.dashboard_ui = Ui_MainWindow()
-        self.dashboard_ui.setupUi(self)
+        self.dashboard_ui.setupUi(self, username)
+
+        print("user name from app.py : ", username)
 
         # Assuming you have a logout button defined in your UI
         self.dashboard_ui.logoutBtn.clicked.connect(self.handle_logout)
@@ -38,22 +40,28 @@ class App(QMainWindow):
         self.show_login()
 
     def show_login(self):
-        """Switches back to the login page."""
-        # Recreate the login form and widget
-        self.login_form = Ui_LoginForm()
-        self.login_widget = QWidget()
-        self.login_form.setupUi(self.login_widget)
-        self.login_form.login_success_signal.connect(self.show_dashboard)
+        try:
+            """Switches back to the login page."""
+            # Recreate the login form and widget
+            self.login_form = Ui_LoginForm()
+            self.login_widget = QWidget()
+            self.login_form.setupUi(self.login_widget)
+            self.login_form.login_success_signal.connect(self.show_dashboard)
+            print("Showing login form")
+            self.setCentralWidget(self.login_widget)
+        except Exception as e:
+            print(f"Error in show_login: {e}")
 
-        self.setCentralWidget(self.login_widget)
-
-    def show_dashboard(self):
-        """Switches to the dashboard after a successful login."""
-        # Recreate the dashboard
-        self.dashboard = Dashboard()
-        self.dashboard.logout_signal.connect(self.show_login)
-
-        self.setCentralWidget(self.dashboard)
+    def show_dashboard(self, username):
+        try:
+            """Switches to the dashboard after a successful login."""
+            # Recreate the dashboard
+            self.dashboard = Dashboard(username)
+            self.dashboard.logout_signal.connect(self.show_login)
+            print("Showing dashboard")
+            self.setCentralWidget(self.dashboard)
+        except Exception as e:
+            print(f"Error in show_dashboard: {e}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
