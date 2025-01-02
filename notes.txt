@@ -6,6 +6,9 @@
 6. DB Query
 7. Logging
 8. data save, field clear and setText
+9. Signal  (pysignal, shared_signal)
+10. current date update in retranslateUi method
+11.. signal, click event shoul be in retranslateUi method
 
 
 

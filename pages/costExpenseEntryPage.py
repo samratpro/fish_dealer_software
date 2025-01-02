@@ -76,6 +76,10 @@ class Ui_costExpenseMain(object):
         self.accountNameSelect.addItem("")
         self.accountNameSelect.addItem("")
         self.accountNameSelect.addItem("")
+        self.accountNameSelect.addItem("")
+        self.accountNameSelect.addItem("")
+        self.accountNameSelect.addItem("")
+        self.accountNameSelect.addItem("")
         self.accountNameFrame_layout.addWidget(self.accountNameSelect)
         self.costExpenseHeader_Layout.addWidget(self.accountNameFrame)
         self.startDateFrame = QtWidgets.QFrame(parent=self.costExpenseHeader)
@@ -397,16 +401,6 @@ class Ui_costExpenseMain(object):
         QtCore.QMetaObject.connectSlotsByName(costExpenseMain)
 
 
-        # Set current date ****************
-        self.startDateInput.setDisplayFormat("dd/MM/yyyy")
-        self.endDateInput.setDisplayFormat("dd/MM/yyyy")
-        self.today_date_raw = datetime.now()
-        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
-        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
-        self.startDateInput.setDate(self.qdate_today)
-        self.endDateInput.setDate(self.qdate_today)
-
-
     def retranslateUi(self, costExpenseMain):
         _translate = QtCore.QCoreApplication.translate
         costExpenseMain.setWindowTitle(_translate("costExpenseMain", "Form"))
@@ -414,7 +408,11 @@ class Ui_costExpenseMain(object):
         self.accountNameSelect.setItemText(0, _translate("costExpenseMain", "সব হিসাব"))
         self.accountNameSelect.setItemText(1, _translate("costExpenseMain", "বিক্রেতা কে প্রদান"))
         self.accountNameSelect.setItemText(2, _translate("costExpenseMain", "ক্রেতা থেকে গ্রহণ"))
-        self.accountNameSelect.setItemText(3, _translate("costExpenseMain", "অন্যান্য খরচ"))
+        self.accountNameSelect.setItemText(3, _translate("costExpenseMain", "মূলধন উত্তোলন"))
+        self.accountNameSelect.setItemText(4, _translate("costExpenseMain", "মূলধন জমা"))
+        self.accountNameSelect.setItemText(5, _translate("costExpenseMain", "ঋণ গ্রহণ"))
+        self.accountNameSelect.setItemText(6, _translate("costExpenseMain", "ঋণ পরিশোধ"))
+        self.accountNameSelect.setItemText(7, _translate("costExpenseMain", "অন্যান্য খরচ"))
         self.startDateLabel.setText(_translate("costExpenseMain", "তারিখ"))
         self.startDateInput.setDisplayFormat(_translate("costExpenseMain", "dd/mm/yyyy"))
         self.endDateLabel.setText(_translate("costExpenseMain", "শেষ তারিখ"))
@@ -443,6 +441,15 @@ class Ui_costExpenseMain(object):
         self.revenueAmount.setText(_translate("costExpenseMain", "100000"))
         self.saveBtn.setText(_translate("costExpenseMain", "সেভ এক্সেল"))
         self.printBtn.setText(_translate("costExpenseMain", "প্রিন্ট"))
+
+        # Set current date ****************
+        self.startDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.endDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.today_date_raw = datetime.now()
+        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
+        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
+        self.startDateInput.setDate(self.qdate_today)
+        self.endDateInput.setDate(self.qdate_today)
 
 
 if __name__ == "__main__":

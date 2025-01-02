@@ -7,10 +7,14 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from pages.homePage import  Ui_HomePageMain
+from pages.homePage import Ui_HomePageMain
 from pages.memoPage import Ui_memoPageMain
 from pages.cashReportPage import Ui_cashReportMain
-from pages.costExpenseEntryPage import  Ui_costExpenseMain
+from pages.costExpenseEntryPage import Ui_costExpenseMain
+from pages.buyerProfiles import buyerProfiles
+from pages.sellerProfiles import sellerProfiles
+from pages.receivableReportPage import receivableReport
+from pages.payableableReportPage import payableableReport
 
 
 class Ui_MainWindow:
@@ -128,23 +132,23 @@ class Ui_MainWindow:
         self.memoIconBtn.setFlat(False)
         self.memoIconBtn.setObjectName("memoIconBtn")
         self.verticalLayout_2.addWidget(self.memoIconBtn)
-        self.cashReportIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.cashReportIconBtn.setFont(font)
-        self.cashReportIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.cashReportIconBtn.setText("")
-        icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("./icons/loader.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.cashReportIconBtn.setIcon(icon3)
-        self.cashReportIconBtn.setIconSize(QtCore.QSize(28, 28))
-        self.cashReportIconBtn.setCheckable(True)
-        self.cashReportIconBtn.setAutoExclusive(True)
-        self.cashReportIconBtn.setAutoRepeatDelay(100)
-        self.cashReportIconBtn.setAutoDefault(False)
-        self.cashReportIconBtn.setFlat(False)
-        self.cashReportIconBtn.setObjectName("cashReportIconBtn")
-        self.verticalLayout_2.addWidget(self.cashReportIconBtn)
+        # self.cashReportIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        # font = QtGui.QFont()
+        # font.setFamily("Arial")
+        # self.cashReportIconBtn.setFont(font)
+        # self.cashReportIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        # self.cashReportIconBtn.setText("")
+        # icon3 = QtGui.QIcon()
+        # icon3.addPixmap(QtGui.QPixmap("./icons/loader.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        # self.cashReportIconBtn.setIcon(icon3)
+        # self.cashReportIconBtn.setIconSize(QtCore.QSize(28, 28))
+        # self.cashReportIconBtn.setCheckable(True)
+        # self.cashReportIconBtn.setAutoExclusive(True)
+        # self.cashReportIconBtn.setAutoRepeatDelay(100)
+        # self.cashReportIconBtn.setAutoDefault(False)
+        # self.cashReportIconBtn.setFlat(False)
+        # self.cashReportIconBtn.setObjectName("cashReportIconBtn")
+        # self.verticalLayout_2.addWidget(self.cashReportIconBtn)
         self.costEntryIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -162,7 +166,80 @@ class Ui_MainWindow:
         self.costEntryIconBtn.setFlat(False)
         self.costEntryIconBtn.setObjectName("costEntryIconBtn")
         self.verticalLayout_2.addWidget(self.costEntryIconBtn)
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+
+        self.buyerProfileIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.buyerProfileIconBtn.setFont(font)
+        self.buyerProfileIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buyerProfileIconBtn.setText("")
+        iconusers = QtGui.QIcon()
+        iconusers.addPixmap(QtGui.QPixmap("./icons/users.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.buyerProfileIconBtn.setIcon(iconusers)
+        self.buyerProfileIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.buyerProfileIconBtn.setCheckable(True)
+        self.buyerProfileIconBtn.setAutoExclusive(True)
+        self.buyerProfileIconBtn.setAutoRepeatDelay(100)
+        self.buyerProfileIconBtn.setAutoDefault(False)
+        self.buyerProfileIconBtn.setFlat(False)
+        self.buyerProfileIconBtn.setObjectName("buyerProfileIconBtn")
+        self.verticalLayout_2.addWidget(self.buyerProfileIconBtn)
+
+
+        self.sellerProfileIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.sellerProfileIconBtn.setFont(font)
+        self.sellerProfileIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.sellerProfileIconBtn.setText("")
+        self.sellerProfileIconBtn.setIcon(iconusers)
+        self.sellerProfileIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.sellerProfileIconBtn.setCheckable(True)
+        self.sellerProfileIconBtn.setAutoExclusive(True)
+        self.sellerProfileIconBtn.setAutoRepeatDelay(100)
+        self.sellerProfileIconBtn.setAutoDefault(False)
+        self.sellerProfileIconBtn.setFlat(False)
+        self.sellerProfileIconBtn.setObjectName("buyerProfileIconBtn")
+        self.verticalLayout_2.addWidget(self.sellerProfileIconBtn)
+
+        self.receivableIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.receivableIconBtn.setFont(font)
+        self.receivableIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.receivableIconBtn.setText("")
+        receivableIcon = QtGui.QIcon()
+        receivableIcon.addPixmap(QtGui.QPixmap("./icons/arrow-down-right.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.receivableIconBtn.setIcon(receivableIcon)
+        self.receivableIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.receivableIconBtn.setCheckable(True)
+        self.receivableIconBtn.setAutoExclusive(True)
+        self.receivableIconBtn.setAutoRepeatDelay(100)
+        self.receivableIconBtn.setAutoDefault(False)
+        self.receivableIconBtn.setFlat(False)
+        self.receivableIconBtn.setObjectName("receivableIconBtn")
+        self.verticalLayout_2.addWidget(self.receivableIconBtn)
+
+        self.payableIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.payableIconBtn.setFont(font)
+        self.payableIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.payableIconBtn.setText("")
+        payableIcon = QtGui.QIcon()
+        payableIcon.addPixmap(QtGui.QPixmap("./icons/arrow-up-left.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.payableIconBtn.setIcon(payableIcon)
+        self.payableIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.payableIconBtn.setCheckable(True)
+        self.payableIconBtn.setAutoExclusive(True)
+        self.payableIconBtn.setAutoRepeatDelay(100)
+        self.payableIconBtn.setAutoDefault(False)
+        self.payableIconBtn.setFlat(False)
+        self.payableIconBtn.setObjectName("payableIconBtn")
+        self.verticalLayout_2.addWidget(self.payableIconBtn)
+
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
+                                           QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
         self.settingsIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
@@ -201,8 +278,8 @@ class Ui_MainWindow:
         self.IconMenu_Layout.addWidget(self.IconMenuItems)
         self.centralwidget_Layout.addWidget(self.IconMenu)
         self.SideMenu = QtWidgets.QWidget(parent=self.centralwidget)
-        self.SideMenu.setMinimumSize(QtCore.QSize(190, 0))
-        self.SideMenu.setMaximumSize(QtCore.QSize(190, 16777215))
+        self.SideMenu.setMinimumSize(QtCore.QSize(200, 0))
+        self.SideMenu.setMaximumSize(QtCore.QSize(200, 16777215))
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.SideMenu.setFont(font)
@@ -277,21 +354,21 @@ class Ui_MainWindow:
         self.memoBtn.setFlat(False)
         self.memoBtn.setObjectName("memoBtn")
         self.verticalLayout_3.addWidget(self.memoBtn)
-        self.cashReportBtn = QtWidgets.QPushButton(parent=self.MenuItems)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.cashReportBtn.setFont(font)
-        self.cashReportBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.cashReportBtn.setIcon(icon3)
-        self.cashReportBtn.setIconSize(QtCore.QSize(28, 28))
-        self.cashReportBtn.setCheckable(True)
-        self.cashReportBtn.setAutoExclusive(True)
-        self.cashReportBtn.setAutoRepeatDelay(100)
-        self.cashReportBtn.setAutoDefault(False)
-        self.cashReportBtn.setFlat(False)
-        self.cashReportBtn.setObjectName("cashReportBtn")
-        self.verticalLayout_3.addWidget(self.cashReportBtn)
+        # self.cashReportBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        # font = QtGui.QFont()
+        # font.setFamily("Arial")
+        # font.setPointSize(12)
+        # self.cashReportBtn.setFont(font)
+        # self.cashReportBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        # self.cashReportBtn.setIcon(icon3)
+        # self.cashReportBtn.setIconSize(QtCore.QSize(28, 28))
+        # self.cashReportBtn.setCheckable(True)
+        # self.cashReportBtn.setAutoExclusive(True)
+        # self.cashReportBtn.setAutoRepeatDelay(100)
+        # self.cashReportBtn.setAutoDefault(False)
+        # self.cashReportBtn.setFlat(False)
+        # self.cashReportBtn.setObjectName("cashReportBtn")
+        # self.verticalLayout_3.addWidget(self.cashReportBtn)
         self.costEntryBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -307,7 +384,73 @@ class Ui_MainWindow:
         self.costEntryBtn.setFlat(False)
         self.costEntryBtn.setObjectName("costEntryBtn")
         self.verticalLayout_3.addWidget(self.costEntryBtn)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
+
+        self.buyerProfileBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.buyerProfileBtn.setFont(font)
+        self.buyerProfileBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.buyerProfileBtn.setIcon(iconusers)
+        self.buyerProfileBtn.setIconSize(QtCore.QSize(28, 28))
+        self.buyerProfileBtn.setCheckable(True)
+        self.buyerProfileBtn.setAutoExclusive(True)
+        self.buyerProfileBtn.setAutoRepeatDelay(100)
+        self.buyerProfileBtn.setAutoDefault(False)
+        self.buyerProfileBtn.setFlat(False)
+        self.buyerProfileBtn.setObjectName("buyerProfileBtn")
+        self.verticalLayout_3.addWidget(self.buyerProfileBtn)
+
+        self.sellerProfileBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.sellerProfileBtn.setFont(font)
+        self.sellerProfileBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.sellerProfileBtn.setIcon(iconusers)
+        self.sellerProfileBtn.setIconSize(QtCore.QSize(28, 28))
+        self.sellerProfileBtn.setCheckable(True)
+        self.sellerProfileBtn.setAutoExclusive(True)
+        self.sellerProfileBtn.setAutoRepeatDelay(100)
+        self.sellerProfileBtn.setAutoDefault(False)
+        self.sellerProfileBtn.setFlat(False)
+        self.sellerProfileBtn.setObjectName("sellerProfileBtn")
+        self.verticalLayout_3.addWidget(self.sellerProfileBtn)
+
+        self.receivableBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.receivableBtn.setFont(font)
+        self.receivableBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.receivableBtn.setIcon(receivableIcon)
+        self.receivableBtn.setIconSize(QtCore.QSize(28, 28))
+        self.receivableBtn.setCheckable(True)
+        self.receivableBtn.setAutoExclusive(True)
+        self.receivableBtn.setAutoRepeatDelay(100)
+        self.receivableBtn.setAutoDefault(False)
+        self.receivableBtn.setFlat(False)
+        self.receivableBtn.setObjectName("receivableBtn")
+        self.verticalLayout_3.addWidget(self.receivableBtn)
+
+        self.payableBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.payableBtn.setFont(font)
+        self.payableBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.payableBtn.setIcon(payableIcon)
+        self.payableBtn.setIconSize(QtCore.QSize(28, 28))
+        self.payableBtn.setCheckable(True)
+        self.payableBtn.setAutoExclusive(True)
+        self.payableBtn.setAutoRepeatDelay(100)
+        self.payableBtn.setAutoDefault(False)
+        self.payableBtn.setFlat(False)
+        self.payableBtn.setObjectName("payableBtn")
+        self.verticalLayout_3.addWidget(self.payableBtn)
+
+        spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
+                                            QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
         self.settingsBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
@@ -387,16 +530,17 @@ class Ui_MainWindow:
         self.tag.setObjectName("tag")
         self.LeftHeader_Layout.addWidget(self.tag)
         self.Header_Layout.addWidget(self.LeftHeader, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding, QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.Header_Layout.addItem(spacerItem2)
         self.RightHeader = QtWidgets.QWidget(parent=self.Header)
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.RightHeader.setFont(font)
         self.RightHeader.setStyleSheet("*{background-color: rgb(0, 0, 0);\n"
-" border-radius:20px;\n"
-"margin-right:10px;\n"
-"}")
+                                       " border-radius:20px;\n"
+                                       "margin-right:10px;\n"
+                                       "}")
         self.RightHeader.setObjectName("RightHeader")
         self.RightHeader_Layout = QtWidgets.QHBoxLayout(self.RightHeader)
         self.RightHeader_Layout.setContentsMargins(-1, 9, -1, 9)
@@ -450,11 +594,11 @@ class Ui_MainWindow:
         self.cashMemoPage.setupUi(self.cashMemoStack, username)
 
         # ************ cash report page
-        self.cashReportStack = QtWidgets.QWidget()
-        self.cashReportStack.setObjectName("Cash Report Page")
-        self.stackedWidget.addWidget(self.cashReportStack)
-        self.cashReportPage = Ui_cashReportMain()
-        self.cashReportPage.setupUi(self.cashReportStack)
+        # self.cashReportStack = QtWidgets.QWidget()
+        # self.cashReportStack.setObjectName("Cash Report Page")
+        # self.stackedWidget.addWidget(self.cashReportStack)
+        # self.cashReportPage = Ui_cashReportMain()
+        # self.cashReportPage.setupUi(self.cashReportStack)
 
         # ************ debit credit page
         self.earnExpenseStack = QtWidgets.QWidget()
@@ -463,9 +607,35 @@ class Ui_MainWindow:
         self.earnExpensePage = Ui_costExpenseMain()
         self.earnExpensePage.setupUi(self.earnExpenseStack)
 
+        # ************ buyers profiles
+        self.buyerProfileStack = QtWidgets.QWidget()
+        self.buyerProfileStack.setObjectName("Buyer Profile Page")
+        self.stackedWidget.addWidget(self.buyerProfileStack)
+        self.buyerProfilePage = buyerProfiles()
+        self.buyerProfilePage.setupUi(self.buyerProfileStack)
+
+        # ************ seller profiles
+        self.sellerProfileStack = QtWidgets.QWidget()
+        self.sellerProfileStack.setObjectName("Seller Profile Page")
+        self.stackedWidget.addWidget(self.sellerProfileStack)
+        self.sellerProfilePage = sellerProfiles()
+        self.sellerProfilePage.setupUi(self.sellerProfileStack)
+
+        # ************ receiveable report page
+        self.receivableReportStack = QtWidgets.QWidget()
+        self.receivableReportStack.setObjectName("Receivable Report Page")
+        self.stackedWidget.addWidget(self.receivableReportStack)
+        self.receivableReportPage = receivableReport()
+        self.receivableReportPage.setupUi(self.receivableReportStack)
+
+        # ************ rpayable report page
+        self.payableReportStack = QtWidgets.QWidget()
+        self.payableReportStack.setObjectName("Payable Report Page")
+        self.stackedWidget.addWidget(self.payableReportStack)
+        self.payableReportPage = payableableReport()
+        self.payableReportPage.setupUi(self.payableReportStack)
 
         # End pages ***********************
-
 
         self.horizontalLayout.addWidget(self.stackedWidget)
         self.MainBody_Layout.addWidget(self.Body)
@@ -473,22 +643,31 @@ class Ui_MainWindow:
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.ToggleBtn.clicked.connect(self.IconMenu.show) # type: ignore
-        self.ToggleBtn.clicked.connect(self.SideMenu.hide) # type: ignore
-        self.IconToggleBtn.clicked.connect(self.SideMenu.show) # type: ignore
-        self.IconToggleBtn.clicked.connect(self.IconMenu.hide) # type: ignore
-        self.homeBtn.toggled['bool'].connect(self.homeIconBtn.setChecked) # type: ignore
-        self.homeIconBtn.toggled['bool'].connect(self.homeBtn.setChecked) # type: ignore
-        self.memoBtn.toggled['bool'].connect(self.memoIconBtn.setChecked) # type: ignore
-        self.memoIconBtn.toggled['bool'].connect(self.memoBtn.setChecked) # type: ignore
-        self.cashReportBtn.toggled['bool'].connect(self.cashReportIconBtn.setChecked) # type: ignore
-        self.cashReportIconBtn.toggled['bool'].connect(self.cashReportBtn.setChecked) # type: ignore
-        self.costEntryBtn.toggled['bool'].connect(self.costEntryIconBtn.setChecked) # type: ignore
-        self.costEntryIconBtn.toggled['bool'].connect(self.costEntryBtn.setChecked) # type: ignore
-        self.settingsBtn.toggled['bool'].connect(self.settingsBtn.setChecked) # type: ignore
-        self.settingsIconBtn.toggled['bool'].connect(self.settingsBtn.setChecked) # type: ignore
-        self.logoutBtn.toggled['bool'].connect(self.logoutIconBtn.setChecked) # type: ignore
-        self.logoutIconBtn.toggled['bool'].connect(self.logoutBtn.setChecked) # type: ignore
+        self.ToggleBtn.clicked.connect(self.IconMenu.show)  # type: ignore
+        self.ToggleBtn.clicked.connect(self.SideMenu.hide)  # type: ignore
+        self.IconToggleBtn.clicked.connect(self.SideMenu.show)  # type: ignore
+        self.IconToggleBtn.clicked.connect(self.IconMenu.hide)  # type: ignore
+        self.homeBtn.toggled['bool'].connect(self.homeIconBtn.setChecked)  # type: ignore
+        self.homeIconBtn.toggled['bool'].connect(self.homeBtn.setChecked)  # type: ignore
+        self.memoBtn.toggled['bool'].connect(self.memoIconBtn.setChecked)  # type: ignore
+        self.memoIconBtn.toggled['bool'].connect(self.memoBtn.setChecked)  # type: ignore
+        # self.cashReportBtn.toggled['bool'].connect(self.cashReportIconBtn.setChecked)  # type: ignore
+        # self.cashReportIconBtn.toggled['bool'].connect(self.cashReportBtn.setChecked)  # type: ignore
+        self.costEntryBtn.toggled['bool'].connect(self.costEntryIconBtn.setChecked)  # type: ignore
+        self.costEntryIconBtn.toggled['bool'].connect(self.costEntryBtn.setChecked)  # type: ignore
+        self.buyerProfileBtn.toggled['bool'].connect(self.buyerProfileIconBtn.setChecked)  # type: ignore
+        self.buyerProfileIconBtn.toggled['bool'].connect(self.buyerProfileBtn.setChecked)  # type: ignore
+        self.sellerProfileBtn.toggled['bool'].connect(self.sellerProfileIconBtn.setChecked)  # type: ignore
+        self.sellerProfileIconBtn.toggled['bool'].connect(self.sellerProfileBtn.setChecked)  # type: ignore
+        self.receivableBtn.toggled['bool'].connect(self.receivableIconBtn.setChecked)  # type: ignore
+        self.receivableIconBtn.toggled['bool'].connect(self.receivableBtn.setChecked)  # type: ignore
+        self.payableBtn.toggled['bool'].connect(self.payableIconBtn.setChecked)  # type: ignore
+        self.payableIconBtn.toggled['bool'].connect(self.payableBtn.setChecked)  # type: ignore
+
+        self.settingsBtn.toggled['bool'].connect(self.settingsBtn.setChecked)  # type: ignore
+        self.settingsIconBtn.toggled['bool'].connect(self.settingsBtn.setChecked)  # type: ignore
+        self.logoutBtn.toggled['bool'].connect(self.logoutIconBtn.setChecked)  # type: ignore
+        self.logoutIconBtn.toggled['bool'].connect(self.logoutBtn.setChecked)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -497,7 +676,7 @@ class Ui_MainWindow:
         self.IconToggleBtn.setToolTip(_translate("MainWindow", "Expand Menu"))
         self.homeIconBtn.setToolTip(_translate("MainWindow", "হোম "))
         self.memoIconBtn.setToolTip(_translate("MainWindow", "ক্যাশ মেমো "))
-        self.cashReportIconBtn.setToolTip(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
+        # self.cashReportIconBtn.setToolTip(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
         self.costEntryIconBtn.setToolTip(_translate("MainWindow", "খরচের এন্ট্রি"))
         self.settingsIconBtn.setToolTip(_translate("MainWindow", "সেটিংস "))
         self.logoutIconBtn.setToolTip(_translate("MainWindow", "লগ আউট"))
@@ -506,18 +685,23 @@ class Ui_MainWindow:
         self.homeBtn.setText(_translate("MainWindow", "হোম "))
         self.memoBtn.setToolTip(_translate("MainWindow", "ক্যাশ মেমো "))
         self.memoBtn.setText(_translate("MainWindow", "ক্যাশ মেমো "))
-        self.cashReportBtn.setToolTip(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
-        self.cashReportBtn.setText(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
+        # self.cashReportBtn.setToolTip(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
+        # self.cashReportBtn.setText(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
         self.costEntryBtn.setToolTip(_translate("MainWindow", "খরচের এন্ট্রি"))
-        self.costEntryBtn.setText(_translate("MainWindow", "আয়-ব্যয়"))
+        self.costEntryBtn.setText(_translate("MainWindow", "আড়ৎ এর এন্ট্রি"))
+        self.buyerProfileBtn.setToolTip(_translate("MainWindow", "ক্রেতা প্রোফাইল"))
+        self.buyerProfileBtn.setText(_translate("MainWindow", "ক্রেতা প্রোফাইল"))
+        self.sellerProfileBtn.setToolTip(_translate("MainWindow", "বিক্রেতা প্রোফাইল"))
+        self.sellerProfileBtn.setText(_translate("MainWindow", "বিক্রেতা প্রোফাইল"))
+        self.receivableBtn.setText(_translate("MainWindow", "পাওনা"))
+        self.payableBtn.setText(_translate("MainWindow", "দেনা"))
         self.settingsBtn.setToolTip(_translate("MainWindow", "সেটিংস "))
         self.settingsBtn.setText(_translate("MainWindow", "সেটিংস "))
         self.logoutBtn.setToolTip(_translate("MainWindow", "লগ আউট"))
         self.logoutBtn.setText(_translate("MainWindow", "লগ আউট"))
         self.tag.setText(_translate("MainWindow", "মেসার্স ওসমান ফিশ "))
 
-        
-        # Page switching 
+        # Page switching
         try:
             self.homeIconBtn.clicked.connect(lambda: self.switch_page("home"))
             self.homeBtn.clicked.connect(lambda: self.switch_page("home"))
@@ -525,11 +709,25 @@ class Ui_MainWindow:
             self.memoIconBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
             self.memoBtn.clicked.connect(lambda: self.switch_page("cash_memo"))
 
-            self.cashReportBtn.clicked.connect(lambda: self.switch_page("cash_report"))
-            self.cashReportIconBtn.clicked.connect(lambda: self.switch_page("cash_report"))
+            # self.cashReportBtn.clicked.connect(lambda: self.switch_page("cash_report"))
+            # self.cashReportIconBtn.clicked.connect(lambda: self.switch_page("cash_report"))
 
             self.costEntryIconBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
             self.costEntryBtn.clicked.connect(lambda: self.switch_page("earn_expense"))
+
+            self.buyerProfileIconBtn.clicked.connect(lambda: self.switch_page("buyer_profile"))
+            self.buyerProfileBtn.clicked.connect(lambda: self.switch_page("buyer_profile"))
+
+            self.sellerProfileIconBtn.clicked.connect(lambda: self.switch_page("seller_profile"))
+            self.sellerProfileBtn.clicked.connect(lambda: self.switch_page("seller_profile"))
+
+            self.receivableIconBtn.clicked.connect(lambda: self.switch_page("receivable_report"))
+            self.receivableBtn.clicked.connect(lambda: self.switch_page("receivable_report"))
+
+            self.payableIconBtn.clicked.connect(lambda: self.switch_page("payable_report"))
+            self.payableBtn.clicked.connect(lambda: self.switch_page("payable_report"))
+
+
         except AttributeError as e:
             print(f"Error connecting button: {e}")
 
@@ -539,10 +737,18 @@ class Ui_MainWindow:
                 self.stackedWidget.setCurrentWidget(self.homePageStack)
             elif page_name == "cash_memo":
                 self.stackedWidget.setCurrentWidget(self.cashMemoStack)
-            elif page_name == "cash_report":
-                self.stackedWidget.setCurrentWidget(self.cashReportStack)
+            # elif page_name == "cash_report":
+            #     self.stackedWidget.setCurrentWidget(self.cashReportStack)
             elif page_name == "earn_expense":
                 self.stackedWidget.setCurrentWidget(self.earnExpenseStack)
+            elif page_name == "buyer_profile":
+                self.stackedWidget.setCurrentWidget(self.buyerProfileStack)
+            elif page_name == "seller_profile":
+                self.stackedWidget.setCurrentWidget(self.sellerProfileStack)
+            elif page_name == "receivable_report":
+                self.stackedWidget.setCurrentWidget(self.receivableReportStack)
+            elif page_name == "payable_report":
+                self.stackedWidget.setCurrentWidget(self.payableReportStack)
             else:
                 print(f"Invalid page name: {page_name}")
         except Exception as e:
@@ -551,6 +757,7 @@ class Ui_MainWindow:
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

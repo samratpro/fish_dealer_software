@@ -29,7 +29,7 @@ class Dashboard(QMainWindow):
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Login System")
+        self.setWindowTitle("ওসমান ফিশ")
         self.setMinimumSize(1200, 700)
         self.setWindowIcon(QIcon("images/logo.png"))
         # Initialize login form and dashboard attributes

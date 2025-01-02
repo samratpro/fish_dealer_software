@@ -11,9 +11,11 @@ from pages.form import Ui_SellerInformation
 from PyQt6.QtCore import QDate
 from datetime import datetime
 from sqlalchemy.orm import sessionmaker
-from models import Seller, Buyer, Dealer, Base
+from models import SellingModel, BuyingModel, DealerModel, BuyerProfileModel, SellerProfileModel
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
 import logging
+from pages.data_save_signals import data_save_signals
 
 
 class Ui_memoPageMain(object):
@@ -23,6 +25,7 @@ class Ui_memoPageMain(object):
         self.username = username
         print('memo page username : ', self.username)
         # Database setup
+        Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
@@ -831,6 +834,7 @@ class Ui_memoPageMain(object):
 
     # Configure logging  ->   *************** Save in database
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
     def save_data(self):
         try:
             logging.debug("Starting save_data method")
@@ -844,59 +848,126 @@ class Ui_memoPageMain(object):
             commission_amount = float(self.commissionInput.text())
             total_cost_amount = int(self.totalCostInput.text())
             sell_amount = int(self.totalTakaInput.text())
-            seller_paid_amount = int(self.sellerPaidTakaInput.text())
+            seller_get_paid_amount = int(self.sellerPaidTakaInput.text())
             remaining_get_paid_amount = int(self.remainTakaInput.text())
-
-            # logging.debug(f"Collected data - Voucher No: {voucher_no}, Seller Name: {seller_name}, Selling Date: {selling_date}")
 
             # Validate required fields
             if not voucher_no or not seller_name or not selling_date:
                 QtWidgets.QMessageBox.warning(None, "Input Error", "Please fill all required fields.")
                 return
 
-            # Create a new Seller record
-            seller = Seller(voucher_no=voucher_no,seller_name=seller_name,date=selling_date,address=address,phone=phone,
-                            sell_amount=sell_amount,commission_amount=commission_amount,total_cost_amount=total_cost_amount,
-                            get_paid_amount=seller_paid_amount,remaining_get_paid_amount=remaining_get_paid_amount,
-                            entry_by=self.username
-                            )
+            # Check if seller profile exists
+            seller_profile = self.session.query(SellerProfileModel).filter_by(seller_name=seller_name).first()
+            if not seller_profile:
+                seller_profile = SellerProfileModel(
+                    seller_name=seller_name,
+                    address=address,
+                    phone=phone,
+                    seller_rank=0,
+                    total_payable=0,
+                    total_get_paid_amount=0,
+                    total_commission=0,
+                    date=selling_date,
+                    entry_by=self.username
+                )
+                self.session.add(seller_profile)
+                self.session.commit()
+                logging.debug("New SellerProfile created")
+
+            # Update SellerProfileModel's total_receivable
+            seller_profile.total_payable += remaining_get_paid_amount
+            seller_profile.total_get_paid_amount += seller_get_paid_amount
+            seller_profile.total_commission += commission_amount
+            seller_profile.seller_rank += 1
+            seller_profile.date = selling_date
+            self.session.commit()
+
+            # Create or update Seller record
+            seller = SellingModel(
+                vouchar_no=voucher_no,
+                seller_name=seller_name,
+                date=selling_date,
+                sell_amount=sell_amount,
+                commission_amount=commission_amount,
+                total_cost_amount=total_cost_amount,
+                category_id=seller_profile.id,
+                entry_by=self.username
+            )
             self.session.add(seller)
             self.session.commit()
             logging.debug("Seller record saved successfully")
 
-            dealer = Dealer(entry_name="Seller Entry", date=selling_date, paying_amount=seller_paid_amount,
-                            receiving_amount=0, commission_amount=commission_amount, seller_id=seller.id,
-                            buyer_id=None, seller=seller, buyer=None, entry_by=self.username)
-            self.session.add(dealer)
-            self.session.commit()
-            logging.debug("Seller record saved successfully in Dealer")
+            # Create Dealer record for Seller
+            if seller_get_paid_amount > 0:
+                dealer = DealerModel(
+                    entry_name="paid_to_seller",
+                    receiver_name=seller_name,
+                    date=selling_date,
+                    paying_amount=seller_get_paid_amount,
+                    receiving_amount=0,
+                    entry_by=self.username
+                )
+                self.session.add(dealer)
+                self.session.commit()
+                logging.debug("Dealer record for Seller saved successfully")
+            else:
+                logging.debug("No take paid to seller")
 
             # Loop through tableWidget rows to save Buyer data
             for row in range(self.tableWidget.rowCount()):
                 buyer_name = self.tableWidget.item(row, 0).text()
                 fish_name = self.tableWidget.item(row, 1).text()
                 fish_rate = self.tableWidget.item(row, 2).text()
-                raw_rate = self.tableWidget.item(row, 3).text()
-                final_rate = self.tableWidget.item(row, 4).text()
+                raw_weight = self.tableWidget.item(row, 3).text()
+                final_weight = self.tableWidget.item(row, 4).text()
                 buying_amount = int(self.tableWidget.item(row, 5).text())
 
                 logging.debug(f"Row {row} - Buyer Name: {buyer_name}, Fish Name: {fish_name}")
 
-                # Create a new Buyer record linked to the seller
-                buyer = Buyer(voucher_no=voucher_no,date=selling_date,buyer_name=buyer_name,fish_name=fish_name,
-                              fish_rate=fish_rate,raw_rate=raw_rate,final_rate=final_rate,buying_amount=buying_amount,
-                              sellers=[seller],paid_amount=0.0,remaining_amount=buying_amount,entry_by=self.username)
+                # Check if buyer profile exists
+                buyer_profile = self.session.query(BuyerProfileModel).filter_by(buyer_name=buyer_name).first()
+                if not buyer_profile:
+                    buyer_profile = BuyerProfileModel(
+                        buyer_name=buyer_name,
+                        buyer_rank=0,
+                        total_receivable=0,
+                        total_paid=0,
+                        date=selling_date,
+                        entry_by=self.username
+                    )
+                    self.session.add(buyer_profile)
+                    self.session.commit()
+                    logging.debug("New BuyerProfile created")
+
+                # Update BuyerProfileModel's total_payable
+                buyer_profile.buyer_rank += 1
+                buyer_profile.total_receivable += buying_amount
+                buyer_profile.date = selling_date
+                self.session.commit()
+
+                # Create Buyer record
+                buyer = BuyingModel(
+                    vouchar_no=voucher_no,
+                    buyer_name=buyer_name,
+                    date=selling_date,
+                    fish_name=fish_name,
+                    fish_rate=fish_rate,
+                    raw_weight=raw_weight,
+                    final_weight=final_weight,
+                    buying_amount=buying_amount,
+                    seller_name=seller_name,
+                    entry_by=self.username,
+                    category_id=buyer_profile.id  # Link to the buyer profile
+                )
                 self.session.add(buyer)
                 self.session.commit()
-                dealer = Dealer(entry_name="Buyer Entry", date=selling_date, paying_amount=0,
-                            receiving_amount=0, commission_amount=0, seller_id=None,
-                            buyer_id=buyer.id, seller=None, buyer=buyer, entry_by=self.username)
-                self.session.add(dealer)
-
             self.session.commit()
             logging.debug("All Buyer records saved successfully")
             QtWidgets.QMessageBox.information(None, "Success", "Data saved successfully.")
-            # Clear the table widget
+
+            data_save_signals.data_saved.emit()   # send signal to save data
+
+            # Clear form fields
             self.clear_table_widget()
             self.totalTakaInput.setText("0")
             self.commissionInput.setText("0.0")

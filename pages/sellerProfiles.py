@@ -10,15 +10,14 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from datetime import datetime
 from PyQt6.QtCore import QDate
 from sqlalchemy.orm import sessionmaker
-from models import SellingModel, BuyingModel, DealerModel, Base
+from models import SellerProfileModel, SellingModel, Base
 from sqlalchemy import create_engine
 import logging
+from pages.sellerProfileView import SellerProfileView
 from pages.data_save_signals import data_save_signals
 
-
-class Ui_cashReportMain(object):
+class sellerProfiles(object):
     def setupUi(self, cashReportMain):
-
 
         # Database setup
         self.engine = create_engine('sqlite:///business.db')
@@ -86,35 +85,6 @@ class Ui_cashReportMain(object):
         self.sellerFilterInput.setObjectName("sellerFilterInput")
         self.sellerFilterrame_Layout.addWidget(self.sellerFilterInput)
         self.cashReportHeader_Layout.addWidget(self.sellerFilterrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.buyerFilterFrame = QtWidgets.QFrame(parent=self.cashReportHeader)
-        self.buyerFilterFrame.setMinimumSize(QtCore.QSize(180, 0))
-        self.buyerFilterFrame.setMaximumSize(QtCore.QSize(250, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.buyerFilterFrame.setFont(font)
-        self.buyerFilterFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.buyerFilterFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.buyerFilterFrame.setObjectName("buyerFilterFrame")
-        self.buyerFilterFrame_Layout = QtWidgets.QVBoxLayout(self.buyerFilterFrame)
-        self.buyerFilterFrame_Layout.setContentsMargins(0, 0, 0, 0)
-        self.buyerFilterFrame_Layout.setSpacing(0)
-        self.buyerFilterFrame_Layout.setObjectName("buyerFilterFrame_Layout")
-        self.buyerFilterlabel = QtWidgets.QLabel(parent=self.buyerFilterFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.buyerFilterlabel.setFont(font)
-        self.buyerFilterlabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.buyerFilterlabel.setObjectName("buyerFilterlabel")
-        self.buyerFilterFrame_Layout.addWidget(self.buyerFilterlabel)
-        self.buyerFilterInput = QtWidgets.QLineEdit(parent=self.buyerFilterFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.buyerFilterInput.setFont(font)
-        self.buyerFilterInput.setObjectName("buyerFilterInput")
-        self.buyerFilterFrame_Layout.addWidget(self.buyerFilterInput)
-        self.cashReportHeader_Layout.addWidget(self.buyerFilterFrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
         self.startDateFrame = QtWidgets.QFrame(parent=self.cashReportHeader)
         self.startDateFrame.setMinimumSize(QtCore.QSize(140, 0))
         self.startDateFrame.setMaximumSize(QtCore.QSize(250, 16777215))
@@ -236,7 +206,7 @@ class Ui_cashReportMain(object):
                                                 }
                                                 """)
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(9)
+        self.tableWidget.setColumnCount(10)
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -256,8 +226,10 @@ class Ui_cashReportMain(object):
         self.tableWidget.setHorizontalHeaderItem(7, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(8, item)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(150)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(9, item)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(120)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(120)
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
@@ -265,84 +237,6 @@ class Ui_cashReportMain(object):
         self.tableWidget.setFont(font)
         self.cashReportBody_Layout.addWidget(self.tableWidget)
         self.cashReportMain_Layout.addWidget(self.cashReportBody)
-        self.cashReportBottom = QtWidgets.QWidget(parent=cashReportMain)
-        self.cashReportBottom.setMinimumSize(QtCore.QSize(0, 50))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.cashReportBottom.setFont(font)
-        self.cashReportBottom.setStyleSheet("#creditAmount, #debitAmount, #creditRevenueAmount{\n"
-"background:white;\n"
-"color:black;\n"
-"border-radius:10px;\n"
-"border:1px solid #828282;\n"
-"}")
-        self.cashReportBottom.setObjectName("cashReportBottom")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.cashReportBottom)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.debitLabel = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.debitLabel.setMinimumSize(QtCore.QSize(100, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.debitLabel.setFont(font)
-        self.debitLabel.setObjectName("debitLabel")
-        self.horizontalLayout.addWidget(self.debitLabel, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.debitAmount = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.debitAmount.setMinimumSize(QtCore.QSize(150, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.debitAmount.setFont(font)
-        self.debitAmount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.debitAmount.setObjectName("debitAmount")
-        self.horizontalLayout.addWidget(self.debitAmount)
-        self.creditLabel = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.creditLabel.setMinimumSize(QtCore.QSize(100, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(11)
-        font.setBold(True)
-        font.setWeight(75)
-        self.creditLabel.setFont(font)
-        self.creditLabel.setObjectName("creditLabel")
-        self.horizontalLayout.addWidget(self.creditLabel, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.creditAmount = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.creditAmount.setMinimumSize(QtCore.QSize(150, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.creditAmount.setFont(font)
-        self.creditAmount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.creditAmount.setObjectName("creditAmount")
-        self.horizontalLayout.addWidget(self.creditAmount, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.creditRevenueLabel = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.creditRevenueLabel.setMinimumSize(QtCore.QSize(100, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(11)
-        font.setBold(True)
-        font.setWeight(75)
-        self.creditRevenueLabel.setFont(font)
-        self.creditRevenueLabel.setObjectName("creditRevenueLabel")
-        self.horizontalLayout.addWidget(self.creditRevenueLabel, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.creditRevenueAmount = QtWidgets.QLabel(parent=self.cashReportBottom)
-        self.creditRevenueAmount.setMinimumSize(QtCore.QSize(150, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(11)
-        font.setBold(True)
-        font.setWeight(75)
-        self.creditRevenueAmount.setFont(font)
-        self.creditRevenueAmount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.creditRevenueAmount.setObjectName("creditRevenueAmount")
-        self.horizontalLayout.addWidget(self.creditRevenueAmount, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.cashReportMain_Layout.addWidget(self.cashReportBottom)
         self.cashReportFooter = QtWidgets.QWidget(parent=cashReportMain)
         self.cashReportFooter.setMinimumSize(QtCore.QSize(0, 60))
         font = QtGui.QFont()
@@ -390,16 +284,11 @@ class Ui_cashReportMain(object):
         self.retranslateUi(cashReportMain)
         QtCore.QMetaObject.connectSlotsByName(cashReportMain)
 
-        self.engine = create_engine('sqlite:///business.db')
-        Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
-        self.session = self.Session()
 
     def retranslateUi(self, cashReportMain):
         _translate = QtCore.QCoreApplication.translate
         cashReportMain.setWindowTitle(_translate("cashReportMain", "Form"))
         self.sellerFilterlabel.setText(_translate("cashReportMain", "বিক্রেতার নাম"))
-        self.buyerFilterlabel.setText(_translate("cashReportMain", "ক্রেতার নাম"))
         self.startDateLabel.setText(_translate("cashReportMain", "তারিখ"))
         self.startDateInput.setDisplayFormat(_translate("cashReportMain", "dd/mm/yyyy"))
         self.endDateLabel.setText(_translate("cashReportMain", "শেষ তারিখ"))
@@ -407,29 +296,25 @@ class Ui_cashReportMain(object):
         self.filterLabel.setText(_translate("cashReportMain", "অ্যাকশন"))
         self.filterBtn.setText(_translate("cashReportMain", "ফিল্টার"))
         item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("cashReportMain", "তারিখ "))
+        item.setText(_translate("cashReportMain", "নাম"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("cashReportMain", "ক্রেতার নাম"))
+        item.setText(_translate("cashReportMain", "ঠিকানা"))
         item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("cashReportMain", "বিক্রেতার নাম"))
+        item.setText(_translate("cashReportMain", "ফোন"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("cashReportMain", "মাছের নাম"))
+        item.setText(_translate("cashReportMain", "সেলার রাংক"))
         item = self.tableWidget.horizontalHeaderItem(4)
-        item.setText(_translate("cashReportMain", "দাম"))
+        item.setText(_translate("cashReportMain", "টাকা পাবে"))
         item = self.tableWidget.horizontalHeaderItem(5)
-        item.setText(_translate("cashReportMain", "দেনা"))
+        item.setText(_translate("cashReportMain", "টোটাল পেয়েছে"))
         item = self.tableWidget.horizontalHeaderItem(6)
-        item.setText(_translate("cashReportMain", "পাওনা"))
+        item.setText(_translate("cashReportMain", "টোটাল কমিশন"))
         item = self.tableWidget.horizontalHeaderItem(7)
-        item.setText(_translate("cashReportMain", "পাওনা লভ্যাংশ"))
+        item.setText(_translate("cashReportMain", "তারিখ"))
         item = self.tableWidget.horizontalHeaderItem(8)
         item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
-        self.debitLabel.setText(_translate("cashReportMain", "মোট দেনা :"))
-        self.debitAmount.setText(_translate("cashReportMain", "500000"))
-        self.creditLabel.setText(_translate("cashReportMain", "মোট পাওনা :"))
-        self.creditAmount.setText(_translate("cashReportMain", "100000"))
-        self.creditRevenueLabel.setText(_translate("cashReportMain", "মোট পাওনা লভ্যাংশ:"))
-        self.creditRevenueAmount.setText(_translate("cashReportMain", "1000"))
+        item = self.tableWidget.horizontalHeaderItem(9)
+        item.setText(_translate("cashReportMain", "ভিউ"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
 
@@ -442,29 +327,31 @@ class Ui_cashReportMain(object):
         self.startDateInput.setDate(self.qdate_today)
         self.endDateInput.setDate(self.qdate_today)
 
+        self.engine = create_engine('sqlite:///business.db')
+        Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+        self.session = self.Session()
+
         data_save_signals.data_saved.connect(self.filter_data)
         self.filter_data()
-
-    def set_signal_connections(self, cashMemoPage):
-        cashMemoPage.data_saved.connect(self.filter_data)
+        self.filterBtn.clicked.connect(self.filter_data)
 
     def filter_data(self):
         try:
             start_date = self.startDateInput.date().toPyDate()
             end_date = self.endDateInput.date().toPyDate()
             seller_filter = self.sellerFilterInput.text()
-            buyer_filter = self.buyerFilterInput.text()
 
             logging.debug(f"Filtering data from {start_date} to {end_date}")
             logging.debug(f"Seller Filter: {seller_filter}")
-            logging.debug(f"Buyer Filter: {buyer_filter}")
 
             # Retrieve data from the database
-            sellers = self.session.query(SellingModel).all()
-            buyers = self.session.query(BuyingModel).all()
+            query = self.session.query(SellerProfileModel).filter(SellerProfileModel.date.between(start_date, end_date))
+            query = query.filter(SellerProfileModel.seller_name.ilike(f"%{seller_filter}%"))
+            sellers = query.all()
 
-            # Log retrieved data for debugging
-            logging.debug(f"Retrieved {len(sellers)} sellers and {len(buyers)} buyers from the database")
+            # for seller in sellers:
+            #     logging.debug(f"Seller: {seller.seller_name}, Date: {seller.date}")
 
             # Clear existing table data
             self.tableWidget.clearContents()
@@ -474,40 +361,44 @@ class Ui_cashReportMain(object):
             row = 0
             for seller in sellers:
                 self.tableWidget.insertRow(row)
-                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(seller.date)))  # Selling date
-                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(""))  # Buyer name
-                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(seller.seller_name))
-                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(""))  # Fish name
-                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(""))  # Price
-                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.sell_amount)))  # Payable amount
-                self.tableWidget.setItem(row, 6,QtWidgets.QTableWidgetItem(''))  # Getable amount
-                self.tableWidget.setItem(row, 7,QtWidgets.QTableWidgetItem(str(seller.commission_amount)))  # Commission
-                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.entry_by)))  # Entry by
-                row += 1
+                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(seller.seller_name)))  # Selling date
+                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(seller.address)))  # Buyer name
+                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(seller.phone)))
+                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(seller.seller_rank)))  # Fish name
+                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.total_payable)))  # need to pay
+                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.total_get_paid_amount)))  # Price
+                self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.total_commission)))  # Price
+                self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(seller.date)))  # Payable amount
+                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.entry_by)))  # Payable amount
 
-            for buyer in buyers:
-                self.tableWidget.insertRow(row)
-                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(''))  # Selling date
-                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(buyer.buyer_name))
-                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(""))  # Seller name
-                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(buyer.fish_name))
-                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(buyer.fish_rate)))  # Price
-                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(buyer.buying_amount)))  # Payable amount
-                self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(""))  # Getable amount
-                self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(""))  # Commission
-                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(buyer.entry_by)))  # Entry by
+                # Add a delete button in the last column
+                view_button = QtWidgets.QPushButton("")
+                view_icon = QtGui.QIcon("./images/view.png")  # Path to your delete icon
+                view_button.setIcon(view_icon)
+                view_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                view_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name))
+                self.tableWidget.setCellWidget(row, 9, view_button)
                 row += 1
 
             logging.debug(f"Populated table with {row} rows")
         except Exception as e:
-            logging.error(f"cash Report Error in filter_data: {e}")
-            QtWidgets.QMessageBox.critical(None, "cash Report Error: ", f"An error occurred while filtering data: {e}")
+            logging.error(f"seller Profile Error in filter_data: {e}")
+            QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
+
+    def view_profile(self, seller_name):
+        try:
+            self.transactions_window = SellerProfileView(seller_name, self.session)
+            self.transactions_window.show()
+        except Exception as e:
+            print(f' err o : {str(e)}')
 
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     cashReportMain = QtWidgets.QWidget()
-    ui = Ui_cashReportMain()
+    ui = sellerProfiles()
     ui.setupUi(cashReportMain)
     cashReportMain.show()
     sys.exit(app.exec())

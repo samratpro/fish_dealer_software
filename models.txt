@@ -1,0 +1,109 @@
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date
+from sqlalchemy.orm import relationship, declarative_base
+
+Base = declarative_base()
+
+class SellerCategory(Base):
+    __tablename__ = "seller_category"
+    id = Column(Integer, primary_key=True)
+    seller_name = Column(String, unique=True, nullable=False)
+    seller_rank = Column(Integer, default=0)
+    total_receivable = Column(Float, default=0.0)
+    total_get_paid = Column(Float, default=0.0)
+    entry_by = Column(String, nullable=True)
+
+    sellers = relationship("Seller", back_populates="category")
+
+class Seller(Base):
+    __tablename__ = "sellers"
+    id = Column(Integer, primary_key=True)
+    vouchar_no = Column(String, nullable=False)
+    seller_name = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
+    address = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    sell_amount = Column(Float, default=0.0)
+    commission_amount = Column(Float, default=0.0)
+    total_cost_amount = Column(Float, default=0.0)
+    get_paid_amount = Column(Float, default=0.0)
+    remaining_receivable_amount = Column(Float, default=0.0)
+    buyer_name = Column(String, nullable=True)
+
+    category_id = Column(Integer, ForeignKey("seller_category.id"))
+    category = relationship("SellerCategory", back_populates="sellers")
+    dealer_entries = relationship("Dealer", back_populates="seller")
+
+class BuyerCategory(Base):
+    __tablename__ = "buyer_category"
+    id = Column(Integer, primary_key=True)
+    buyer_name = Column(String, unique=True, nullable=False)
+    buyer_rank = Column(Integer, default=0)
+    total_payable = Column(Float, default=0.0)
+    total_paid = Column(Float, default=0.0)
+    entry_by = Column(String, nullable=True)
+
+    buyers = relationship("Buyer", back_populates="category")
+
+class Buyer(Base):
+    __tablename__ = "buyers"
+    id = Column(Integer, primary_key=True)
+    vouchar_no = Column(String, nullable=False)
+    buyer_name = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
+    fish_name = Column(String, nullable=True)
+    fish_rate = Column(Float, default=0.0)
+    raw_weight = Column(Float, default=0.0)
+    final_weight = Column(Float, default=0.0)
+    buying_amount = Column(Float, default=0.0)
+    paid_amount = Column(Float, default=0.0)
+    remaining_amount = Column(Float, default=0.0)
+    seller_name = Column(String, nullable=True)
+
+    category_id = Column(Integer, ForeignKey("buyer_category.id"))
+    category = relationship("BuyerCategory", back_populates="buyers")
+    dealer_entries = relationship("Dealer", back_populates="buyer")
+
+class Dealer(Base):
+    __tablename__ = "dealers"
+    id = Column(Integer, primary_key=True)
+    entry_name = Column(String, nullable=False)
+    date = Column(Date, nullable=False)
+    paying_amount = Column(Float, default=0.0)
+    receiving_amount = Column(Float, default=0.0)
+    commission_amount = Column(Float, default=0.0)
+    seller_id = Column(Integer, ForeignKey("sellers.id"))
+    buyer_id = Column(Integer, ForeignKey("buyers.id"))
+    entry_by = Column(String, nullable=True)
+
+    seller = relationship("Seller", back_populates="dealer_entries")
+    buyer = relationship("Buyer", back_populates="dealer_entries")
+
+class FinalAccounting(Base):
+    __tablename__ = "final_accounting"
+    id = Column(Integer, primary_key=True, default=1)
+    total_capital = Column(Float, default=0.0)
+    total_loan = Column(Float, default=0.0)
+    total_receivable = Column(Float, default=0.0)
+    total_payable = Column(Float, default=0.0)
+    total_commission = Column(Float, default=0.0)
+    total_cost = Column(Float, default=0.0)
+
+    @staticmethod
+    def update_final_accounting(session):
+        # Compute and update final accounting based on other tables
+        total_receivable = session.query(func.sum(Seller.remaining_receivable_amount)).scalar() or 0.0
+        total_payable = session.query(func.sum(Buyer.remaining_amount)).scalar() or 0.0
+        total_commission = session.query(func.sum(Dealer.commission_amount)).scalar() or 0.0
+        total_cost = session.query(func.sum(Seller.total_cost_amount)).scalar() or 0.0
+
+        # Ensure only one record exists
+        accounting = session.query(FinalAccounting).first()
+        if not accounting:
+            accounting = FinalAccounting()
+            session.add(accounting)
+
+        accounting.total_receivable = total_receivable
+        accounting.total_payable = total_payable
+        accounting.total_commission = total_commission
+        accounting.total_cost = total_cost
+        session.commit()
