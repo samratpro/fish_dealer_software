@@ -1,0 +1,4 @@
+1. Buyer Profile Page:
+   buyer phone number, entry by
+2. Delete Entry
+3. others cost (somiti, mosque, other)
