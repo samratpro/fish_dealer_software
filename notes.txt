@@ -1,6 +1,6 @@
 1. QDate
 2. table operation
-3. autoCompleted text, with other filled update accroding to autoCompleted
+3. autoCompleted text, with other filled update accroding to autoCompleted, update Completer
 4. Page connection
 5. authentication - login signal, username pass
 6. DB Query

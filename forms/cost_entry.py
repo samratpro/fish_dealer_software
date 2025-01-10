@@ -230,6 +230,7 @@ class Ui_CostEntry(object):
         self.payerName.setDisabled(True)
         self.payerName.setStyleSheet("background-color: #F0F0F0;")
 
+
     def make_capital(self, element):
         element.textChanged.disconnect()
         element.setText(element.text().title())

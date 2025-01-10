@@ -446,9 +446,15 @@ class Ui_costExpenseMain(object):
         self.filter_data()
         self.filterBtn.clicked.connect(self.filter_data)
 
+        self.entry_by = ''
+        self.entry_by_username()
+        data_save_signals.data_saved.connect(self.entry_by_username)
+
+
+    def entry_by_username(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        self.username = setting.username
+        self.entry_by = setting.username
         session.close()
 
     def filter_data(self):
@@ -601,12 +607,6 @@ class Ui_costExpenseMain(object):
         self.ui.cancelBtn.clicked.connect(self.dialog.close)
         self.dialog.exec()
 
-    def username(self):
-        session = self.Session()
-        setting = session.query(SettingModel).first()
-        username = setting.username
-        session.close()
-        return username
     def accept_information(self):
         try:
             session = self.Session()
@@ -622,7 +622,7 @@ class Ui_costExpenseMain(object):
             receiverName = self.ui.receiverName.text().strip()
             entry_date = self.ui.entryDate.date().toPyDate()
             amount = self.ui.amount.text().strip()
-            entry_by = self.username()  # Replace with dynamic user input if necessary
+            entry_by = self.entry_by  # Replace with dynamic user input if necessary
 
             # Define a mapping for required fields per entry_name
             required_fields = {

@@ -7,7 +7,7 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from datetime import datetime
+from datetime import datetime, timedelta
 from PyQt6.QtCore import Qt, QDate
 from models import BuyerProfileModel
 from pages.buyerProfileView import BuyerProfileView
@@ -347,17 +347,18 @@ class buyerProfiles(object):
         self.filterBtn.clicked.connect(self.filter_data)
 
         # ************ Autocomplete *****************************
-        self.completer = QtWidgets.QCompleter(self.get_all_names(), cashReportMain)
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive) 
-        self.buyerFilterInput.setCompleter(self.completer)                        # change input field
+        self.auto_completer(cashReportMain)
+        data_save_signals.data_saved.connect(lambda: self.auto_completer(cashReportMain))
         # *************** end autocomplete *******************************
 
         self.buyerFilterInput.textChanged.connect(lambda : self.make_capital(self.buyerFilterInput))
 
-    def make_capital(self, element):
-        element.textChanged.disconnect()
-        element.setText(element.text().title())
-        element.textChanged.connect(lambda: self.make_capital(element))
+    def auto_completer(self, QTObject):
+        """Refresh the QCompleter with the latest seller names."""
+        self.all_name = self.get_all_names()
+        self.completer = QtWidgets.QCompleter(self.all_name, QTObject)    # QT object parameter memoPageMain
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.buyerFilterInput.setCompleter(self.completer)   # change input field
 
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
@@ -366,9 +367,15 @@ class buyerProfiles(object):
         session.close()
         return [name_entry.buyer_name for name_entry in name_entires]    # change field name
 
+    def make_capital(self, element):
+        element.textChanged.disconnect()
+        element.setText(element.text().title())
+        element.textChanged.connect(lambda: self.make_capital(element))
+
     def filter_data(self):
         try:
             start_date = self.startDateInput.date().toPyDate()
+            start_date = start_date - timedelta(days=7)
             end_date = self.endDateInput.date().toPyDate()
             buyer_filter = self.buyerFilterInput.text()
 

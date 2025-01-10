@@ -7,7 +7,7 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from datetime import datetime
+from datetime import datetime, timedelta
 from PyQt6.QtCore import Qt, QDate
 from models import SellerProfileModel
 from pages.sellerProfileView import SellerProfileView
@@ -341,11 +341,18 @@ class sellerProfiles(object):
         self.filterBtn.clicked.connect(self.filter_data)
 
         # ************ Autocomplete *****************************
-        self.completer = QtWidgets.QCompleter(self.get_all_names(), cashReportMain)
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive) 
-        self.sellerFilterInput.setCompleter(self.completer)                        # change input field
+        self.auto_completer(cashReportMain)
+        data_save_signals.data_saved.connect(lambda: self.auto_completer(cashReportMain))
         # *************** end autocomplete *******************************
         self.sellerFilterInput.textChanged.connect(lambda : self.make_capital(self.sellerFilterInput))
+
+
+    def auto_completer(self, QTObject):
+        """Refresh the QCompleter with the latest seller names."""
+        self.all_name = self.get_all_names()
+        self.completer = QtWidgets.QCompleter(self.all_name, QTObject)    # QT object parameter memoPageMain
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.sellerFilterInput.setCompleter(self.completer)   # change input field
 
     def make_capital(self, element):
         element.textChanged.disconnect()
@@ -362,6 +369,7 @@ class sellerProfiles(object):
     def filter_data(self):
         try:
             start_date = self.startDateInput.date().toPyDate()
+            start_date = start_date - timedelta(days=7)
             end_date = self.endDateInput.date().toPyDate()
             seller_filter = self.sellerFilterInput.text()
 

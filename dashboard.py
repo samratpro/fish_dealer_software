@@ -9,7 +9,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from pages.homePage import Ui_HomePageMain
 from pages.memoPage import Ui_memoPageMain
-from pages.cashReportPage import Ui_cashReportMain
 from pages.costExpenseEntryPage import Ui_costExpenseMain
 from pages.buyerProfiles import buyerProfiles
 from pages.sellerProfiles import sellerProfiles

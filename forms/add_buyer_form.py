@@ -239,25 +239,30 @@ class Ui_AddBuyer(object):
         self.addBtn.clicked.connect(lambda:self.handle_name_entry(AddBuyer))
 
         # ************ Autocomplete *****************************
-        self.completer = QtWidgets.QCompleter(self.get_all_names(), AddBuyer)
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseSensitive)
-        self.buyerName.setCompleter(self.completer)                        # change input field
+        self.auto_completer(AddBuyer)
+        data_save_signals.data_saved.connect(lambda: self.auto_completer(AddBuyer))
         # *************** end autocomplete *******************************
         self.buyerName.textChanged.connect(lambda :self.make_capital(self.buyerName))
 
 
-    def username(self):
+        self.entry_by = ''
+        self.entry_by_username()
+        data_save_signals.data_saved.connect(self.entry_by_username)
+        self.dhol_amount = ''
+        self.dhol_amount_calculation()
+        data_save_signals.data_saved.connect(self.dhol_amount_calculation)
+
+    def entry_by_username(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        username = setting.username
+        self.entry_by = setting.username
         session.close()
-        return username
-    def dhol_amount(self):
+
+    def dhol_amount_calculation(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        dhol_amount = (1/1000) * setting.dhol
+        self.dhol_amount = (1/1000) * setting.dhol
         session.close()
-        return dhol_amount
 
 
     def make_capital(self, element):
@@ -301,7 +306,7 @@ class Ui_AddBuyer(object):
         fish_rate = custom_round(rate)
 
 
-        dhol = custom_round(raw_weight * self.dhol_amount())  # Deduction for dhol (wastage)
+        dhol = custom_round(raw_weight * self.dhol_amount)  # Deduction for dhol (wastage)
         final_weight = raw_weight - dhol
         if weight_type == "kg":
             total_price = custom_round((fish_rate*final_weight) / 10) * 10     # 10 is doing for round figure base 10
@@ -321,10 +326,10 @@ class Ui_AddBuyer(object):
         session.close()
         return [name_entry.buyer_name for name_entry in name_entires]    # change field name
 
-    def update_completer(self, AddBuyer):
+    def auto_completer(self, AddBuyer):
         """Refresh the QCompleter with the latest seller names."""
         self.all_name = self.get_all_names()
-        self.completer = QtWidgets.QCompleter(self.all_name, AddBuyer)
+        self.completer = QtWidgets.QCompleter(self.all_name, AddBuyer)  # # QT object parameter AddBuyer
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.buyerName.setCompleter(self.completer)   # change input field
 
@@ -346,7 +351,7 @@ class Ui_AddBuyer(object):
             self.add_name(target_name, phone)
             print(f"New Seller: Seller '{target_name}' has been added.")
 
-        self.update_completer(AddBuyer)  # Refresh completer with updated list
+        # self.auto_completer(AddBuyer)  # Refresh completer with updated list
         data_save_signals.data_saved.emit()  # Send signal to save data
         return True, None
 
@@ -360,13 +365,13 @@ class Ui_AddBuyer(object):
     def add_name(self, name, phone):
         """Add a new seller to the database."""
         session = self.Session()
-        new_name = BuyerProfileModel(buyer_name=name, phone=phone, date=datetime.now(), entry_by=self.username())  # Change Model name & Field Name
+        new_name = BuyerProfileModel(buyer_name=name, phone=phone, date=datetime.now(), entry_by=self.entry_by)  # Change Model name & Field Name
         try:
             session.add(new_name)
             session.commit()
         except Exception as e:
             session.rollback()
-            QtWidgets.QMessageBox.warning(self, "Database Error", f"Failed to add seller: {e}")
+            QtWidgets.QMessageBox.warning(None, "Database Error", f"Failed to add seller: {e}")
         finally:
             session.close()
 

@@ -10,12 +10,10 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from forms.add_buyer_form import Ui_AddBuyer
 from PyQt6.QtCore import QDate, Qt
 from datetime import datetime
-from sqlalchemy.orm import sessionmaker
 from models import *
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from features.data_save_signals import data_save_signals
-from models import session
 
 
 class Ui_memoPageMain(object):
@@ -684,26 +682,31 @@ class Ui_memoPageMain(object):
         self.save_db_Btn.clicked.connect(self.save_data)
 
         # ************ Autocomplete *****************************
-        self.completer = QtWidgets.QCompleter(self.get_all_names(), memoPageMain)
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.sellerNameInput.setCompleter(self.completer)                        # change input field
+        self.auto_completer(memoPageMain)
+        data_save_signals.data_saved.connect(lambda : self.auto_completer(memoPageMain))
         # *************** end autocomplete *******************************
 
         self.sellerNameInput.textChanged.connect(lambda:self.make_capital(self.sellerNameInput))
 
-    def commision(self):
-        session = self.Session()
-        setting = session.query(SettingModel).first()
-        commision = (1/100) * setting.commission
-        session.close()
-        return commision
+        self.entry_by = ''
+        self.entry_by_username()
+        data_save_signals.data_saved.connect(self.entry_by_username)
+        self.commision = ''
+        self.commision_call()
+        data_save_signals.data_saved.connect(self.commision_call)
 
-    def username(self):
+    def entry_by_username(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        username = setting.username
+        self.entry_by = setting.username
         session.close()
-        return username
+
+    def commision_call(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        self.commision = (1/100) * setting.commission
+        session.close()
+
 
     # Dynamic make capital event pass
     def make_capital(self, element):
@@ -719,13 +722,20 @@ class Ui_memoPageMain(object):
         print([name_entry.seller_name for name_entry in name_entires])
         return [name_entry.seller_name for name_entry in name_entires]    # change field name
 
+    def auto_completer(self, QTObject):
+        """Refresh the QCompleter with the latest seller names."""
+        self.all_name = self.get_all_names()
+        self.completer = QtWidgets.QCompleter(self.all_name, QTObject)    # QT object parameter memoPageMain
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.sellerNameInput.setCompleter(self.completer)   # change input field
+
 
     ## Open dialog to get seller information *************
     def open_seller_information(self):
         # Create and show the SellerInformation dialog
         self.dialog = QtWidgets.QDialog()
         self.ui = Ui_AddBuyer()
-        self.ui.setupUi(self.dialog, self.username())
+        self.ui.setupUi(self.dialog, self.entry_by)
         # Connect the add button to a method that handles both validation and acceptance
         self.ui.addBtn.clicked.connect(self.handle_and_accept_information)
         self.ui.cancelBtn.clicked.connect(self.dialog.close)
@@ -837,7 +847,7 @@ class Ui_memoPageMain(object):
 
         # Update the totalTakaInput field
         self.totalTakaInput.setText(str(total_sum))
-        commission_value = int(total_sum * self.commision())
+        commission_value = int(total_sum * self.commision)
         self.commissionInput.setText(str(commission_value))
         total_cost_taka = int(round(commission_value + self.int_v(self.mosqueInput) + self.int_v(self.somitiInput) + self.int_v(self.otherInput)))
         self.totalCostInput.setText(str(total_cost_taka))
@@ -975,7 +985,7 @@ class Ui_memoPageMain(object):
                         seller_name=seller_name,
                         phone = seller_phone,
                         address=address,
-                        entry_by=self.username()
+                        entry_by=self.entry_by
                     )
                     session.add(seller_profile)
                     session.commit()
@@ -998,7 +1008,7 @@ class Ui_memoPageMain(object):
                     commission_amount=commission_amount,
                     total_cost_amount=total_cost_amount,
                     category_id=seller_profile.id,
-                    entry_by=self.username()
+                    entry_by=self.entry_by
                 )
                 session.add(seller)
                 session.commit()
@@ -1012,7 +1022,7 @@ class Ui_memoPageMain(object):
                         date=selling_date,
                         paying_amount=seller_get_paid_amount,
                         receiving_amount=0,
-                        entry_by=self.username()
+                        entry_by=self.entry_by
                     )
                     session.add(dealer)
                     session.commit()
@@ -1040,7 +1050,7 @@ class Ui_memoPageMain(object):
                         buyer_profile = BuyerProfileModel(
                             buyer_name=buyer_name,
                             date=selling_date,
-                            entry_by=self.username()
+                            entry_by=self.entry_by
                         )
                         session.add(buyer_profile)
                         session.commit()
@@ -1063,7 +1073,7 @@ class Ui_memoPageMain(object):
                         final_weight=final_weight,
                         buying_amount=buying_amount,
                         seller_name=seller_name,
-                        entry_by=self.username(),
+                        entry_by=self.entry_by,
                         category_id=buyer_profile.id  # Link to the buyer profile
                     )
                     session.add(buyer)
