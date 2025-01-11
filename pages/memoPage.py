@@ -836,6 +836,11 @@ class Ui_memoPageMain(object):
             self.row_calculate()
 
     def row_calculate(self):
+        def custom_round(value):
+            try:
+                return round(float(value) + 0.01)
+            except ValueError:
+                return 0
         total_sum = 0
         row_count = self.tableWidget.rowCount()
 
@@ -847,7 +852,9 @@ class Ui_memoPageMain(object):
 
         # Update the totalTakaInput field
         self.totalTakaInput.setText(str(total_sum))
-        commission_value = int(total_sum * self.commision)
+        commission_value = custom_round(int(total_sum * self.commision)/10) * 10
+        if commission_value < 10:
+            commission_value = 10
         self.commissionInput.setText(str(commission_value))
         total_cost_taka = int(round(commission_value + self.int_v(self.mosqueInput) + self.int_v(self.somitiInput) + self.int_v(self.otherInput)))
         self.totalCostInput.setText(str(total_cost_taka))

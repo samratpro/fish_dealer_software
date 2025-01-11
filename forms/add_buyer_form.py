@@ -244,6 +244,9 @@ class Ui_AddBuyer(object):
         # *************** end autocomplete *******************************
         self.buyerName.textChanged.connect(lambda :self.make_capital(self.buyerName))
 
+        # final weight change
+        self.finalWeight.textEdited.connect(self.final_weight_change)
+
 
         self.entry_by = ''
         self.entry_by_username()
@@ -305,9 +308,9 @@ class Ui_AddBuyer(object):
             raw_weight = 0
         fish_rate = custom_round(rate)
 
-
-        dhol = custom_round(raw_weight * self.dhol_amount)  # Deduction for dhol (wastage)
-        final_weight = raw_weight - dhol
+        raw_weight_for_dhol = custom_round(raw_weight)
+        dhol = raw_weight_for_dhol * self.dhol_amount  # Deduction for dhol (wastage)
+        final_weight = round(raw_weight - dhol, 3)  # take digit
         if weight_type == "kg":
             total_price = custom_round((fish_rate*final_weight) / 10) * 10     # 10 is doing for round figure base 10
         else:
@@ -318,6 +321,38 @@ class Ui_AddBuyer(object):
         self.finalWeight.setText(str(final_weight))  # Rounded to 2 decimal places
         self.totalPrice.setText(str(total_price))    # Rounded to 2 decimal places
 
+    def final_weight_change(self):
+        def custom_round(value):
+            try:
+                return round(float(value) + 0.01)
+            except ValueError:
+                return 0
+            # Determine the weight type based on the selected index
+
+        weight_index = self.weightType.currentIndex()
+        weight_type = {0: 'kg', 1: 'mann', 2: 'thuya'}.get(weight_index, 'thuya')
+
+        # If the weight type is 'thuya', no calculation is needed
+        if weight_type == 'thuya':
+            return
+        rate = self.fishRate.text().strip()
+        final_weight_raw = self.finalWeight.text().strip()
+        if custom_round(rate) == 0 or custom_round(final_weight_raw)==0:
+            self.dialog = QtWidgets.QDialog()
+            error_dialog = QtWidgets.QMessageBox(self.dialog)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+            error_dialog.setWindowTitle("Input Error")
+            error_dialog.setText("দর এবং পাকা জিরো থেকে বড় যেকোনো সংখ্যা হতে হবে..")  # Rate and weight must be numeric
+            error_dialog.exec()
+            return
+        fish_rate = custom_round(rate)
+        final_weight = float(final_weight_raw)
+        if weight_type == "kg":
+            total_price = custom_round((fish_rate*final_weight) / 10) * 10     # 10 is doing for round figure base 10
+        else:
+            fish_rate = fish_rate/40  # 40 kg per moon
+            total_price = custom_round((fish_rate*final_weight) / 10) * 10     # 10 is doing for round figure base 10
+        self.totalPrice.setText(str(total_price))
 
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
