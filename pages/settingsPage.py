@@ -148,7 +148,7 @@ class Ui_settingsPage(object):
         self.updateBtn.setText(_translate("settingsPage", "আপডেট "))
         self.label_2.setText(_translate("settingsPage", "এন্ট্রি বাই ইউজারনেম :"))
         self.label_3.setText(_translate("settingsPage", "কমিশন (শতাংশ) :"))
-        self.label_4.setText(_translate("settingsPage", "ঢল (গ্রাম) :"))
+        self.label_4.setText(_translate("settingsPage", "ঢলক (গ্রাম) :"))
 
         session = self.Session()
         try:

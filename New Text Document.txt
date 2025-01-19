@@ -1,4 +1,8 @@
-1. Buyer Profile Page:
-   buyer phone number, entry by
-2. Delete Entry
-3. others cost (somiti, mosque, other)
+1. Bangla Typing, And Bangla Font
+2. Mobile - Address
+3. Delete by Admin only
+4. Admin can create User with access
+5. Arot Entry - Name filter
+6. Income statement seller profile
+7. Auto suggestion - mosque amount, seller mobile, address, buyer mobile
+8. Save data, Print, Backup

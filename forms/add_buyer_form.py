@@ -30,7 +30,7 @@ class Ui_AddBuyer(object):
         # ******************* end db ***************************
 
 
-        AddBuyer.setObjectName("SellerInformation")
+        AddBuyer.setObjectName("ক্রেতার তথ্য")
         AddBuyer.resize(491, 497)
         AddBuyer.setWindowIcon(QIcon("images/logo.png"))
         AddBuyer.setStyleSheet("""QLineEdit, QDateEdit{ border-radius:10px;
@@ -219,7 +219,7 @@ class Ui_AddBuyer(object):
 
     def retranslateUi(self, AddBuyer):
         _translate = QtCore.QCoreApplication.translate
-        AddBuyer.setWindowTitle(_translate("AddBuyer", "SellerInformation"))
+        AddBuyer.setWindowTitle(_translate("AddBuyer", "ক্রেতার তথ্য"))
         self.label.setText(_translate("AddBuyer", "*ক্রেতার নাম :"))
         self.label_6.setText(_translate("AddBuyer", "মোবাইল :"))
         self.label_2.setText(_translate("AddBuyer", "*মাছের নাম :"))
