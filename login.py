@@ -7,158 +7,72 @@
 from PyQt6.QtCore import pyqtSignal
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget
+from ui.login_ui import Ui_LoginForm
 from time import sleep
+from models import initialize, UserModel
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 
-class Ui_LoginForm(QWidget):
+class LoginPage(QWidget):
     login_success_signal = pyqtSignal(str)
 
-    def setupUi(self, LoginForm):
-        LoginForm.setObjectName("LoginForm")
-        LoginForm.resize(921, 563)
-        LoginForm.setStyleSheet("")
-        self.loginForm_Layout = QtWidgets.QVBoxLayout(LoginForm)
-        self.loginForm_Layout.setObjectName("loginForm_Layout")
-        self.LoginHeader = QtWidgets.QWidget(parent=LoginForm)
-        self.LoginHeader.setMinimumSize(QtCore.QSize(0, 60))
-        self.LoginHeader.setMaximumSize(QtCore.QSize(16777215, 60))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.LoginHeader.setFont(font)
-        self.LoginHeader.setObjectName("LoginHeader")
-        self.LoginHeader_Layout = QtWidgets.QHBoxLayout(self.LoginHeader)
-        self.LoginHeader_Layout.setContentsMargins(20, -1, 20, -1)
-        self.LoginHeader_Layout.setObjectName("LoginHeader_Layout")
-        self.LoginLogo = QtWidgets.QLabel(parent=self.LoginHeader)
-        self.LoginLogo.setMinimumSize(QtCore.QSize(40, 30))
-        self.LoginLogo.setMaximumSize(QtCore.QSize(40, 30))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.LoginLogo.setFont(font)
-        self.LoginLogo.setText("")
-        self.LoginLogo.setPixmap(QtGui.QPixmap("./images/logo.png"))
-        self.LoginLogo.setScaledContents(True)
-        self.LoginLogo.setObjectName("LoginLogo")
-        self.LoginHeader_Layout.addWidget(self.LoginLogo, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.LoginTag = QtWidgets.QLabel(parent=self.LoginHeader)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(16)
-        self.LoginTag.setFont(font)
-        self.LoginTag.setObjectName("LoginTag")
-        self.LoginHeader_Layout.addWidget(self.LoginTag, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.loginForm_Layout.addWidget(self.LoginHeader)
-        self.LoginBody = QtWidgets.QWidget(parent=LoginForm)
-        self.LoginBody.setMinimumSize(QtCore.QSize(400, 0))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.LoginBody.setFont(font)
-        self.LoginBody.setStyleSheet("""QPushButton, QLineEdit{
-                                        border-radius:10px;
-                                        padding:2px;
-                                        margin:1px 6px;
-                                        padding:8px;}
-                                        QPushButton{
-                                        background-color: rgb(0, 0, 0);
-                                        color:white;
-                                        margin-top:30px;}
-                                        """)
-        self.LoginBody.setObjectName("LoginBody")
-        self.LoginBody_Layout = QtWidgets.QVBoxLayout(self.LoginBody)
-        self.LoginBody_Layout.setContentsMargins(-1, 0, -1, 20)
-        self.LoginBody_Layout.setObjectName("LoginBody_Layout")
-        self.username_label = QtWidgets.QLabel(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.username_label.setFont(font)
-        self.username_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.username_label.setObjectName("username_label")
-        self.LoginBody_Layout.addWidget(self.username_label)
-        self.usernameInput = QtWidgets.QLineEdit(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.usernameInput.setFont(font)
-        self.usernameInput.setStyleSheet("")
-        self.usernameInput.setObjectName("usernameInput")
-        self.LoginBody_Layout.addWidget(self.usernameInput)
-        self.password_Label = QtWidgets.QLabel(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.password_Label.setFont(font)
-        self.password_Label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.password_Label.setObjectName("password_Label")
-        self.LoginBody_Layout.addWidget(self.password_Label)
-        self.passwordInput = QtWidgets.QLineEdit(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.passwordInput.setFont(font)
-        self.passwordInput.setObjectName("passwordInput")
-        self.passwordInput.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+    def __init__(self):
+        super().__init__()
+        self.setup_database()
+        self.ui = Ui_LoginForm()
+        self.ui.setupUi(self)
+        self.setup_ui()
 
-        self.LoginBody_Layout.addWidget(self.passwordInput)
-        self.loginBtn = QtWidgets.QPushButton(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.loginBtn.setFont(font)
-        self.loginBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.loginBtn.setObjectName("loginBtn")
 
+    def setup_database(self):
+        self.Base = declarative_base()
+        self.engine = create_engine('sqlite:///business.db')
+        self.Base.metadata.create_all(self.engine)
+        self.Session = sessionmaker(bind=self.engine)
+
+    def setup_ui(self):
         # Login handle
-        self.passwordInput.editingFinished.connect(self.handle_login) # Work with enter press
-        self.loginBtn.clicked.connect(self.handle_login)
-
-
-        self.LoginBody_Layout.addWidget(self.loginBtn)
-        self.errorMessage = QtWidgets.QLabel(parent=self.LoginBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(11)
-        self.errorMessage.setFont(font)
-        self.errorMessage.setStyleSheet("margin-top:20px;")
-        self.errorMessage.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.errorMessage.setObjectName("errorMessage")
-        self.LoginBody_Layout.addWidget(self.errorMessage)
-        self.loginForm_Layout.addWidget(self.LoginBody, 0, QtCore.Qt.AlignmentFlag.AlignHCenter|QtCore.Qt.AlignmentFlag.AlignVCenter)
-
-        self.retranslateUi(LoginForm)
-        QtCore.QMetaObject.connectSlotsByName(LoginForm)
+        self.ui.passwordInput.editingFinished.connect(self.handle_login) # Work with enter press
+        self.ui.loginBtn.clicked.connect(self.handle_login)
+        self.ui.passwordInput.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+        initialize()
 
     def handle_login(self):
         try:
-            username = self.usernameInput.text()
-            password = self.passwordInput.text()
-
-            # For simplicity, just validate with hardcoded values
-            if username == "admin" and password == "admin":
-                # Emit the login success signal when login is successful
-                self.errorMessage.setText('')
-                print("Login successful, emitting signal")
-                self.login_success_signal.emit('admin1')
+            username = self.ui.usernameInput.text()
+            password = self.ui.passwordInput.text()
+            session = self.Session()
+            user = session.query(UserModel).filter(UserModel.username==username).one_or_none()
+            if user:
+                if user.password == password:
+                    self.ui.errorMessage.setText('')
+                    print("Login successful, emitting signal")
+                    self.login_success_signal.emit(username)
+                else:
+                    self.ui.errorMessage.setText('ভুল পাসওয়ার্ড!')
+                    print("Invalid password")
+                    self.retry_login()
             else:
-                self.errorMessage.setText('ভুল ইউজারনেম বা পাসওয়ার্ড!')
-                print("Invalid credentials")
+                self.ui.errorMessage.setText('ভুল ইউজারনেম!')
+                print("Invalid username")
                 self.retry_login()
         except Exception as e:
             print(f"Error in handle_login: {e}")
 
     def retry_login(self):
         try:
-            self.loginBtn.setEnabled(True)
+            self.ui.loginBtn.setEnabled(True)
         except Exception as e:
             print(f"Error in retry_login: {e}")
 
     def retranslateUi(self, LoginForm):
         _translate = QtCore.QCoreApplication.translate
         LoginForm.setWindowTitle(_translate("LoginForm", "Form"))
-        self.LoginTag.setText(_translate("LoginForm", "মেসার্স ওসমান ফিশ "))
-        self.username_label.setText(_translate("LoginForm", "ইউজারনেম"))
-        self.password_Label.setText(_translate("LoginForm", "পাসওয়ার্ড"))
-        self.loginBtn.setText(_translate("LoginForm", "লগইন"))
+        self.ui.LoginTag.setText(_translate("LoginForm", "মেসার্স ওসমান ফিশ "))
+        self.ui.username_label.setText(_translate("LoginForm", "ইউজারনেম"))
+        self.ui.password_Label.setText(_translate("LoginForm", "পাসওয়ার্ড"))
+        self.ui.loginBtn.setText(_translate("LoginForm", "লগইন"))
 
 
 

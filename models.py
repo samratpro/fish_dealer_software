@@ -103,6 +103,13 @@ class SettingModel(Base):
     commission = Column(Float, default=4)
     dhol = Column(Integer, default=100)
 
+class UserModel(Base):
+    __tablename__ ='user_model'
+    id = Column(Integer, primary_key=True, default=1)
+    username = Column(String, default='admin')
+    password = Column(String, default='admin')
+    role = Column(String, default='admin')
+
 # Final Accounting Model
 class FinalAccounting(Base):
     __tablename__ = "final_accounting"
@@ -118,7 +125,7 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Ensure FinalAccounting record exists and is initialized with zero
-def initialize_final_accounting_and_cost():
+def initialize():
     accounting = session.query(FinalAccounting).first()
     if not accounting:
         accounting = FinalAccounting()
@@ -134,5 +141,11 @@ def initialize_final_accounting_and_cost():
         setting = SettingModel()
         session.add(setting)
         session.commit()
+    user = session.query(UserModel).first()
+    if not user:
+        user = UserModel()
+        session.add(user)
+        session.commit()
+    session.close()
 # Call the initialization function when the software runs
-initialize_final_accounting_and_cost()
+initialize()

@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import pyqtSignal
-from login import Ui_LoginForm
+from login import LoginPage
 from dashboard import Ui_MainWindow
 import sys
 
@@ -44,12 +44,10 @@ class App(QMainWindow):
         try:
             """Switches back to the login page."""
             # Recreate the login form and widget
-            self.login_form = Ui_LoginForm()
-            self.login_widget = QWidget()
-            self.login_form.setupUi(self.login_widget)
+            self.login_form = LoginPage()
             self.login_form.login_success_signal.connect(self.show_dashboard)
             print("Showing login form")
-            self.setCentralWidget(self.login_widget)
+            self.setCentralWidget(self.login_form)
         except Exception as e:
             print(f"Error in show_login: {e}")
 
@@ -57,11 +55,12 @@ class App(QMainWindow):
         try:
             """Switches to the dashboard after a successful login."""
             # Recreate the dashboard
+            print("username  show_dashboard: ", username)
             self.dashboard = Dashboard(username)
             self.dashboard.logout_signal.connect(self.show_login)
             print("Showing dashboard")
             self.setCentralWidget(self.dashboard)
-        except Exception as e:
+        except Exception as e: 
             print(f"Error in show_dashboard: {e}")
 
 if __name__ == "__main__":

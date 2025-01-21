@@ -50,18 +50,18 @@ border-radius:9px;
     <string>সেটিংস </string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="updateBtn">
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>330</y>
+     <y>380</y>
      <width>111</width>
      <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Arial</family>
+     <family>SutonnyMJ</family>
      <pointsize>18</pointsize>
     </font>
    </property>
@@ -72,12 +72,12 @@ border-radius:9px;
     <string>আপডেট </string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>60</x>
      <y>130</y>
-     <width>508</width>
+     <width>501</width>
      <height>37</height>
     </rect>
    </property>
@@ -92,7 +92,7 @@ border-radius:9px;
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
+        <family>SutonnyMJ</family>
         <pointsize>18</pointsize>
        </font>
       </property>
@@ -102,7 +102,7 @@ border-radius:9px;
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="username">
       <property name="minimumSize">
        <size>
         <width>250</width>
@@ -119,13 +119,13 @@ border-radius:9px;
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>200</y>
-     <width>508</width>
-     <height>37</height>
+     <y>260</y>
+     <width>501</width>
+     <height>41</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -139,7 +139,7 @@ border-radius:9px;
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
+        <family>SutonnyMJ</family>
         <pointsize>18</pointsize>
        </font>
       </property>
@@ -149,7 +149,7 @@ border-radius:9px;
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="commission">
       <property name="minimumSize">
        <size>
         <width>250</width>
@@ -166,13 +166,13 @@ border-radius:9px;
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>270</y>
-     <width>508</width>
-     <height>37</height>
+     <y>320</y>
+     <width>501</width>
+     <height>41</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -186,7 +186,7 @@ border-radius:9px;
       </property>
       <property name="font">
        <font>
-        <family>Arial</family>
+        <family>SutonnyMJ</family>
         <pointsize>18</pointsize>
        </font>
       </property>
@@ -196,7 +196,7 @@ border-radius:9px;
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_3">
+     <widget class="QLineEdit" name="dhol">
       <property name="minimumSize">
        <size>
         <width>250</width>
@@ -212,6 +212,87 @@ border-radius:9px;
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="viewPassword">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>190</y>
+     <width>41</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="../resource.qrc">
+     <normaloff>:/icons/images/view.png</normaloff>:/icons/images/view.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>25</width>
+     <height>25</height>
+    </size>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="autoExclusive">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>62</x>
+     <y>191</y>
+     <width>200</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <family>SutonnyMJ</family>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>পাসওয়ার্ড :</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="password">
+   <property name="geometry">
+    <rect>
+     <x>268</x>
+     <y>191</y>
+     <width>291</width>
+     <height>37</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>250</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>18</pointsize>
+    </font>
+   </property>
   </widget>
  </widget>
  <resources>

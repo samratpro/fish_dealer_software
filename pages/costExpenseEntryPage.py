@@ -454,6 +454,7 @@ class Ui_costExpenseMain(object):
     def entry_by_username(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
+        
         self.entry_by = setting.username
         session.close()
 
