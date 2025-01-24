@@ -12,7 +12,6 @@ class settingsPage(QWidget):
     def __init__(self, username):
         super().__init__()
         self.username = username
-        print(f"Initializing settingsPage with username: {self.username}")
         self.setup_database()  # First setup database
         self.ui = Ui_settingsPage()
         self.ui.setupUi(self)
@@ -29,10 +28,8 @@ class settingsPage(QWidget):
     def setup_ui(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        print("setting : ", setting)
 
         user = session.query(UserModel).filter(UserModel.username==self.username).one()
-        print('user model : ', user)
         self.ui.username.setText(user.username)
         self.ui.username.setDisabled(True)
 
@@ -99,9 +96,12 @@ class settingsPage(QWidget):
         session = Session()
         try:
             setting = session.query(SettingModel).first()
-            user = session.query(UserModel).filter(UserModel.username==self.username).one()
+            user = session.query(UserModel).filter(UserModel.username==username).one_or_none()
             if setting is None:
                 QtWidgets.QMessageBox.warning(None, "Error", f"কোনো সেটিংস পাওয়া যায়নি")
+                return
+            if user is None:
+                QtWidgets.QMessageBox.warning(None, "Error", f"ইউজারনেম পাওয়া যায়নি")
                 return
 
             setting.commission = commission_value

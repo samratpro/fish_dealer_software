@@ -4,6 +4,7 @@ from PyQt6.QtCore import pyqtSignal
 from login import LoginPage
 from dashboard import Ui_MainWindow
 import sys
+from features.data_save_signals import data_save_signals
 
 class Dashboard(QMainWindow):
     logout_signal = pyqtSignal()
@@ -26,6 +27,8 @@ class Dashboard(QMainWindow):
     def handle_logout(self):
         """Handle the logout button click."""
         self.logout_signal.emit()
+        # data_save_signals.data_saved.emit()
+
 
 class App(QMainWindow):
     def __init__(self):
@@ -33,7 +36,6 @@ class App(QMainWindow):
         self.setWindowTitle("ওসমান ফিশ")
         self.setMinimumSize(1200, 700)
         self.setWindowIcon(QIcon("images/logo.png"))
-        # Initialize login form and dashboard attributes
         self.login_widget = None
         self.dashboard = None
 

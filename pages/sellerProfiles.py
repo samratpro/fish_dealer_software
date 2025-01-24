@@ -7,352 +7,75 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtWidgets import QWidget
 from datetime import datetime, timedelta
 from PyQt6.QtCore import Qt, QDate
-from models import SellerProfileModel
+from models import SellerProfileModel, UserModel
 from pages.sellerProfileView import SellerProfileView
 from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from ui.sellerProfiles_ui import UI_sellerprofiles
+from features.printmemo import Ui_Form
+from PyQt6 import QtWidgets, QtGui, QtPrintSupport
+from PyQt6.QtWidgets import QFileDialog
+import xlsxwriter
 
-class sellerProfiles(object):
-    def setupUi(self, cashReportMain):
 
-        # ****************** Declear database ************************
+class sellerProfiles(QWidget):
+    def __init__(self, username):
+        super().__init__()
+        self.username = username
+        self.user_role = None
+        self.setup_database()  # First setup database
+        self.ui = UI_sellerprofiles()
+        self.ui.setupUi(self)
+        self.setup_ui()
+        session = self.Session()
+        user = session.query(UserModel).filter(UserModel.username==self.username).one()
+        self.user_role = user.role
+
+    def setup_database(self):
         self.Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')    # change db url
         self.Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
-        # ******************* end db ***************************
 
-        cashReportMain.setObjectName("cashReportMain")
-        cashReportMain.resize(935, 570)
-        cashReportMain.setMinimumSize(QtCore.QSize(300, 0))
-        cashReportMain.setStyleSheet("""*{text-align: left;}
-                                     QLineEdit{border-radius:10px;border:1px solid #B8B8B8;padding:2px;}
-                                     QPushButton{background-color:#150E0A;color:white;
-                                                padding:3px 12px 0px 8px;
-                                                border-radius:9px;
-                                                text-align:center;}
-                                     QDateEdit{border:1px solid #B8B8B8;border-radius:5px;}
-                                     QDateEdit::drop-down {
-                                            image: url('./images/down-arrow.png');
-                                            margin:3px 4px 0 0;
-                                            border:1px solid #DEDEDE;
-                                                }
-                                     """
-                                     )
-        self.cashReportMain_Layout = QtWidgets.QVBoxLayout(cashReportMain)
-        self.cashReportMain_Layout.setContentsMargins(15, 15, 15, 15)
-        self.cashReportMain_Layout.setSpacing(6)
-        self.cashReportMain_Layout.setObjectName("cashReportMain_Layout")
-        self.cashReportHeader = QtWidgets.QWidget(parent=cashReportMain)
-        self.cashReportHeader.setMaximumSize(QtCore.QSize(16777215, 80))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.cashReportHeader.setFont(font)
-        self.cashReportHeader.setObjectName("cashReportHeader")
-        self.cashReportHeader_Layout = QtWidgets.QHBoxLayout(self.cashReportHeader)
-        self.cashReportHeader_Layout.setContentsMargins(0, 0, 0, 0)
-        self.cashReportHeader_Layout.setSpacing(0)
-        self.cashReportHeader_Layout.setObjectName("cashReportHeader_Layout")
-        self.sellerFilterrame = QtWidgets.QFrame(parent=self.cashReportHeader)
-        self.sellerFilterrame.setMinimumSize(QtCore.QSize(180, 0))
-        self.sellerFilterrame.setMaximumSize(QtCore.QSize(250, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.sellerFilterrame.setFont(font)
-        self.sellerFilterrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.sellerFilterrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.sellerFilterrame.setObjectName("sellerFilterrame")
-        self.sellerFilterrame_Layout = QtWidgets.QVBoxLayout(self.sellerFilterrame)
-        self.sellerFilterrame_Layout.setContentsMargins(0, 0, 0, 0)
-        self.sellerFilterrame_Layout.setSpacing(0)
-        self.sellerFilterrame_Layout.setObjectName("sellerFilterrame_Layout")
-        self.sellerFilterlabel = QtWidgets.QLabel(parent=self.sellerFilterrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.sellerFilterlabel.setFont(font)
-        self.sellerFilterlabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.sellerFilterlabel.setObjectName("sellerFilterlabel")
-        self.sellerFilterrame_Layout.addWidget(self.sellerFilterlabel)
-        self.sellerFilterInput = QtWidgets.QLineEdit(parent=self.sellerFilterrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.sellerFilterInput.setFont(font)
-        self.sellerFilterInput.setObjectName("sellerFilterInput")
-        self.sellerFilterrame_Layout.addWidget(self.sellerFilterInput)
-        self.cashReportHeader_Layout.addWidget(self.sellerFilterrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.startDateFrame = QtWidgets.QFrame(parent=self.cashReportHeader)
-        self.startDateFrame.setMinimumSize(QtCore.QSize(140, 0))
-        self.startDateFrame.setMaximumSize(QtCore.QSize(250, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.startDateFrame.setFont(font)
-        self.startDateFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.startDateFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.startDateFrame.setObjectName("startDateFrame")
-        self.startDateFrame_Layout = QtWidgets.QVBoxLayout(self.startDateFrame)
-        self.startDateFrame_Layout.setContentsMargins(0, 0, 0, 0)
-        self.startDateFrame_Layout.setSpacing(0)
-        self.startDateFrame_Layout.setObjectName("startDateFrame_Layout")
-        self.startDateLabel = QtWidgets.QLabel(parent=self.startDateFrame)
-        self.startDateLabel.setMinimumSize(QtCore.QSize(0, 0))
-        self.startDateLabel.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.startDateLabel.setFont(font)
-        self.startDateLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.startDateLabel.setObjectName("startDateLabel")
-        self.startDateFrame_Layout.addWidget(self.startDateLabel)
-        self.startDateInput = QtWidgets.QDateEdit(parent=self.startDateFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.startDateInput.setFont(font)
-        self.startDateInput.setFocusPolicy(QtCore.Qt.FocusPolicy.WheelFocus)
-        self.startDateInput.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
-        self.startDateInput.setCorrectionMode(QtWidgets.QAbstractSpinBox.CorrectionMode.CorrectToNearestValue)
-        self.startDateInput.setCalendarPopup(True)
-        self.startDateInput.setObjectName("startDateInput")
-        self.startDateFrame_Layout.addWidget(self.startDateInput)
-        self.cashReportHeader_Layout.addWidget(self.startDateFrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.endDateFrame = QtWidgets.QFrame(parent=self.cashReportHeader)
-        self.endDateFrame.setMinimumSize(QtCore.QSize(140, 0))
-        self.endDateFrame.setMaximumSize(QtCore.QSize(250, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.endDateFrame.setFont(font)
-        self.endDateFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.endDateFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.endDateFrame.setObjectName("endDateFrame")
-        self.endDateFrame_Layout = QtWidgets.QVBoxLayout(self.endDateFrame)
-        self.endDateFrame_Layout.setContentsMargins(0, 0, 0, 0)
-        self.endDateFrame_Layout.setSpacing(0)
-        self.endDateFrame_Layout.setObjectName("endDateFrame_Layout")
-        self.endDateLabel = QtWidgets.QLabel(parent=self.endDateFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.endDateLabel.setFont(font)
-        self.endDateLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.endDateLabel.setObjectName("endDateLabel")
-        self.endDateFrame_Layout.addWidget(self.endDateLabel)
-        self.endDateInput = QtWidgets.QDateEdit(parent=self.endDateFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.endDateInput.setFont(font)
-        self.endDateInput.setCalendarPopup(True)
-        self.endDateInput.setObjectName("endDateInput")
-        self.endDateFrame_Layout.addWidget(self.endDateInput)
-        self.cashReportHeader_Layout.addWidget(self.endDateFrame, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.filterActionFrame = QtWidgets.QFrame(parent=self.cashReportHeader)
-        self.filterActionFrame.setMinimumSize(QtCore.QSize(100, 0))
-        self.filterActionFrame.setMaximumSize(QtCore.QSize(100, 16777215))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.filterActionFrame.setFont(font)
-        self.filterActionFrame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
-        self.filterActionFrame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
-        self.filterActionFrame.setObjectName("filterActionFrame")
-        self.filterActionFrame_Layout = QtWidgets.QVBoxLayout(self.filterActionFrame)
-        self.filterActionFrame_Layout.setContentsMargins(0, 0, 0, 0)
-        self.filterActionFrame_Layout.setSpacing(0)
-        self.filterActionFrame_Layout.setObjectName("filterActionFrame_Layout")
-        self.filterLabel = QtWidgets.QLabel(parent=self.filterActionFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.filterLabel.setFont(font)
-        self.filterLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.filterLabel.setObjectName("filterLabel")
-        self.filterActionFrame_Layout.addWidget(self.filterLabel)
-        self.filterBtn = QtWidgets.QPushButton(parent=self.filterActionFrame)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.filterBtn.setFont(font)
-        self.filterBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.filterBtn.setStyleSheet("")
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("./icons/filter.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.filterBtn.setIcon(icon)
-        self.filterBtn.setObjectName("filterBtn")
-        self.filterActionFrame_Layout.addWidget(self.filterBtn)
-        self.cashReportHeader_Layout.addWidget(self.filterActionFrame)
-        self.cashReportMain_Layout.addWidget(self.cashReportHeader)
-        self.cashReportBody = QtWidgets.QWidget(parent=cashReportMain)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.cashReportBody.setFont(font)
-        self.cashReportBody.setObjectName("cashReportBody")
-        self.cashReportBody_Layout = QtWidgets.QHBoxLayout(self.cashReportBody)
-        self.cashReportBody_Layout.setContentsMargins(0, 10, 0, 0)
-        self.cashReportBody_Layout.setSpacing(0)
-        self.cashReportBody_Layout.setObjectName("cashReportBody_Layout")
-        self.tableWidget = QtWidgets.QTableWidget(parent=self.cashReportBody)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.tableWidget.setFont(font)
-        self.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
-                                                background-color: #2D221B;
-                                                color: white;
-                                                font-size: 12pt;
-                                                text-align: center;
-                                                }
-                                                """)
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(12)
-        self.tableWidget.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(3, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(4, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(5, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(6, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(7, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(8, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(9, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(10, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(11, item)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(112)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(112)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.tableWidget.setFont(font)
-        font.setPointSize(12)  # Set the font size to 12 points
-        self.tableWidget.setFont(font)
-        self.cashReportBody_Layout.addWidget(self.tableWidget)
-        self.cashReportMain_Layout.addWidget(self.cashReportBody)
-        self.cashReportFooter = QtWidgets.QWidget(parent=cashReportMain)
-        self.cashReportFooter.setMinimumSize(QtCore.QSize(0, 60))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        self.cashReportFooter.setFont(font)
-        self.cashReportFooter.setObjectName("cashReportFooter")
-        self.cashReportFooter_Layout = QtWidgets.QHBoxLayout(self.cashReportFooter)
-        self.cashReportFooter_Layout.setContentsMargins(0, 20, 0, 25)
-        self.cashReportFooter_Layout.setSpacing(0)
-        self.cashReportFooter_Layout.setObjectName("cashReportFooter_Layout")
-        self.saveBtn = QtWidgets.QPushButton(parent=self.cashReportFooter)
-        self.saveBtn.setMinimumSize(QtCore.QSize(0, 30))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.saveBtn.setFont(font)
-        self.saveBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.saveBtn.setStyleSheet("")
-        icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("./icons/save.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.saveBtn.setIcon(icon1)
-        self.saveBtn.setIconSize(QtCore.QSize(22, 22))
-        self.saveBtn.setCheckable(True)
-        self.saveBtn.setAutoExclusive(True)
-        self.saveBtn.setObjectName("saveBtn")
-        self.cashReportFooter_Layout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
-        self.printBtn = QtWidgets.QPushButton(parent=self.cashReportFooter)
-        self.printBtn.setMinimumSize(QtCore.QSize(90, 30))
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(12)
-        self.printBtn.setFont(font)
-        self.printBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-        self.printBtn.setStyleSheet("")
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("./icons/printer.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.printBtn.setIcon(icon2)
-        self.printBtn.setIconSize(QtCore.QSize(22, 22))
-        self.printBtn.setCheckable(True)
-        self.printBtn.setAutoExclusive(True)
-        self.printBtn.setObjectName("printBtn")
-        self.cashReportFooter_Layout.addWidget(self.printBtn, 0, QtCore.Qt.AlignmentFlag.AlignRight)
-        self.cashReportMain_Layout.addWidget(self.cashReportFooter)
-
-        self.retranslateUi(cashReportMain)
-        QtCore.QMetaObject.connectSlotsByName(cashReportMain)
-
-
-    def retranslateUi(self, cashReportMain):
-        _translate = QtCore.QCoreApplication.translate
-        cashReportMain.setWindowTitle(_translate("cashReportMain", "Form"))
-        self.sellerFilterlabel.setText(_translate("cashReportMain", "বিক্রেতার নাম"))
-        self.startDateLabel.setText(_translate("cashReportMain", "তারিখ"))
-        self.startDateInput.setDisplayFormat(_translate("cashReportMain", "dd/mm/yyyy"))
-        self.endDateLabel.setText(_translate("cashReportMain", "শেষ তারিখ"))
-        self.endDateInput.setDisplayFormat(_translate("cashReportMain", "dd/mm/yyyy"))
-        self.filterLabel.setText(_translate("cashReportMain", "অ্যাকশন"))
-        self.filterBtn.setText(_translate("cashReportMain", "ফিল্টার"))
-        item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("cashReportMain", "আইডি"))
-        item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("cashReportMain", "নাম"))
-        item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("cashReportMain", "ঠিকানা"))
-        item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("cashReportMain", "ফোন"))
-        item = self.tableWidget.horizontalHeaderItem(4)
-        item.setText(_translate("cashReportMain", "সেলার রাংক"))
-        item = self.tableWidget.horizontalHeaderItem(5)
-        item.setText(_translate("cashReportMain", "টাকা পাবে"))
-        item = self.tableWidget.horizontalHeaderItem(6)
-        item.setText(_translate("cashReportMain", "টোটাল পেয়েছে"))
-        item = self.tableWidget.horizontalHeaderItem(7)
-        item.setText(_translate("cashReportMain", "টোটাল কমিশন"))
-        item = self.tableWidget.horizontalHeaderItem(8)
-        item.setText(_translate("cashReportMain", "তারিখ"))
-        item = self.tableWidget.horizontalHeaderItem(9)
-        item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
-        item = self.tableWidget.horizontalHeaderItem(10)
-        item.setText(_translate("cashReportMain", "ভিউ"))
-        item = self.tableWidget.horizontalHeaderItem(11)
-        item.setText(_translate("cashReportMain", "অ্যাকশন"))
-        self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
-        self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
-
+    def setup_ui(self):
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(112)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(112)
+        self.ui.tableWidget.verticalHeader().setVisible(False)
         # Set current date ****************
-        self.startDateInput.setDisplayFormat("dd/MM/yyyy")
-        self.endDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
+        self.ui.endDateInput.setDisplayFormat("dd/MM/yyyy")
         self.today_date_raw = datetime.now()
         self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
         self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
-        self.startDateInput.setDate(self.qdate_today)
-        self.endDateInput.setDate(self.qdate_today)
+        self.ui.startDateInput.setDate(self.qdate_today)
+        self.ui.endDateInput.setDate(self.qdate_today)
 
         data_save_signals.data_saved.connect(self.filter_data)
         self.filter_data()
-        self.filterBtn.clicked.connect(self.filter_data)
+        self.ui.filterBtn.clicked.connect(self.filter_data)
 
         # ************ Autocomplete *****************************
-        self.auto_completer(cashReportMain)
-        data_save_signals.data_saved.connect(lambda: self.auto_completer(cashReportMain))
+        self.auto_completer()
+        data_save_signals.data_saved.connect(lambda: self.auto_completer())
         # *************** end autocomplete *******************************
-        self.sellerFilterInput.textChanged.connect(lambda : self.make_capital(self.sellerFilterInput))
+        self.ui.sellerFilterInput.textChanged.connect(lambda : self.make_capital(self.ui.sellerFilterInput))
 
 
-    def auto_completer(self, QTObject):
+        self.ui.printBtn.clicked.connect(self.openPrintMemo)
+        self.ui.saveBtn.clicked.connect(self.save_xlsx)
+
+
+    def auto_completer(self):
         """Refresh the QCompleter with the latest seller names."""
         self.all_name = self.get_all_names()
-        self.completer = QtWidgets.QCompleter(self.all_name, QTObject)    # QT object parameter memoPageMain
+        self.completer = QtWidgets.QCompleter(self.all_name, self)    # QT object parameter memoPageMain
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.sellerFilterInput.setCompleter(self.completer)   # change input field
+        self.ui.sellerFilterInput.setCompleter(self.completer)   # change input field
 
     def make_capital(self, element):
         element.textChanged.disconnect()
@@ -368,10 +91,10 @@ class sellerProfiles(object):
 
     def filter_data(self):
         try:
-            start_date = self.startDateInput.date().toPyDate()
+            start_date = self.ui.startDateInput.date().toPyDate()
             start_date = start_date - timedelta(days=7)
-            end_date = self.endDateInput.date().toPyDate()
-            seller_filter = self.sellerFilterInput.text()
+            end_date = self.ui.endDateInput.date().toPyDate()
+            seller_filter = self.ui.sellerFilterInput.text()
 
             # Retrieve data from the database
             session = self.Session()
@@ -379,27 +102,24 @@ class sellerProfiles(object):
             query = query.filter(SellerProfileModel.seller_name.ilike(f"%{seller_filter}%"))
             sellers = query.all()
 
-            # for seller in sellers:
-            #     logging.debug(f"Seller: {seller.seller_name}, Date: {seller.date}")
-
             # Clear existing table data
-            self.tableWidget.clearContents()
-            self.tableWidget.setRowCount(0)
+            self.ui.tableWidget.clearContents()
+            self.ui.tableWidget.setRowCount(0)
 
             # Populate the table with queried data
             row = 0
             for seller in sellers:
-                self.tableWidget.insertRow(row)
-                self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(seller.id)))
-                self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(seller.seller_name)))
-                self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(seller.address)))
-                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(seller.phone)))
-                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.seller_rank)))
-                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.total_receivable)))
-                self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.total_get_paid_amount)))
-                self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(seller.total_commission)))
-                self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.date)))
-                self.tableWidget.setItem(row, 9, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
+                self.ui.tableWidget.insertRow(row)
+                self.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(seller.id)))
+                self.ui.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(seller.seller_name)))
+                self.ui.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(seller.address)))
+                self.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(seller.phone)))
+                self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.seller_rank)))
+                self.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.total_receivable)))
+                self.ui.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.total_get_paid_amount)))
+                self.ui.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(seller.total_commission)))
+                self.ui.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.date)))
+                self.ui.tableWidget.setItem(row, 9, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
 
                 # Add a delete button in the last column
                 view_button = QtWidgets.QPushButton("")
@@ -409,7 +129,7 @@ class sellerProfiles(object):
                 view_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name))
-                self.tableWidget.setCellWidget(row, 10, view_button)
+                self.ui.tableWidget.setCellWidget(row, 10, view_button)
 
                 delete_button = QtWidgets.QPushButton("")
                 delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
@@ -418,7 +138,7 @@ class sellerProfiles(object):
                 delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-                self.tableWidget.setCellWidget(row, 11, delete_button)
+                self.ui.tableWidget.setCellWidget(row, 11, delete_button)
                 row += 1
 
         except Exception as e:
@@ -427,6 +147,9 @@ class sellerProfiles(object):
 
 
     def delete_row(self, row):
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে ডিলিট করার একসেস নেই..")
+            return
         try:
             reply = QtWidgets.QMessageBox.question(
                 None,
@@ -438,11 +161,11 @@ class sellerProfiles(object):
 
             # If the user confirms, proceed with deletion
             if reply == QtWidgets.QMessageBox.StandardButton.Yes:
-                entry_id = self.tableWidget.item(row, 0).text()
+                entry_id = self.ui.tableWidget.item(row, 0).text()
                 session = self.Session()
                 session.query(SellerProfileModel).filter(SellerProfileModel.id == entry_id).delete()
                 session.commit()
-                self.tableWidget.removeRow(row)
+                self.ui.tableWidget.removeRow(row)
         except Exception as ops:
             print(f'error in delete of buyer profile: ({ops})')
         data_save_signals.data_saved.emit()
@@ -453,11 +176,90 @@ class sellerProfiles(object):
         except Exception as e:
             print(f' err o : {str(e)}')
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    cashReportMain = QtWidgets.QWidget()
-    ui = sellerProfiles()
-    ui.setupUi(cashReportMain)
-    cashReportMain.show()
-    sys.exit(app.exec())
+
+    def openPrintMemo(self):
+        try:
+            self.print_window = QtWidgets.QWidget()
+            self.ui_form = Ui_Form()
+            self.ui_form.setupUi(self.print_window)
+
+            # Table Update
+            column_count = self.ui.tableWidget.columnCount()
+            column_count -= 3
+            row_count = self.ui.tableWidget.rowCount()
+            headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+
+            # Set up the table headers in the print window
+            self.ui_form.tableWidget.verticalHeader().setVisible(False)
+            self.ui_form.tableWidget.setColumnCount(column_count)
+            self.ui_form.tableWidget.setHorizontalHeaderLabels(headers)
+
+            # Insert rows and data into the print window's table
+            self.ui_form.tableWidget.setRowCount(row_count)
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.ui.tableWidget.item(row_idx, col_idx)
+                    if item:
+                        self.ui_form.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
+
+            self.print_window.show()
+            # Set up the printer
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
+            # printer.setFullPage(True)  # Use the full page
+            # Open print dialog
+            print_dialog = QtPrintSupport.QPrintDialog(printer)
+            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                painter = QtGui.QPainter(printer)
+                # Render the print window content to the printer
+                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                self.print_window.render(painter)
+                painter.end()
+            else:
+                print("Print dialog canceled")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def save_xlsx(self):
+        try:
+            # Open a file dialog to select the location to save the Excel file
+            file_path, _ = QFileDialog.getSaveFileName(
+                None,  # Use the actual QWidget as the parent
+                "Save Excel File",
+                "",
+                "Excel Files (*.xlsx);;All Files (*)"
+            )
+
+            # If no file is selected, return early
+            if not file_path:
+                return
+
+            # Ensure the file has the correct extension
+            if not file_path.endswith(".xlsx"):
+                file_path += ".xlsx"
+
+            # Create an Excel file using xlsxwriter
+            workbook = xlsxwriter.Workbook(file_path)
+            worksheet = workbook.add_worksheet("Table Data")
+
+            # Retrieve data from the tableWidget
+            row_count = self.ui.tableWidget.rowCount()
+            column_count = self.ui.tableWidget.columnCount()
+
+            # Write headers to the first row
+            headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+            for col_idx, header in enumerate(headers):
+                worksheet.write(0, col_idx, header)
+
+            # Write table data to the worksheet
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.ui.tableWidget.item(row_idx, col_idx)
+                    worksheet.write(row_idx + 1, col_idx, item.text() if item else "")
+
+            # Close and save the workbook
+            workbook.close()
+            print(f"Excel file saved successfully at {file_path}")
+
+        except Exception as e:
+            print(f"An error occurred while saving Excel file: {e}")

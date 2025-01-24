@@ -14,11 +14,14 @@ from models import *
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from features.data_save_signals import data_save_signals
-
+from features.printmemo import Ui_Form
+from PyQt6 import QtWidgets, QtGui, QtPrintSupport
+from PyQt6.QtWidgets import QFileDialog
+import xlsxwriter
 
 class Ui_memoPageMain(object):
-
     def setupUi(self, memoPageMain, username):
+        self.entry_by = username
         # ****************** Declear database ************************
         self.Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')    # change db url
@@ -646,6 +649,11 @@ class Ui_memoPageMain(object):
         self.save_db_Btn.setText(_translate("memoPageMain", "সেভ ইন ডাটাবেস"))
         self.saveExcelBtn.setText(_translate("memoPageMain", "সেভ এক্সেল ফাইল"))
         self.printBtn.setText(_translate("memoPageMain", "প্রিন্ট মেমো"))
+
+
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(180)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(180)
+        self.tableWidget.verticalHeader().setVisible(False)
         self.mosqueInput.setText('10')
         self.somitiInput.setText('10')
         self.otherInput.setText('0')
@@ -678,28 +686,42 @@ class Ui_memoPageMain(object):
         self.tableWidget.itemChanged.connect(self.handle_change_in_fish_price_column)
         # This signal is passing to when adding new buyer
 
-        # save all data
-        self.save_db_Btn.clicked.connect(self.save_data)
-
         # ************ Autocomplete *****************************
         self.auto_completer(memoPageMain)
-        data_save_signals.data_saved.connect(lambda : self.auto_completer(memoPageMain))
+        data_save_signals.data_saved.connect(lambda: self.auto_completer(memoPageMain))
         # *************** end autocomplete *******************************
 
         self.sellerNameInput.textChanged.connect(lambda:self.make_capital(self.sellerNameInput))
 
-        self.entry_by = ''
-        self.entry_by_username()
-        data_save_signals.data_saved.connect(self.entry_by_username)
         self.commision = ''
         self.commision_call()
         data_save_signals.data_saved.connect(self.commision_call)
 
-    def entry_by_username(self):
+        self.printBtn.clicked.connect(self.openPrintMemo)
+        self.saveExcelBtn.clicked.connect(self.save_xlsx)
+
+        # save all data
+        self.save_db_Btn.clicked.connect(self.save_data)
+
+    def auto_completer(self, memoPageMain):
+        self.completer = QtWidgets.QCompleter(self.get_all_names(), memoPageMain)
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.sellerNameInput.setCompleter(self.completer)
+        self.completer.activated.connect(lambda text: self.fill_seller_info(text))
+    def get_all_names(self):
+        """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        setting = session.query(SettingModel).first()
-        self.entry_by = setting.username
+        name_entires = session.query(SellerProfileModel).all()
         session.close()
+        return [name_entry.seller_name for name_entry in name_entires]
+    def fill_seller_info(self, name):
+        session = self.Session()
+        name_model = session.query(SellerProfileModel).filter_by(seller_name=name).first()
+        self.sellerAddressInput.setText(name_model.address)
+        self.sellerMobileInput.setText(name_model.phone)
+        session.close()
+
+
 
     def commision_call(self):
         session = self.Session()
@@ -713,21 +735,6 @@ class Ui_memoPageMain(object):
         element.textChanged.disconnect()
         element.setText(element.text().title())
         element.textChanged.connect(lambda: self.make_capital(element))
-
-    def get_all_names(self):
-        """Fetch all seller names from the database for autocomplete."""
-        session = self.Session()
-        name_entires = session.query(SellerProfileModel).all()     # change Model name
-        session.close()
-        print([name_entry.seller_name for name_entry in name_entires])
-        return [name_entry.seller_name for name_entry in name_entires]    # change field name
-
-    def auto_completer(self, QTObject):
-        """Refresh the QCompleter with the latest seller names."""
-        self.all_name = self.get_all_names()
-        self.completer = QtWidgets.QCompleter(self.all_name, QTObject)    # QT object parameter memoPageMain
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.sellerNameInput.setCompleter(self.completer)   # change input field
 
 
     ## Open dialog to get seller information *************
@@ -762,10 +769,6 @@ class Ui_memoPageMain(object):
             final_weight = self.ui.finalWeight.text().strip()
             total_price = self.ui.totalPrice.text().strip()
 
-            # print(f"Buyer Name: {buyer_name}")
-            # print(f"Fish Name: {fish_name}")
-            # print(f"Total Price: {total_price}")
-
             # Check if all fields are filled
             if buyer_name and fish_name and total_price:
                 if total_price.isdigit():
@@ -778,8 +781,6 @@ class Ui_memoPageMain(object):
                     self.tableWidget.setItem(row_position, 4, QtWidgets.QTableWidgetItem(final_weight))
                     self.tableWidget.setItem(row_position, 5, QtWidgets.QTableWidgetItem(total_price))
 
-                    print("Added information to the table.")
-
                     # Add a delete button in the last column
                     delete_button = QtWidgets.QPushButton("")
                     delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
@@ -790,14 +791,10 @@ class Ui_memoPageMain(object):
                     delete_button.clicked.connect(lambda _, r=row_position: self.delete_row(r))
                     self.tableWidget.setCellWidget(row_position, 6, delete_button)
 
-                    # handle_change_in_fish_price_column()
-
-                    print("Updated financial fields successfully.")
-
                     # Close the dialog
                     self.dialog.close()
                 else:
-                    print("Total price is not a digit.")
+                    # print("Total price is not a digit.")
                     # Show error message if total_price is not a digit
                     error_dialog = QtWidgets.QMessageBox(self.dialog)
                     error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
@@ -805,7 +802,7 @@ class Ui_memoPageMain(object):
                     error_dialog.setText("মোট মূল্য সংখ্যা হতে হবে.")
                     error_dialog.exec()
             else:
-                print("Required fields are empty.")
+                # print("Required fields are empty.")
                 # Show error message if any required field is empty
                 error_dialog = QtWidgets.QMessageBox(self.dialog)
                 error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
@@ -1110,6 +1107,106 @@ class Ui_memoPageMain(object):
             QtWidgets.QMessageBox.critical(None, "Error", f"ইনভ্যালিড ইনপুট")
             print(f"Error: {e}")
 
+    def openPrintMemo(self):
+        try:
+            self.print_window = QtWidgets.QWidget()
+            self.ui = Ui_Form()
+            self.ui.setupUi(self.print_window)
+
+            # Others field
+            self.ui.name.setText(str(self.sellerNameInput.text()))
+            self.ui.date.setText(str(self.sellingDateInput.text()))
+            self.ui.address.setText(str(self.sellerAddressInput.text()))
+            self.ui.mobile.setText(str(self.sellerMobileInput.text()))
+            self.ui.commission.setText(str(self.commissionInput.text()))
+            self.ui.mosque.setText(str(self.mosqueInput.text()))
+            self.ui.somiti.setText(str(self.somitiInput.text()))
+            self.ui.others.setText(str(self.otherInput.text()))
+            self.ui.totalCost_raw.setText(str(self.totalCostInput.text()))
+            self.ui.totalCost.setText(str(self.totalCostInput.text()))
+            self.ui.totalTaka.setText(str(self.totalTakaInput.text()))
+            self.ui.finalTaka.setText(str(self.finalTakaInput.text()))
+
+            # Table Update
+            column_count = self.tableWidget.columnCount()
+            column_count -= 1
+            row_count = self.tableWidget.rowCount()
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+
+            # Set up the table headers in the print window
+            self.ui.tableWidget.verticalHeader().setVisible(False)
+            self.ui.tableWidget.setColumnCount(column_count)
+            self.ui.tableWidget.setHorizontalHeaderLabels(headers)
+
+            # Insert rows and data into the print window's table
+            self.ui.tableWidget.setRowCount(row_count)
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.tableWidget.item(row_idx, col_idx)
+                    if item:
+                        self.ui.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
+
+            self.print_window.show()
+            # Set up the printer
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
+            # printer.setFullPage(True)  # Use the full page
+            # Open print dialog
+            print_dialog = QtPrintSupport.QPrintDialog(printer)
+            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                painter = QtGui.QPainter(printer)
+                # Render the print window content to the printer
+                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                self.print_window.render(painter)
+                painter.end()
+            else:
+                print("Print dialog canceled")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def save_xlsx(self):
+        try:
+            # Open a file dialog to select the location to save the Excel file
+            file_path, _ = QFileDialog.getSaveFileName(
+                None,  # Use the actual QWidget as the parent
+                "Save Excel File",
+                "",
+                "Excel Files (*.xlsx);;All Files (*)"
+            )
+
+            # If no file is selected, return early
+            if not file_path:
+                return
+
+            # Ensure the file has the correct extension
+            if not file_path.endswith(".xlsx"):
+                file_path += ".xlsx"
+
+            # Create an Excel file using xlsxwriter
+            workbook = xlsxwriter.Workbook(file_path)
+            worksheet = workbook.add_worksheet("Table Data")
+
+            # Retrieve data from the tableWidget
+            row_count = self.tableWidget.rowCount()
+            column_count = self.tableWidget.columnCount()
+
+            # Write headers to the first row
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+            for col_idx, header in enumerate(headers):
+                worksheet.write(0, col_idx, header)
+
+            # Write table data to the worksheet
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.tableWidget.item(row_idx, col_idx)
+                    worksheet.write(row_idx + 1, col_idx, item.text() if item else "")
+
+            # Close and save the workbook
+            workbook.close()
+            print(f"Excel file saved successfully at {file_path}")
+
+        except Exception as e:
+            print(f"An error occurred while saving Excel file: {e}")
 
 
 if __name__ == "__main__":

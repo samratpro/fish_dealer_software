@@ -1,4 +1,52 @@
-dhol_amount = (1/100) * 4
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
+)
+from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
+from PyQt6.QtGui import QPainter
 
 
-print(dhol_amount*1000)
+class PrintExample(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("PyQt6 Print Entire Widget Example")
+        self.setGeometry(200, 200, 600, 400)
+
+        # Main layout
+        self.layout = QVBoxLayout()
+
+        # QTextEdit to enter text
+        self.text_edit = QTextEdit(self)
+        self.text_edit.setPlaceholderText("Type something to print...")
+        self.layout.addWidget(self.text_edit)
+
+        # Print button
+        self.print_button = QPushButton("Print Widget", self)
+        self.print_button.clicked.connect(self.print_widget)
+        self.layout.addWidget(self.print_button)
+
+        # Set the layout
+        self.setLayout(self.layout)
+
+    def print_widget(self):
+        # Create a QPrinter object
+        printer = QPrinter()
+
+        # Open a print dialog
+        print_dialog = QPrintDialog(printer, self)
+        if print_dialog.exec():  # Show the print dialog
+            try:
+                # Use QPainter to render the widget onto the printer
+                painter = QPainter(printer)
+                self.render(painter)  # Render the entire widget
+                painter.end()
+
+                QMessageBox.information(self, "Success", "Widget sent to printer.")
+            except Exception as e:
+                QMessageBox.warning(self, "Print Error", f"An error occurred: {e}")
+
+
+if __name__ == "__main__":
+    app = QApplication([])
+    window = PrintExample()
+    window.show()
+    app.exec()

@@ -6,3 +6,21 @@
 6. Income statement seller profile
 7. Auto suggestion - mosque amount, seller mobile, address, buyer mobile
 8. Save data, Print, Backup
+
+
+
+
+0 : seller
+1 : buyer 
+2 : munafa uttolon
+3 : muldhon joma
+4 : loan get
+5 : loan paid
+6 : salary
+7 : others cost
+8 : mosque
+9 : somiti
+10 : others_vouchar
+
+
+

@@ -18,7 +18,7 @@
 QComboBox{padding:5px 8px;border-radius:9px;}
 QPushButton{background-color:#2D221B;color:white;padding:5px 8px;border-radius:9px;}</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>100</x>
@@ -39,6 +39,9 @@ QPushButton{background-color:#2D221B;color:white;padding:5px 8px;border-radius:9
         <pointsize>16</pointsize>
        </font>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string>ক্যানসেল</string>
       </property>
@@ -52,6 +55,9 @@ QPushButton{background-color:#2D221B;color:white;padding:5px 8px;border-radius:9
         <pointsize>16</pointsize>
        </font>
       </property>
+      <property name="cursor">
+       <cursorShape>PointingHandCursor</cursorShape>
+      </property>
       <property name="text">
        <string>ঠিক আছে</string>
       </property>
@@ -59,7 +65,7 @@ QPushButton{background-color:#2D221B;color:white;padding:5px 8px;border-radius:9
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -211,12 +217,12 @@ QPushButton{background-color:#2D221B;color:white;padding:5px 8px;border-radius:9
         </property>
         <item>
          <property name="text">
-          <string>এডিটর</string>
+          <string>অ্যাডমিন</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>অ্যাডমিন</string>
+          <string>এডিটর</string>
          </property>
         </item>
        </widget>

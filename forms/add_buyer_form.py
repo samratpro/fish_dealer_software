@@ -21,7 +21,7 @@ import sys
 
 class Ui_AddBuyer(object):
     def setupUi(self, AddBuyer, username):
-
+        self.entry_by = username
         # ****************** Declear database ************************
         self.Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')    # change db url
@@ -247,26 +247,35 @@ class Ui_AddBuyer(object):
         # final weight change
         self.finalWeight.textEdited.connect(self.final_weight_change)
 
-
-        self.entry_by = ''
-        self.entry_by_username()
-        data_save_signals.data_saved.connect(self.entry_by_username)
         self.dhol_amount = ''
         self.dhol_amount_calculation()
         data_save_signals.data_saved.connect(self.dhol_amount_calculation)
 
-    def entry_by_username(self):
+    def get_all_names(self):
+        """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        setting = session.query(SettingModel).first()
-        self.entry_by = setting.username
+        name_entires = session.query(BuyerProfileModel).all()     # change Model name
         session.close()
+        return [name_entry.buyer_name for name_entry in name_entires]    # change field name
+
+    def auto_completer(self, AddBuyer):
+        """Refresh the QCompleter with the latest seller names."""
+        self.all_name = self.get_all_names()
+        self.completer = QtWidgets.QCompleter(self.all_name, AddBuyer)  # # QT object parameter AddBuyer
+        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.buyerName.setCompleter(self.completer)   # change input field
+        self.completer.activated.connect(lambda text: self.fill_phone_number(text))
+
+    def fill_phone_number(self, name):
+        session = self.Session()
+        user = session.query(BuyerProfileModel).filter_by(buyer_name=name).first()
+        self.mobile.setText(user.phone)
 
     def dhol_amount_calculation(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
         self.dhol_amount = (1/1000) * setting.dhol
         session.close()
-
 
     def make_capital(self, element):
         element.textChanged.disconnect()
@@ -353,20 +362,6 @@ class Ui_AddBuyer(object):
             fish_rate = fish_rate/40  # 40 kg per moon
             total_price = custom_round((fish_rate*final_weight) / 10) * 10     # 10 is doing for round figure base 10
         self.totalPrice.setText(str(total_price))
-
-    def get_all_names(self):
-        """Fetch all seller names from the database for autocomplete."""
-        session = self.Session()
-        name_entires = session.query(BuyerProfileModel).all()     # change Model name
-        session.close()
-        return [name_entry.buyer_name for name_entry in name_entires]    # change field name
-
-    def auto_completer(self, AddBuyer):
-        """Refresh the QCompleter with the latest seller names."""
-        self.all_name = self.get_all_names()
-        self.completer = QtWidgets.QCompleter(self.all_name, AddBuyer)  # # QT object parameter AddBuyer
-        self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
-        self.buyerName.setCompleter(self.completer)   # change input field
 
     def handle_name_entry(self, AddBuyer):
         target_name = self.buyerName.text().strip()  # Change input field

@@ -517,13 +517,6 @@ class Ui_HomePageMain(object):
                 total_receivable = session.query(BuyerProfileModel).filter(BuyerProfileModel.date.between(start_date, end_date)).all()
                 receivable_amount = sum(receivable.total_payable for receivable in total_receivable)
 
-                # Print the results
-                # print('capital :', capital.capital)
-                # print('borrowing_amount : ', loan_amount)
-                # print('received_amount : ', received_amount)
-                # print('paid_amount : ', paid_amount)
-                # print('payable_amount : ', payable_amount)
-                # print('receivable_amount : ', receivable_amount)
 
                 self.capitalAmount.setText(str(capital.capital))
                 self.loanAmount.setText(str(loan_amount))

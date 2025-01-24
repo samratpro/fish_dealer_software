@@ -7,23 +7,9 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from datetime import datetime, timedelta
-from PyQt6.QtCore import Qt, QDate
-from models import SellerProfileModel, CostModel
-from features.data_save_signals import data_save_signals
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
 class commissionReportPage_ui(object):
     def setupUi(self, cashReportMain):
-
-        # ****************** Declear database ************************
-        self.Base = declarative_base()
-        self.engine = create_engine('sqlite:///business.db')    # change db url
-        self.Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
-        # ******************* end db ***************************
-
         cashReportMain.setObjectName("cashReportMain")
         cashReportMain.resize(935, 570)
         cashReportMain.setMinimumSize(QtCore.QSize(300, 0))
@@ -252,6 +238,36 @@ class commissionReportPage_ui(object):
         self.saveBtn.setAutoExclusive(True)
         self.saveBtn.setObjectName("saveBtn")
         self.cashReportFooter_Layout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+
+
+
+        self.amountLabel = QtWidgets.QLabel(parent=self.cashReportFooter)
+        self.amountLabel.setMinimumSize(QtCore.QSize(70, 0))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.amountLabel.setFont(font)
+        self.amountLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.amountLabel.setObjectName("receivedLabel")
+        self.cashReportFooter_Layout.addWidget(self.amountLabel, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        self.amount = QtWidgets.QLabel(parent=self.cashReportFooter)
+        self.amount.setMinimumSize(QtCore.QSize(150, 0))
+        self.amount.setStyleSheet("QLabel{border:1px solid #828282;background-color:white;border-radius:10px}")
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.amount.setFont(font)
+        self.amount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.amount.setObjectName("receivedAmount")
+        self.cashReportFooter_Layout.addWidget(self.amount, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+
         self.printBtn = QtWidgets.QPushButton(parent=self.cashReportFooter)
         self.printBtn.setMinimumSize(QtCore.QSize(90, 30))
         font = QtGui.QFont()
@@ -291,6 +307,8 @@ class commissionReportPage_ui(object):
         item.setText(_translate("cashReportMain", "তারিখ"))
         item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
+        self.amountLabel.setText(_translate("cashReportMain", "এমাউন্ট"))
+        self.amount.setText(_translate("cashReportMain", "0"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
 

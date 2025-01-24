@@ -1,7 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from pages.homePage import Ui_HomePageMain
 from pages.memoPage import Ui_memoPageMain
-from pages.costExpenseEntryPage import Ui_costExpenseMain
+from pages.costExpenseEntryPage import costExpensePage
 from pages.buyerProfiles import buyerProfiles
 from pages.sellerProfiles import sellerProfiles
 from pages.receivableReportPage import receivableReport
@@ -9,7 +9,7 @@ from pages.payableableReportPage import payableableReport
 from pages.settingsPage import settingsPage
 from pages.loanPage import Ui_LoanPage
 from pages.commissionReportPage import commissionReportPage
-from pages.costReportPage import costReport
+from pages.costReportPage import CostReport
 from pages.usersPage import userPage
 
 class Ui_MainWindow:
@@ -668,24 +668,18 @@ class Ui_MainWindow:
 
         # ************ debit credit page
         print("debug 4")
-        self.earnExpenseStack = QtWidgets.QWidget()
-        self.earnExpenseStack.setObjectName("Debit Credit Page")
-        self.stackedWidget.addWidget(self.earnExpenseStack)
-        self.earnExpensePage = Ui_costExpenseMain()
-        self.earnExpensePage.setupUi(self.earnExpenseStack)
+        self.costExpensePage = costExpensePage(self.username)
+        self.stackedWidget.addWidget(self.costExpensePage)
 
         # ************ buyers profiles
         print("debug 5")
-        self.buyerProfilePage = buyerProfiles()  # Create the buyer profile page instance
+        self.buyerProfilePage = buyerProfiles(self.username)  # Create the buyer profile page instance
         self.stackedWidget.addWidget(self.buyerProfilePage)  # Add it to the stacked widget
 
         # ************ seller profiles
         print("debug 6")
-        self.sellerProfileStack = QtWidgets.QWidget()
-        self.sellerProfileStack.setObjectName("Seller Profile Page")
-        self.stackedWidget.addWidget(self.sellerProfileStack)
-        self.sellerProfilePage = sellerProfiles()
-        self.sellerProfilePage.setupUi(self.sellerProfileStack)
+        self.sellerProfilePage = sellerProfiles(self.username)  # Create the buyer profile page instance
+        self.stackedWidget.addWidget(self.sellerProfilePage)
 
         # ************ receiveable report page
         print("debug 7")
@@ -718,12 +712,12 @@ class Ui_MainWindow:
 
         # ************ cost report
         print("debug 11")
-        self.costreportPage = costReport() 
+        self.costreportPage = CostReport()
         self.stackedWidget.addWidget(self.costreportPage)
 
         # ************ Users Pages
         print("debug 12")
-        self.userPage = userPage()
+        self.userPage = userPage(self.username)
         self.stackedWidget.addWidget(self.userPage) 
 
 
@@ -858,11 +852,11 @@ class Ui_MainWindow:
             # elif page_name == "cash_report":
             #     self.stackedWidget.setCurrentWidget(self.cashReportStack)
             elif page_name == "earn_expense":
-                self.stackedWidget.setCurrentWidget(self.earnExpenseStack)
+                self.stackedWidget.setCurrentWidget(self.costExpensePage)
             elif page_name == "buyer_profile":
                 self.stackedWidget.setCurrentWidget(self.buyerProfilePage)
             elif page_name == "seller_profile":
-                self.stackedWidget.setCurrentWidget(self.sellerProfileStack)
+                self.stackedWidget.setCurrentWidget(self.sellerProfilePage)
             elif page_name == "receivable_report":
                 self.stackedWidget.setCurrentWidget(self.receivableReportStack)
             elif page_name == "payable_report":

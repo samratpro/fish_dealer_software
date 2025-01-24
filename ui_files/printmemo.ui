@@ -6,20 +6,22 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>781</height>
+    <width>794</width>
+    <height>1239</height>
    </rect>
   </property>
   <property name="font">
    <font>
-    <pointsize>10</pointsize>
+    <family>Arial</family>
+    <pointsize>12</pointsize>
    </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLineEdit{border:1px solid #C3D1DF;border-radius:8px;pdding:3px 5px}</string>
+   <string notr="true">QLineEdit{border:1px solid #C3D1DF;border-radius:8px;pdding:5px 15px}
+*{background-color:white;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
    <property name="spacing">
@@ -338,7 +340,7 @@ border-radius:5px;padding:3px 8px;</string>
                    <widget class="QLineEdit" name="name">
                     <property name="font">
                      <font>
-                      <family>SutonnyMJ</family>
+                      <family>Arial</family>
                       <pointsize>12</pointsize>
                      </font>
                     </property>
@@ -385,7 +387,7 @@ border-radius:5px;padding:3px 8px;</string>
                    <widget class="QLineEdit" name="date">
                     <property name="font">
                      <font>
-                      <family>SutonnyMJ</family>
+                      <family>Arial</family>
                       <pointsize>12</pointsize>
                      </font>
                     </property>
@@ -453,7 +455,7 @@ border-radius:5px;padding:3px 8px;</string>
                    <widget class="QLineEdit" name="address">
                     <property name="font">
                      <font>
-                      <family>SutonnyMJ</family>
+                      <family>Arial</family>
                       <pointsize>12</pointsize>
                      </font>
                     </property>
@@ -500,7 +502,7 @@ border-radius:5px;padding:3px 8px;</string>
                    <widget class="QLineEdit" name="mobile">
                     <property name="font">
                      <font>
-                      <family>SutonnyMJ</family>
+                      <family>Arial</family>
                       <pointsize>12</pointsize>
                      </font>
                     </property>
@@ -688,7 +690,7 @@ border-radius:5px;padding:3px 8px;</string>
           <widget class="QTableWidget" name="tableWidget">
            <property name="font">
             <font>
-             <family>SutonnyMJ</family>
+             <family>Arial</family>
              <pointsize>12</pointsize>
             </font>
            </property>
@@ -708,7 +710,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>11</pointsize>
+              <pointsize>12</pointsize>
              </font>
             </property>
             <property name="foreground">
@@ -728,7 +730,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>11</pointsize>
+              <pointsize>12</pointsize>
              </font>
             </property>
            </column>
@@ -788,13 +790,13 @@ border-radius:5px;padding:3px 8px;</string>
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>15</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>15</number>
          </property>
          <item>
           <widget class="QFrame" name="frame_9">
@@ -840,7 +842,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="commission">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -893,7 +895,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="mosque">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -946,7 +948,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="somiti">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -999,7 +1001,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="others">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1058,7 +1060,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="totalCost_raw">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1182,7 +1184,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="totalTaka">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1195,7 +1197,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="totalCost">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1205,7 +1207,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="finalTaka">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1227,13 +1229,13 @@ border-radius:5px;padding:3px 8px;</string>
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>15</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>0</number>
+          <number>15</number>
          </property>
          <item alignment="Qt::AlignBottom">
           <widget class="QFrame" name="frame_7">
@@ -1249,6 +1251,9 @@ border-radius:5px;padding:3px 8px;</string>
            <layout class="QHBoxLayout" name="horizontalLayout_11">
             <property name="rightMargin">
              <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>40</number>
             </property>
             <item>
              <widget class="QLabel" name="label_16">
@@ -1267,7 +1272,7 @@ border-radius:5px;padding:3px 8px;</string>
              <widget class="QLineEdit" name="taka_text">
               <property name="font">
                <font>
-                <family>SutonnyMJ</family>
+                <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
               </property>
@@ -1298,7 +1303,7 @@ border-radius:5px;padding:3px 8px;</string>
              <number>12</number>
             </property>
             <property name="topMargin">
-             <number>8</number>
+             <number>20</number>
             </property>
             <property name="rightMargin">
              <number>12</number>

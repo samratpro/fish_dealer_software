@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey, Float
+from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey, Float, Boolean
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -105,10 +105,11 @@ class SettingModel(Base):
 
 class UserModel(Base):
     __tablename__ ='user_model'
-    id = Column(Integer, primary_key=True, default=1)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, default='admin')
     password = Column(String, default='admin')
     role = Column(String, default='admin')
+    delete = Column(Boolean, default=False)
 
 # Final Accounting Model
 class FinalAccounting(Base):

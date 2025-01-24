@@ -13,6 +13,12 @@ from models import SellerProfileModel, CostModel
 from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from features.printmemo import Ui_Form
+from PyQt6 import QtWidgets, QtGui, QtPrintSupport
+from PyQt6.QtWidgets import QFileDialog
+import xlsxwriter
+
+
 
 class payableableReport(object):
     def setupUi(self, cashReportMain):
@@ -225,8 +231,6 @@ class payableableReport(object):
         self.tableWidget.setHorizontalHeaderItem(7, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(8, item)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(150)
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
@@ -313,6 +317,9 @@ class payableableReport(object):
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
 
         # Set current date ****************
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(150)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(150)
+        self.tableWidget.verticalHeader().setVisible(False)
         self.startDateInput.setDisplayFormat("dd/MM/yyyy")
         self.endDateInput.setDisplayFormat("dd/MM/yyyy")
         self.today_date_raw = datetime.now()
@@ -336,6 +343,9 @@ class payableableReport(object):
         data_save_signals.data_saved.connect(lambda: self.auto_completer(cashReportMain))
         # *************** end autocomplete *******************************
         self.sellerFilterInput.textChanged.connect(lambda : self.make_capital(self.sellerFilterInput))
+
+        self.printBtn.clicked.connect(self.openPrintMemo)
+        self.saveBtn.clicked.connect(self.save_xlsx)
 
     def auto_completer(self, QTObject):
         """Refresh the QCompleter with the latest seller names."""
@@ -413,6 +423,96 @@ class payableableReport(object):
         except Exception as e:
             print(f"seller Profile Error in filter_data: {e}")
             QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
+
+
+    def openPrintMemo(self):
+        try:
+            self.print_window = QtWidgets.QWidget()
+            self.ui = Ui_Form()
+            self.ui.setupUi(self.print_window)
+
+            # Table Update
+            column_count = self.tableWidget.columnCount()
+            column_count -= 1
+            row_count = self.tableWidget.rowCount()
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+
+            # Set up the table headers in the print window
+            self.ui.tableWidget.verticalHeader().setVisible(False)
+            self.ui.tableWidget.setColumnCount(column_count)
+            self.ui.tableWidget.setHorizontalHeaderLabels(headers)
+
+            # Insert rows and data into the print window's table
+            self.ui.tableWidget.setRowCount(row_count)
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.tableWidget.item(row_idx, col_idx)
+                    if item:
+                        self.ui.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
+
+            self.print_window.show()
+            # Set up the printer
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
+            # printer.setFullPage(True)  # Use the full page
+            # Open print dialog
+            print_dialog = QtPrintSupport.QPrintDialog(printer)
+            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                painter = QtGui.QPainter(printer)
+                # Render the print window content to the printer
+                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                self.print_window.render(painter)
+                painter.end()
+            else:
+                print("Print dialog canceled")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def save_xlsx(self):
+        try:
+            # Open a file dialog to select the location to save the Excel file
+            file_path, _ = QFileDialog.getSaveFileName(
+                None,  # Use the actual QWidget as the parent
+                "Save Excel File",
+                "",
+                "Excel Files (*.xlsx);;All Files (*)"
+            )
+
+            # If no file is selected, return early
+            if not file_path:
+                return
+
+            # Ensure the file has the correct extension
+            if not file_path.endswith(".xlsx"):
+                file_path += ".xlsx"
+
+            # Create an Excel file using xlsxwriter
+            workbook = xlsxwriter.Workbook(file_path)
+            worksheet = workbook.add_worksheet("Table Data")
+
+            # Retrieve data from the tableWidget
+            row_count = self.tableWidget.rowCount()
+            column_count = self.tableWidget.columnCount()
+
+            # Write headers to the first row
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+            for col_idx, header in enumerate(headers):
+                worksheet.write(0, col_idx, header)
+
+            # Write table data to the worksheet
+            for row_idx in range(row_count):
+                for col_idx in range(column_count):
+                    item = self.tableWidget.item(row_idx, col_idx)
+                    worksheet.write(row_idx + 1, col_idx, item.text() if item else "")
+
+            # Close and save the workbook
+            workbook.close()
+            print(f"Excel file saved successfully at {file_path}")
+
+        except Exception as e:
+            print(f"An error occurred while saving Excel file: {e}")
+
+
 
 
 if __name__ == "__main__":

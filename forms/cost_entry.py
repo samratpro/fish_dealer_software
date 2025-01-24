@@ -9,7 +9,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtCore import Qt, QDate
 from datetime import datetime
-from models import SellerProfileModel, BuyerProfileModel, LoanModel
+from models import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -217,8 +217,8 @@ class Ui_CostEntry(object):
 
         # change input field
         # *************** end autocomplete *******************************
-        self.payerName.textChanged.connect(lambda : self.make_capital(self.payerName))
-        self.receiverName.textChanged.connect(lambda : self.make_capital(self.receiverName))
+        self.payerName.textChanged.connect(lambda: self.make_capital(self.payerName))
+        self.receiverName.textChanged.connect(lambda: self.make_capital(self.receiverName))
 
         # autofill amount
         self.receiverCompleter.activated.connect(lambda text: self.autofill_amount(text))
@@ -226,6 +226,7 @@ class Ui_CostEntry(object):
 
         # disable entry name
         self.entryName.currentIndexChanged.connect(lambda: self.entry_disable(self.entryName.currentIndex()))
+        self.entryName.currentIndexChanged.connect(self.autofill_cost)
         # by default payer name disable cause selected zero index
         self.payerName.setDisabled(True)
         self.payerName.setStyleSheet("background-color: #F0F0F0;")
@@ -253,7 +254,7 @@ class Ui_CostEntry(object):
 
 
     def entry_disable(self, entry_index):
-        if entry_index in [0, 2, 5,6, 7, 8 ,9, 10]:
+        if entry_index in [0, 2, 5, 6, 7, 8, 9, 10]:
             self.payerName.clear()
             self.amount.clear()
             self.payerName.setDisabled(True)
@@ -283,6 +284,24 @@ class Ui_CostEntry(object):
             loan_payer_name = session.query(LoanModel).filter_by(loan_payer_name=name).first()
             if loan_payer_name:
                 self.amount.setText(str(loan_payer_name.amount))
+        session.close()
+    def autofill_cost(self):
+        entry_index = self.entryName.currentIndex()
+        session = self.Session()
+        if entry_index == 8:
+            mosque = session.query(CostModel.mosque).first()
+            if mosque:
+                self.amount.setText(str(mosque[0]))
+        if entry_index == 9:
+            somiti = session.query(CostModel.somiti).first()
+            if somiti:
+                self.amount.setText(str(somiti[0]))
+        if entry_index == 10:
+            other_cost = session.query(CostModel.other_cost).first()
+            if other_cost:
+                self.amount.setText(str(other_cost[0]))
+        session.close()
+
 
 
 

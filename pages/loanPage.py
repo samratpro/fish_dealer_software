@@ -256,8 +256,6 @@ class Ui_LoanPage(object):
         self.tableWidget.setHorizontalHeaderItem(4, item)
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(240)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(240)
         font = QtGui.QFont()
         font.setFamily("Arial")
         self.tableWidget.setFont(font)
@@ -297,6 +295,10 @@ class Ui_LoanPage(object):
         item.setText(_translate("costExpenseMain", "পরিমান"))
         item = self.tableWidget.horizontalHeaderItem(4)
         item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(240)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(240)
+        self.tableWidget.verticalHeader().setVisible(False)
         self.filter_data()
         data_save_signals.data_saved.connect(self.filter_data)
 
