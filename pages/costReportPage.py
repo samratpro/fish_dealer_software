@@ -63,9 +63,9 @@ class CostReport(QWidget):
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        name_entries = session.query(DealerModel.name).all()     # change Model name
+        name_entries = session.query(DealerModel).all()     # change Model name
         session.close()
-        return [name for name in name_entries[0]]
+        return [entry_name.name for entry_name in name_entries]
 
     def make_capital(self, element):
         element.textChanged.disconnect()

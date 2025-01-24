@@ -307,6 +307,7 @@ class commissionReportPage_ui(object):
         item.setText(_translate("cashReportMain", "তারিখ"))
         item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
+        self.filterLabel.setText(_translate("cashReportMain", "অ্যাকশন"))
         self.amountLabel.setText(_translate("cashReportMain", "এমাউন্ট"))
         self.amount.setText(_translate("cashReportMain", "0"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))

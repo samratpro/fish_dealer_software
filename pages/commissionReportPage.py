@@ -72,9 +72,9 @@ class commissionReportPage(QWidget):
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        name_entries = session.query(SellerProfileModel.seller_name).all()     # change Model name
+        name_entries = session.query(SellerProfileModel).all()     # change Model name
         session.close()
-        return [name for name in name_entries[0]]
+        return [entry_name.seller_name for entry_name in name_entries]
     def make_capital(self, element):
         element.textChanged.disconnect()
         element.setText(element.text().title())
