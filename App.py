@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import pyqtSignal
 from login import LoginPage
-from dashboard import Ui_MainWindow
+from dashboard import DashboardPage
 import sys
 from features.data_save_signals import data_save_signals
 
@@ -15,14 +15,15 @@ class Dashboard(QMainWindow):
         self.setMinimumSize(1000, 600)
 
         # Initialize the dashboard UI
-        self.dashboard_ui = Ui_MainWindow()
-        self.dashboard_ui.setupUi(self, username)
+        self.dashboard_ui = DashboardPage(username)
+        self.dashboard_ui.ui.setupUi(self)
+        self.dashboard_ui.setup_ui()
 
         print("user name from app.py : ", username)
 
         # Assuming you have a logout button defined in your UI
-        self.dashboard_ui.logoutBtn.clicked.connect(self.handle_logout)
-        self.dashboard_ui.logoutIconBtn.clicked.connect(self.handle_logout)
+        self.dashboard_ui.ui.logoutBtn.clicked.connect(self.handle_logout)
+        self.dashboard_ui.ui.logoutIconBtn.clicked.connect(self.handle_logout)
 
     def handle_logout(self):
         """Handle the logout button click."""

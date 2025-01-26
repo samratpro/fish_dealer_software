@@ -102,6 +102,7 @@ class SettingModel(Base):
     username = Column(String, default='admin')
     commission = Column(Float, default=4)
     dhol = Column(Integer, default=100)
+    font= Column(String, default="Arial")
 
 class UserModel(Base):
     __tablename__ ='user_model'

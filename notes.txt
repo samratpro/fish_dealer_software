@@ -20,6 +20,10 @@
 24. entry disable
 25. show_error_method setup, Different type of error, info, warning, criticalerror
 26. floating toggle widget
+27. xlsxwriter
+28. Font, dynamic font add in table data
+29. Backup
+30. Print memo, update memo data also skipp rows
 
 
 

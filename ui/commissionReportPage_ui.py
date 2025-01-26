@@ -240,19 +240,17 @@ class commissionReportPage_ui(object):
         self.cashReportFooter_Layout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
 
 
-
-
-        self.amountLabel = QtWidgets.QLabel(parent=self.cashReportFooter)
-        self.amountLabel.setMinimumSize(QtCore.QSize(70, 0))
+        self.nameLabel = QtWidgets.QLabel(parent=self.cashReportFooter)
+        self.nameLabel.setMinimumSize(QtCore.QSize(70, 0))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
-        self.amountLabel.setFont(font)
-        self.amountLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.amountLabel.setObjectName("receivedLabel")
-        self.cashReportFooter_Layout.addWidget(self.amountLabel, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.nameLabel.setFont(font)
+        self.nameLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.nameLabel.setObjectName("receivedLabel")
+        self.cashReportFooter_Layout.addWidget(self.nameLabel, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
 
         self.amount = QtWidgets.QLabel(parent=self.cashReportFooter)
         self.amount.setMinimumSize(QtCore.QSize(150, 0))
@@ -308,7 +306,7 @@ class commissionReportPage_ui(object):
         item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
         self.filterLabel.setText(_translate("cashReportMain", "অ্যাকশন"))
-        self.amountLabel.setText(_translate("cashReportMain", "এমাউন্ট"))
+        self.nameLabel.setText(_translate("cashReportMain", "কমিশন রিপোর্ট"))
         self.amount.setText(_translate("cashReportMain", "0"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))

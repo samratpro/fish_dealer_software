@@ -12,6 +12,7 @@ from datetime import datetime
 from models import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from features.data_save_signals import data_save_signals
 
 class Ui_CostEntry(object):
     def setupUi(self, AddBuyer):
@@ -230,6 +231,18 @@ class Ui_CostEntry(object):
         # by default payer name disable cause selected zero index
         self.payerName.setDisabled(True)
         self.payerName.setStyleSheet("background-color: #F0F0F0;")
+
+        self.update_setting_font()
+        data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def update_setting_font(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        setting_font = QtGui.QFont()
+        setting_font.setFamily(setting.font)
+        setting_font.setPointSize(12)
+        self.payerName.setFont(setting_font)
+        self.receiverName.setFont(setting_font)
 
 
     def make_capital(self, element):

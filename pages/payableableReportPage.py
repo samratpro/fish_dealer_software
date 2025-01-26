@@ -9,7 +9,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from datetime import datetime, timedelta
 from PyQt6.QtCore import Qt, QDate
-from models import SellerProfileModel, CostModel
+from models import SellerProfileModel, CostModel, SettingModel
 from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -264,6 +264,33 @@ class payableableReport(object):
         self.saveBtn.setAutoExclusive(True)
         self.saveBtn.setObjectName("saveBtn")
         self.cashReportFooter_Layout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        self.nameLabel = QtWidgets.QLabel(parent=self.cashReportFooter)
+        self.nameLabel.setMinimumSize(QtCore.QSize(70, 0))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.nameLabel.setFont(font)
+        self.nameLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.nameLabel.setObjectName("nameLabel")
+        self.cashReportFooter_Layout.addWidget(self.nameLabel, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+        self.amount = QtWidgets.QLabel(parent=self.cashReportFooter)
+        self.amount.setMinimumSize(QtCore.QSize(150, 0))
+        self.amount.setStyleSheet("QLabel{border:1px solid #828282;background-color:white;border-radius:10px}")
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.amount.setFont(font)
+        self.amount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.amount.setObjectName("receivedAmount")
+        self.cashReportFooter_Layout.addWidget(self.amount, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+
         self.printBtn = QtWidgets.QPushButton(parent=self.cashReportFooter)
         self.printBtn.setMinimumSize(QtCore.QSize(90, 30))
         font = QtGui.QFont()
@@ -314,6 +341,7 @@ class payableableReport(object):
         item = self.tableWidget.horizontalHeaderItem(8)
         item.setText(_translate("cashReportMain", "এন্ট্রি বাই"))
         self.saveBtn.setText(_translate("cashReportMain", "সেভ এক্সেল"))
+        self.nameLabel.setText(_translate("cashReportMain", "দেনার রিপোর্ট"))
         self.printBtn.setText(_translate("cashReportMain", "প্রিন্ট"))
 
         # Set current date ****************
@@ -347,6 +375,18 @@ class payableableReport(object):
         self.printBtn.clicked.connect(self.openPrintMemo)
         self.saveBtn.clicked.connect(self.save_xlsx)
 
+        self.update_setting_font()
+        data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def update_setting_font(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        setting_font = QtGui.QFont()
+        setting_font.setFamily(setting.font)
+        setting_font.setPointSize(12)
+        self.sellerFilterInput.setFont(setting_font)
+
+
     def auto_completer(self, QTObject):
         """Refresh the QCompleter with the latest seller names."""
         self.all_name = self.get_all_names()
@@ -368,6 +408,12 @@ class payableableReport(object):
 
     def filter_data(self):
         try:
+            def custom_int(data):
+                try:
+                    data = int(data)
+                    return data
+                except:
+                    return 0
             start_date = self.startDateInput.date().toPyDate()
             start_date = start_date - timedelta(days=7)
             end_date = self.endDateInput.date().toPyDate()
@@ -405,6 +451,8 @@ class payableableReport(object):
                 self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(''))
                 self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(end_date)))
                 self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem('অটো এন্ট্রি'))
+                old_amount = custom_int(self.amount.text())
+                self.amount.setText(str(old_amount+custom_int(cost_amount)))
 
             # after entry cost initialize for sellers entry
             row = 3
@@ -419,6 +467,8 @@ class payableableReport(object):
                 self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.total_commission)))
                 self.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(seller.date)))
                 self.tableWidget.setItem(row, 8, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
+                old_amount = custom_int(self.amount.text())
+                self.amount.setText(str(old_amount+custom_int(seller.total_receivable)))
                 row += 1
         except Exception as e:
             print(f"seller Profile Error in filter_data: {e}")
@@ -430,6 +480,10 @@ class payableableReport(object):
             self.print_window = QtWidgets.QWidget()
             self.ui = Ui_Form()
             self.ui.setupUi(self.print_window)
+
+            # additional data
+            self.ui.name.setText(self.nameLabel.text())
+            self.ui.totalTaka.setText(self.amount.text())
 
             # Table Update
             column_count = self.tableWidget.columnCount()
@@ -451,16 +505,21 @@ class payableableReport(object):
                         self.ui.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
 
             self.print_window.show()
-            # Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # printer.setFullPage(True)  # Use the full page
             # Open print dialog
             print_dialog = QtPrintSupport.QPrintDialog(printer)
             if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 painter = QtGui.QPainter(printer)
                 # Render the print window content to the printer
                 painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                # Calculate the scaling factor
+                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+                scale_y = dpi_y / 96.0
+                # Apply scaling to the painter
+                painter.scale(scale_x, scale_y)
                 self.print_window.render(painter)
                 painter.end()
             else:

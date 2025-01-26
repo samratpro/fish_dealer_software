@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>794</width>
-    <height>1239</height>
+    <width>796</width>
+    <height>2000</height>
    </rect>
   </property>
   <property name="font">
@@ -107,7 +107,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>10</pointsize>
+             <pointsize>11</pointsize>
             </font>
            </property>
            <property name="text">
@@ -208,7 +208,7 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="label_8">
+                <widget class="QLabel" name="memoLabel">
                  <property name="maximumSize">
                   <size>
                    <width>100</width>
@@ -218,7 +218,7 @@
                  <property name="font">
                   <font>
                    <family>SutonnyMJ</family>
-                   <pointsize>10</pointsize>
+                   <pointsize>14</pointsize>
                   </font>
                  </property>
                  <property name="styleSheet">
@@ -255,7 +255,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>20</pointsize>
+                <pointsize>22</pointsize>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
@@ -273,11 +273,11 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>11</pointsize>
                </font>
               </property>
               <property name="text">
-               <string>রপ্তানীযোগ্য চিংড়ি ও সাদা মাছ ক্রয়-বিক্রয় এবং কমিশন এজেন্ট।</string>
+               <string>রপ্তানীযোগ্য চিংড়ি ও সাদা মাছ ক্রয় বিক্রয় এবং কমিশন এজেন্ট।</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -328,7 +328,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>SutonnyMJ</family>
-                      <pointsize>11</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                     <property name="text">
@@ -341,7 +341,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>Arial</family>
-                      <pointsize>12</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                    </widget>
@@ -375,7 +375,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>SutonnyMJ</family>
-                      <pointsize>11</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                     <property name="text">
@@ -388,7 +388,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>Arial</family>
-                      <pointsize>12</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                    </widget>
@@ -443,7 +443,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>SutonnyMJ</family>
-                      <pointsize>11</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                     <property name="text">
@@ -456,7 +456,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>Arial</family>
-                      <pointsize>12</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                    </widget>
@@ -490,7 +490,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>SutonnyMJ</family>
-                      <pointsize>11</pointsize>
+                      <pointsize>15</pointsize>
                      </font>
                     </property>
                     <property name="text">
@@ -503,7 +503,7 @@ border-radius:5px;padding:3px 8px;</string>
                     <property name="font">
                      <font>
                       <family>Arial</family>
-                      <pointsize>12</pointsize>
+                      <pointsize>14</pointsize>
                      </font>
                     </property>
                    </widget>
@@ -519,10 +519,22 @@ border-radius:5px;padding:3px 8px;</string>
          </item>
          <item>
           <widget class="QWidget" name="rightheader" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>240</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>230</width>
+             <width>240</width>
              <height>16777215</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>240</width>
+             <height>0</height>
             </size>
            </property>
            <property name="styleSheet">
@@ -549,7 +561,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>11</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -558,7 +570,7 @@ color: rgb(255, 255, 255);
 border-radius:5px;padding:3px 8px;</string>
               </property>
               <property name="text">
-               <string>প্রোঃ- এস.এম. বদিউজ্জামান</string>
+               <string>প্রোঃ- এস. এম. বদিউজ্জামান</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -570,7 +582,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -589,7 +601,9 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>11</pointsize>
+                <weight>50</weight>
+                <bold>false</bold>
                </font>
               </property>
               <property name="styleSheet">
@@ -598,7 +612,7 @@ color: rgb(255, 255, 255);
 border-radius:5px;padding:3px 8px;</string>
               </property>
               <property name="text">
-               <string>পরিচালনায়: শাহ আলম সরদার ( নিলু )</string>
+               <string>পরিচালনায় :  শাহ আলম সরদার ( নিলু )</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -610,7 +624,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="text">
@@ -626,7 +640,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>11</pointsize>
                </font>
               </property>
               <property name="styleSheet">
@@ -635,7 +649,7 @@ color: rgb(255, 255, 255);
 border-radius:5px;padding:3px 8px;</string>
               </property>
               <property name="text">
-               <string>ম্যানেজার: ০১৩০৪৬৭৭৯৫৭</string>
+               <string>ম্যানেজার :  ০১৩০৪৬৭৭৯৫৭</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -647,12 +661,12 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>11</pointsize>
                </font>
               </property>
               <property name="text">
                <string>সাইন বোর্ড বাজার মৎস্য আড়ৎ
-(বাগেরহাট রোড ), কচুয়া, বাগেরহাট ।</string>
+(বাগেরহাট রোড), কচুয়া, বাগেরহাট।</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -710,7 +724,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
             <property name="foreground">
@@ -730,7 +744,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
            </column>
@@ -741,7 +755,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>11</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
            </column>
@@ -752,7 +766,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>11</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
            </column>
@@ -763,7 +777,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>11</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
            </column>
@@ -774,7 +788,7 @@ border-radius:5px;padding:3px 8px;</string>
             <property name="font">
              <font>
               <family>SutonnyMJ</family>
-              <pointsize>12</pointsize>
+              <pointsize>13</pointsize>
              </font>
             </property>
            </column>
@@ -827,7 +841,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -843,7 +857,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -880,7 +894,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -896,7 +910,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -933,7 +947,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -949,7 +963,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -986,7 +1000,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1002,7 +1016,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -1045,7 +1059,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1061,7 +1075,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -1098,7 +1112,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1114,7 +1128,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1130,7 +1144,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>11</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1185,7 +1199,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1198,7 +1212,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -1208,7 +1222,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -1260,7 +1274,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">
@@ -1273,7 +1287,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>Arial</family>
-                <pointsize>12</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
              </widget>
@@ -1316,8 +1330,11 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>14</pointsize>
                </font>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
               </property>
               <property name="text">
                <string>স্বাক্ষর</string>
@@ -1329,13 +1346,14 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>12</pointsize>
                </font>
               </property>
               <property name="styleSheet">
                <string notr="true">background-color: rgb(111, 89, 125);
 color: rgb(255, 255, 255);
-border-radius:5px;padding:3px 8px;</string>
+border-radius:5px;padding:3px 8px;
+margin-top:20px;</string>
               </property>
               <property name="text">
                <string>নিজে নামাজ পড়ুন অন্যকে উৎসাহিত করুন</string>
@@ -1347,7 +1365,7 @@ border-radius:5px;padding:3px 8px;</string>
               <property name="font">
                <font>
                 <family>SutonnyMJ</family>
-                <pointsize>10</pointsize>
+                <pointsize>14</pointsize>
                </font>
               </property>
               <property name="text">

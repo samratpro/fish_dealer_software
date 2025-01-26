@@ -10,7 +10,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget
 from datetime import datetime, timedelta
 from PyQt6.QtCore import Qt, QDate
-from models import SellerProfileModel
+from models import SellerProfileModel, SettingModel
 from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
@@ -54,6 +54,17 @@ class commissionReportPage(QWidget):
         self.ui.printBtn.clicked.connect(self.openPrintMemo)
         self.ui.saveBtn.clicked.connect(self.save_xlsx)
 
+        self.update_setting_font()
+        data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def update_setting_font(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        setting_font = QtGui.QFont()
+        setting_font.setFamily(setting.font)
+        setting_font.setPointSize(12)
+        self.ui.sellerFilterInput.setFont(setting_font)
+
     def setup_database(self):
         from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker, declarative_base
@@ -82,6 +93,12 @@ class commissionReportPage(QWidget):
 
     def filter_data(self):
         try:
+            def custom_int(data):
+                try:
+                    data = int(data)
+                    return data
+                except:
+                    return 0
             start_date = self.ui.startDateInput.date().toPyDate()
             start_date = start_date - timedelta(days=7)
             end_date = self.ui.endDateInput.date().toPyDate()
@@ -104,8 +121,8 @@ class commissionReportPage(QWidget):
                 self.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(seller.total_commission)))
                 self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.date)))
                 self.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
-                old_amount = int(self.ui.amount.text())
-                self.ui.amount.setText(str(old_amount+int(seller.total_commission)))
+                old_amount = custom_int(self.ui.amount.text())
+                self.ui.amount.setText(str(old_amount+custom_int(seller.total_commission)))
                 row += 1
 
         except Exception as e:
@@ -118,6 +135,10 @@ class commissionReportPage(QWidget):
             self.print_window = QtWidgets.QWidget()
             self.ui_form = Ui_Form()
             self.ui_form.setupUi(self.print_window)
+
+            # additional data
+            self.ui_form.name.setText(self.ui.nameLabel.text())
+            self.ui_form.totalTaka.setText(self.ui.amount.text())
 
             # Table Update
             column_count = self.ui.tableWidget.columnCount()
@@ -139,16 +160,21 @@ class commissionReportPage(QWidget):
                         self.ui_form.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
 
             self.print_window.show()
-            # Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # printer.setFullPage(True)  # Use the full page
             # Open print dialog
             print_dialog = QtPrintSupport.QPrintDialog(printer)
             if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 painter = QtGui.QPainter(printer)
                 # Render the print window content to the printer
                 painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                # Calculate the scaling factor
+                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+                scale_y = dpi_y / 96.0
+                # Apply scaling to the painter
+                painter.scale(scale_x, scale_y)
                 self.print_window.render(painter)
                 painter.end()
             else:

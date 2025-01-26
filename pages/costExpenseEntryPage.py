@@ -57,6 +57,18 @@ class costExpensePage(QWidget):
         self.ui.saveBtn.clicked.connect(self.save_xlsx)
 
         self.auto_completer()
+
+        self.update_setting_font()
+        data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def update_setting_font(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        setting_font = QtGui.QFont()
+        setting_font.setFamily(setting.font)
+        setting_font.setPointSize(12)
+        self.ui.filterNameInput.setFont(setting_font)
+
     def auto_completer(self):
         """Refresh the QCompleter with the latest seller names."""
         self.all_name = self.get_all_names()
@@ -470,16 +482,21 @@ class costExpensePage(QWidget):
                         self.ui_form.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
 
             self.print_window.show()
-            # Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # printer.setFullPage(True)  # Use the full page
             # Open print dialog
             print_dialog = QtPrintSupport.QPrintDialog(printer)
             if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 painter = QtGui.QPainter(printer)
                 # Render the print window content to the printer
                 painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                # Calculate the scaling factor
+                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+                scale_y = dpi_y / 96.0
+                # Apply scaling to the painter
+                painter.scale(scale_x, scale_y)
                 self.print_window.render(painter)
                 painter.end()
             else:

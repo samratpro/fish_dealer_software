@@ -14,10 +14,6 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from features.data_save_signals import data_save_signals
 from models import BuyerProfileModel, SettingModel
 from datetime import datetime
-import sys
-
-# from pathlib import Path
-# sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 class Ui_AddBuyer(object):
     def setupUi(self, AddBuyer, username):
@@ -250,6 +246,18 @@ class Ui_AddBuyer(object):
         self.dhol_amount = ''
         self.dhol_amount_calculation()
         data_save_signals.data_saved.connect(self.dhol_amount_calculation)
+
+        self.update_setting_font()
+        data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def update_setting_font(self):
+        session = self.Session()
+        setting = session.query(SettingModel).first()
+        setting_font = QtGui.QFont()
+        setting_font.setFamily(setting.font)
+        setting_font.setPointSize(12)
+        self.buyerName.setFont(setting_font)
+        self.fishName.setFont(setting_font)
 
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""

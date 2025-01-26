@@ -213,6 +213,33 @@ class SellerProfileView(QtWidgets.QWidget):
             self.saveBtn.setAutoExclusive(True)
             self.saveBtn.setObjectName("saveBtn")
             self.cashReportFooter_Layout.addWidget(self.saveBtn, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+            self.nameLabel = QtWidgets.QLabel(parent=self.cashReportFooter)
+            self.nameLabel.setMinimumSize(QtCore.QSize(70, 0))
+            font = QtGui.QFont()
+            font.setFamily("Arial")
+            font.setPointSize(12)
+            font.setBold(True)
+            font.setWeight(75)
+            self.nameLabel.setFont(font)
+            self.nameLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            self.nameLabel.setObjectName("nameLabel")
+            self.cashReportFooter_Layout.addWidget(self.nameLabel, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+            self.amount = QtWidgets.QLabel(parent=self.cashReportFooter)
+            self.amount.setMinimumSize(QtCore.QSize(150, 0))
+            self.amount.setStyleSheet("QLabel{border:1px solid #828282;background-color:white;border-radius:10px}")
+            font = QtGui.QFont()
+            font.setFamily("Arial")
+            font.setPointSize(12)
+            font.setBold(True)
+            font.setWeight(75)
+            self.amount.setFont(font)
+            self.amount.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            self.amount.setObjectName("receivedAmount")
+            self.cashReportFooter_Layout.addWidget(self.amount, 0, QtCore.Qt.AlignmentFlag.AlignLeft)
+
+
             self.printBtn = QtWidgets.QPushButton(parent=self.cashReportFooter)
             self.printBtn.setMinimumSize(QtCore.QSize(90, 30))
             font = QtGui.QFont()
@@ -282,12 +309,21 @@ class SellerProfileView(QtWidgets.QWidget):
         self.filter_data()
         self.filterBtn.clicked.connect(self.filter_data)
 
+        self.nameLabel.setText(self.seller_name)
+
         self.printBtn.clicked.connect(self.openPrintMemo)
         self.saveBtn.clicked.connect(self.save_xlsx)
 
 
     def filter_data(self):
         try:
+            def custom_int(data):
+                try:
+                    data = int(data)
+                    return data
+                except:
+                    return 0
+
             start_date = self.startDateInput.date().toPyDate()
             end_date = self.endDateInput.date().toPyDate()
 
@@ -315,6 +351,8 @@ class SellerProfileView(QtWidgets.QWidget):
                 self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.commission_amount)))
                 self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.total_cost_amount)))
                 self.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
+                old_amount = custom_int(self.amount.text())
+                self.amount.setText(str(old_amount+custom_int(seller.sell_amount)))
                 row += 1
         except Exception as e:
             print(f"seller Profile View Error in filter_data: {e}")
@@ -327,6 +365,10 @@ class SellerProfileView(QtWidgets.QWidget):
             self.print_window = QtWidgets.QWidget()
             self.ui = Ui_Form()
             self.ui.setupUi(self.print_window)
+
+            # additional data
+            self.ui.name.setText(self.nameLabel.text())
+            self.ui.totalTaka.setText(self.amount.text())
 
             # Table Update
             column_count = self.tableWidget.columnCount()
@@ -348,16 +390,21 @@ class SellerProfileView(QtWidgets.QWidget):
                         self.ui.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
 
             self.print_window.show()
-            # Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.ScreenResolution)
+            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # printer.setFullPage(True)  # Use the full page
             # Open print dialog
             print_dialog = QtPrintSupport.QPrintDialog(printer)
             if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
                 painter = QtGui.QPainter(printer)
                 # Render the print window content to the printer
                 painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
+                # Calculate the scaling factor
+                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+                scale_y = dpi_y / 96.0
+                # Apply scaling to the painter
+                painter.scale(scale_x, scale_y)
                 self.print_window.render(painter)
                 painter.end()
             else:
