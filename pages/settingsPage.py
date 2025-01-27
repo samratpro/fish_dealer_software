@@ -289,6 +289,7 @@ class settingsPage(QWidget):
 
             # Hide the progress bar after completion
             self.ui.restoreprogressBar.setVisible(False)
+            self.ui.fileChosenLabel.setText(":  কোনও ফাইল নেওয়া হয়নি...")
 
             # Show a success message
             QtWidgets.QMessageBox.information(self, "Restore", "Restore completed successfully!")
