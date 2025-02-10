@@ -16,7 +16,7 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         bangla_font_path = "font/SutonnyMJ.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font_low = QFont(custom_font_family, 12)  # Font size 14
+        custom_font_low = QFont(custom_font_family, 11)  # Font size 14
         custom_font_high = QFont(custom_font_family, 22)  # Font size 14
         custom_font = QFont(custom_font_family, 14)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
