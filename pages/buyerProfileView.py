@@ -12,10 +12,11 @@ from datetime import datetime
 from PyQt6.QtCore import QDate
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QIcon
-from features.printmemo import Ui_Form
+from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog
 import xlsxwriter
+from PyQt6.QtGui import QFont, QFontDatabase
 
 class BuyerProfileView(QtWidgets.QWidget):
 
@@ -27,7 +28,7 @@ class BuyerProfileView(QtWidgets.QWidget):
 
     def setupUi(self):
         try:
-            self.setWindowTitle(f"Transactions for {self.buyer_name}")
+            self.setWindowTitle(f"{self.buyer_name} - এর জন্য লেনদেন")
             self.setWindowIcon(QIcon("images/logo.png"))
             self.resize(935, 570)
             self.setMinimumSize(QtCore.QSize(300, 0))
@@ -322,6 +323,24 @@ class BuyerProfileView(QtWidgets.QWidget):
 
         self.nameLabel.setText(self.buyer_name)
 
+        self.apply_bangla_font()
+
+    def apply_bangla_font(self):
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.startDateLabel.setFont(custom_font)
+        self.endDateLabel.setFont(custom_font)
+        self.filterLabel.setFont(custom_font)
+        self.filterBtn.setFont(custom_font)
+        self.saveBtn.setFont(custom_font)
+        self.printBtn.setFont(custom_font)
+        self.nameLabel.setFont(custom_font)
+        self.setFont(custom_font)
+        self.amount.setFont(custom_font)
+
     def filter_data(self):
         try:
             def custom_int(data):
@@ -370,65 +389,83 @@ class BuyerProfileView(QtWidgets.QWidget):
 
     def openPrintMemo(self):
         try:
-            self.print_window = QtWidgets.QWidget()
-            self.ui = Ui_Form()
-            self.ui.setupUi(self.print_window)
+            # ✅ Create the print window
+            self.ui_print_form = Print_Form()
+            self.ui_print_form.ui.memoLabel.setText("প্রোফাইল")
+            self.ui_print_form.ui.name.setText(str(self.nameLabel.text()))
+            self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
+            self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
 
-            # additional data
-            self.ui.name.setText(self.nameLabel.text())
-            self.ui.totalTaka.setText(self.amount.text())
-
-            # Table Update
+            # ✅ Define columns to exclude
+            excluded_columns = {0, 3, 8, 9}
             column_count = self.tableWidget.columnCount()
             row_count = self.tableWidget.rowCount()
-            # Skip column 1 and the last column
-            headers = [
-                self.tableWidget.horizontalHeaderItem(i).text()
-                for i in range(column_count) if i != 1 and i != column_count - 1
-            ]
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
+                       i not in excluded_columns]
 
-            # Set up the table headers in the print window
-            self.ui.tableWidget.verticalHeader().setVisible(False)
-            self.ui.tableWidget.setColumnCount(len(headers))  # Adjust column count for skipped columns
-            self.ui.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
+            self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
+            self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.setRowCount(row_count)
 
-            # Insert rows and data into the print window's table
-            self.ui.tableWidget.setRowCount(row_count)
+            # ✅ Copy table data excluding specified columns
             for row_idx in range(row_count):
-                col_offset = 0  # To track skipped columns
+                new_col_idx = 0
                 for col_idx in range(column_count):
-                    if col_idx == 1 or col_idx == column_count - 1:  # Skip column 1 and last column
-                        col_offset += 1
-                        continue
-
+                    if col_idx in excluded_columns:
+                        continue  # Skip excluded columns
                     item = self.tableWidget.item(row_idx, col_idx)
                     if item:
-                        self.ui.tableWidget.setItem(
-                            row_idx, col_idx - col_offset, QtWidgets.QTableWidgetItem(item.text())
-                        )
+                        self.ui_print_form.ui.tableWidget.setItem(row_idx, new_col_idx,
+                                                                  QtWidgets.QTableWidgetItem(item.text()))
+                    new_col_idx += 1
 
-            self.print_window.show()
+            # ✅ Show the print window
+            self.ui_print_form.show()
+
+            # ✅ Set up the printer
             printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # Open print dialog
-            print_dialog = QtPrintSupport.QPrintDialog(printer)
-            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                painter = QtGui.QPainter(printer)
-                # Render the print window content to the printer
-                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
-                # Calculate the scaling factor
-                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
-                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
-                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
-                scale_y = dpi_y / 96.0
-                # Apply scaling to the painter
-                painter.scale(scale_x, scale_y)
-                self.print_window.render(painter)
-                painter.end()
-            else:
-                print("Print dialog canceled")
+
+            # ✅ Open print preview dialog
+            preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
+            preview_dialog.paintRequested.connect(self.renderPrintPreview)  # Connect to the custom render function
+            preview_dialog.exec()
+
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def renderPrintPreview(self, printer):
+        """
+        Custom function to render the print window content for the preview.
+        """
+        try:
+            # ✅ Use QPainter to render the print content
+            painter = QtGui.QPainter(printer)
+
+            # ✅ Improve rendering quality
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+
+            # ✅ Calculate the scaling factor
+            dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+            dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+            scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+            scale_y = dpi_y / 96.0
+
+            # ✅ Apply scaling to the painter
+            painter.scale(scale_x, scale_y)
+
+            # ✅ Render the print window content
+            self.ui_print_form.render(painter)
+
+            # ✅ Finish painting
+            painter.end()
+
+        except Exception as e:
+            print(f"An error occurred during print preview: {e}")
+
+
+
 
     def save_xlsx(self):
         try:

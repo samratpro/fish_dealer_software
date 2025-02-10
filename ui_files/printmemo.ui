@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>796</width>
+    <width>695</width>
     <height>2000</height>
    </rect>
   </property>
@@ -20,7 +20,8 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QLineEdit{border:1px solid #C3D1DF;border-radius:8px;pdding:5px 15px}
+   <string notr="true">#Form{border:1px solid #2D221B; padding:10px; margin:10px }
+QLineEdit{border:1px solid #C3D1DF;border-radius:8px;pdding:5px 15px}
 *{background-color:white;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -28,16 +29,16 @@
     <number>0</number>
    </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>10</number>
    </property>
    <item>
     <widget class="QWidget" name="widget" native="true">
@@ -211,7 +212,7 @@
                 <widget class="QLabel" name="memoLabel">
                  <property name="maximumSize">
                   <size>
-                   <width>100</width>
+                   <width>250</width>
                    <height>20</height>
                   </size>
                  </property>

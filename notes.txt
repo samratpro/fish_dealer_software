@@ -1,6 +1,6 @@
 1. QDate
 2. table operation, row vertical header disable, tablewidget,, itemChanged event,, set size, font, css, vartical header disabe
-3. autoCompleted text, with other filled update accroding to autoCompleted, update Completer
+3. autoCompleted text, with other filled update accroding to autoCompleted, update Completer, ((cost_entry page))
 4. Page connection
 5. authentication - login signal, username pass
 6. DB Query
@@ -23,7 +23,11 @@
 27. xlsxwriter
 28. Font, dynamic font add in table data
 29. Backup
-30. Print memo, update memo data also skipp rows
+30. Print memo, update memo data also skipp rows (width : 695, height : 2000)
+31. custom font with file, combofont,
+32. auto increment
+33. make capital in add buyer form
+34. bangla font from models.py
 
 
 

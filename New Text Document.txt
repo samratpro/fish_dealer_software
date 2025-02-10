@@ -1,26 +1,13 @@
-1. Bangla Typing, And Bangla Font
-2. Mobile - Address
-3. Delete by Admin only
-4. Admin can create User with access
-5. Arot Entry - Name filter
-6. Income statement seller profile
-7. Auto suggestion - mosque amount, seller mobile, address, buyer mobile
-8. Save data, Print, Backup
+Home Page ---- Done
+vouchar design, number missing, seller name --
+font ---------- Done
+table heading --------- No need fix
+other cost to office cost, report  and details  -------------
+printer ------ Done
+auto vouchar ----- Done
+Load paying = ------- Done
+Loan rececing  --------- Done
 
-
-
-
-0 : seller
-1 : buyer 
-2 : munafa uttolon
-3 : muldhon joma
-4 : loan get
-5 : loan paid
-6 : salary
-7 : others cost
-8 : mosque
-9 : somiti
-10 : others_vouchar
 
 
 

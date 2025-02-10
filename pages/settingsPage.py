@@ -57,7 +57,7 @@ class settingsPage(QWidget):
                 self.ui.password.setText(user.password)
                 self.ui.commission.setText(str(setting.commission))
                 self.ui.dhol.setText(str(setting.dhol))
-                self.ui.fontComboBox.setCurrentFont(QtGui.QFont(setting.font))
+                self.ui.fontSelect.setCurrentText(setting.font)
             else:
                 QtWidgets.QMessageBox.warning(None, "Error", f"সেটিংস পাওয়া যায়নি")
         except SQLAlchemyError as e:
@@ -84,7 +84,7 @@ class settingsPage(QWidget):
         password = self.ui.password.text().strip()
         commision = self.ui.commission.text().strip()
         dhol = self.ui.dhol.text().strip()
-        font = self.ui.fontComboBox.currentFont().family().strip()
+        font = self.ui.fontSelect.currentText().strip()
 
         # Check if any field is empty
         if not username or not commision or not dhol or not password or not font:

@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="icons">
+    <file>images/taka.png</file>
     <file>images/capital.png</file>
     <file>images/delete.png</file>
     <file>images/down-arrow.png</file>

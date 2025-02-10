@@ -6,13 +6,15 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
 from ui.costExpenseEntryPage_ui import Ui_costExpenseMain
 from models import *
-from forms.cost_entry import Ui_CostEntry
+from forms.cost_entry import CostEntry_Form
 from datetime import datetime
 from PyQt6.QtCore import QDate
-from features.printmemo import Ui_Form
-from PyQt6 import QtWidgets, QtGui, QtPrintSupport
+from features.printmemo import Print_Form
+from PyQt6 import QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog
 import xlsxwriter
+from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
+
 
 class costExpensePage(QWidget):
     def __init__(self, username):
@@ -24,9 +26,8 @@ class costExpensePage(QWidget):
         self.setup_ui()
         self.username = username
         session = self.Session()
-        user = session.query(UserModel).filter(UserModel.username==self.username).one()
+        user = session.query(UserModel).filter(UserModel.username == self.username).one()
         self.user_role = user.role
-
 
     def setup_database(self):
         self.Base = declarative_base()
@@ -36,8 +37,8 @@ class costExpensePage(QWidget):
 
     def setup_ui(self):
         # Set current date ****************
-        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(165)
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(165)
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(140)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(140)
         self.ui.tableWidget.verticalHeader().setVisible(False)
         self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
         self.ui.endDateInput.setDisplayFormat("dd/MM/yyyy")
@@ -58,16 +59,54 @@ class costExpensePage(QWidget):
 
         self.auto_completer()
 
+        self.apply_bangla_font()
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def apply_bangla_font(self):
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.startDateLabel.setFont(custom_font)
+        self.ui.endDateLabel.setFont(custom_font)
+        self.ui.filterLabel.setFont(custom_font)
+        self.ui.filterBtn.setFont(custom_font)
+        self.ui.saveBtn.setFont(custom_font)
+        self.ui.printBtn.setFont(custom_font)
+        self.ui.accountNameLabel.setFont(custom_font)
+        self.ui.accountNameSelect.setFont(custom_font)
+        self.ui.filterNameLabel.setFont(custom_font)
+        self.ui.receivedLabel.setFont(custom_font)
+        self.ui.receivedAmount.setFont(custom_font)
+        self.ui.paidLable.setFont(custom_font)
+        self.ui.paidAmount.setFont(custom_font)
+
+    # work with QFontComboBox
+    # def update_setting_font(self):
+    #     session = self.Session()
+    #     setting = session.query(SettingModel).first()
+    #     setting_font = QtGui.QFont()
+    #     setting_font.setFamily(setting.font)
+    #     setting_font.setPointSize(12)
+    #     self.ui.filterNameInput.setFont(setting_font)
 
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        setting_font = QtGui.QFont()
-        setting_font.setFamily(setting.font)
-        setting_font.setPointSize(12)
-        self.ui.filterNameInput.setFont(setting_font)
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        english_font_path = "font/arial.ttf"
+        # Load the appropriate font
+        if setting.font == "Bangla":
+            font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        else:
+            font_id = QFontDatabase.addApplicationFont(english_font_path)
+        # Retrieve the font family name
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        # Apply the custom font
+        custom_font = QFont(custom_font_family, 12)  # Font size 12
+        self.ui.filterNameInput.setFont(custom_font)
 
     def auto_completer(self):
         """Refresh the QCompleter with the latest seller names."""
@@ -75,10 +114,11 @@ class costExpensePage(QWidget):
         self.completer = QtWidgets.QCompleter(self.all_name, self)
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.ui.filterNameInput.setCompleter(self.completer)
+
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        name_entries = session.query(DealerModel).all()     # change Model name
+        name_entries = session.query(DealerModel).all()  # change Model name
         session.close()
         return [entry_name.name for entry_name in name_entries]
 
@@ -86,7 +126,6 @@ class costExpensePage(QWidget):
         element.textChanged.disconnect()
         element.setText(element.text().title())
         element.textChanged.connect(lambda: self.make_capital(element))
-
 
     def filter_data(self):
         try:
@@ -96,7 +135,8 @@ class costExpensePage(QWidget):
                           2: 'get_paid_from_buyer', 3: 'capital_withdrawal',
                           4: 'capital_deposit', 5: 'borrowing',
                           6: 'loan_repayment', 7: 'salary',
-                          8: 'other_cost', 9: 'mosque', 10: 'somiti', 11: 'other_cost_voucher'
+                          8: 'other_cost', 9: 'mosque', 10: 'somiti', 11: 'other_cost_voucher',
+                          12: "giving_loan", 13: "receiving_loan"
                           }.get(entry_index, 'all_accounting')
             start_date = self.ui.startDateInput.date().toPyDate()
             end_date = self.ui.endDateInput.date().toPyDate()
@@ -122,8 +162,10 @@ class costExpensePage(QWidget):
                 entry_name = {'paid_to_seller': "বিক্রেতা কে প্রদান", 'get_paid_from_buyer': "ক্রেতা থেকে গ্রহণ",
                               'capital_withdrawal': "মুনাফা উত্তোলন", 'capital_deposit': "মূলধন জমা",
                               'borrowing': "ঋণ গ্রহণ", 'loan_repayment': "ঋণ পরিশোধ",
-                              'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অন্যান্য খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
-                              'somiti': 'সমিতি', 'other_cost_voucher': 'অন্যান্য(ভাউচার)'
+                              'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অফিস খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
+                              'somiti': 'সমিতি', 'other_cost_voucher': 'অন্যান্য খরচ(ভাউচার)',
+                              'giving_loan': 'লোন প্রদান',
+                              'receiving_loan': 'পাওনা ঋণ'
                               }.get(entry.entry_name.strip(), "অন্যান্য খরচ")
                 self.ui.tableWidget.insertRow(row)
                 self.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(entry.id)))
@@ -132,7 +174,8 @@ class costExpensePage(QWidget):
                 self.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(entry.name)))
                 self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.receiving_amount)))
                 self.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(entry.paying_amount)))
-                self.ui.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
+                self.ui.tableWidget.setItem(row, 6, QtWidgets.QTableWidgetItem(str(entry.description)))
+                self.ui.tableWidget.setItem(row, 7, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
 
                 delete_button = QtWidgets.QPushButton("")
                 delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
@@ -141,7 +184,7 @@ class costExpensePage(QWidget):
                 delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-                self.ui.tableWidget.setCellWidget(row, 7, delete_button)
+                self.ui.tableWidget.setCellWidget(row, 8, delete_button)
 
                 old_receivedAmount = int(self.ui.receivedAmount.text())
                 self.ui.receivedAmount.setText(str(old_receivedAmount + int(entry.receiving_amount)))
@@ -170,6 +213,7 @@ class costExpensePage(QWidget):
                 session = self.Session()
                 entry = session.query(DealerModel).filter(DealerModel.id == entry_id).one()
                 self.update_capital(entry.paying_amount, entry.receiving_amount)
+
                 if entry.entry_name == "paid_to_seller":
                     seller = session.query(SellerProfileModel).filter_by(seller_name=entry.name).first()
                     seller.total_get_paid_amount -= entry.paying_amount
@@ -182,6 +226,11 @@ class costExpensePage(QWidget):
                     self.update_loan_model(entry.name, entry.receiving_amount, 'sub')
                 elif entry.entry_name == "loan_repayment":  # loan_repayment
                     self.update_loan_model(entry.name, entry.paying_amount, 'add')
+                elif entry.entry_name == "giving_loan":  # giving_loan
+                    self.update_paying_loan_model(entry.name, entry.paying_amount, 'sub')  # Fix: Use paying_amount
+                elif entry.entry_name == "receiving_loan":  # receiving_loan
+                    self.update_paying_loan_model(entry.name, entry.receiving_amount,
+                                                  'add')  # Fix: Use receiving_amount
                 elif entry.entry_name == "mosque":  # mosque
                     cost = session.query(CostModel).first()
                     cost.mosque += entry.paying_amount
@@ -194,9 +243,13 @@ class costExpensePage(QWidget):
                     cost = session.query(CostModel).first()
                     cost.other_cost += entry.paying_amount
                     cost.other_cost_paid -= entry.paying_amount
+
                 session.query(DealerModel).filter(DealerModel.id == entry_id).delete()
                 session.commit()
                 self.ui.tableWidget.removeRow(row)
+                self.filter_data()
+                data_save_signals.data_saved.emit()  # send signal after save data
+
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "Delete Error", f"An error occurred while deleting the row: {e}")
         data_save_signals.data_saved.emit()
@@ -217,6 +270,24 @@ class costExpensePage(QWidget):
             payer_name.amount += amount
         session.commit()
 
+    def update_paying_loan_model(self, name, amount, param):
+        session = self.Session()
+        try:
+            payer_name = session.query(PayingLoanModel).filter_by(loan_receiver_name=name).first()
+            if payer_name:
+                if param == 'sub':
+                    payer_name.amount -= amount  # Subtract the amount
+                else:
+                    payer_name.amount += amount  # Add the amount
+                session.commit()
+            else:
+                print(f"No PayingLoanModel entry found for receiver: {name}")
+        except Exception as e:
+            print(f"Error updating PayingLoanModel: {e}")
+            session.rollback()
+        finally:
+            session.close()
+
     def cell_edited(self, row, column):
         # Reconnect the delete button after a cell is edited
         if column < 6:  # Only do this for data columns, not the button column
@@ -235,29 +306,36 @@ class costExpensePage(QWidget):
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
 
     def open_entry_form(self):
-        self.dialog = QtWidgets.QDialog()
-        self.ui_form = Ui_CostEntry()
-        self.ui_form.setupUi(self.dialog)
-        self.ui_form.addBtn.clicked.connect(self.accept_information)
-        self.ui_form.cancelBtn.clicked.connect(self.dialog.close)
-        self.dialog.exec()
+        try:
+            self.cost_form = CostEntry_Form(self.username)
+            self.cost_form.setWindowTitle("এন্ট্রি ফর্ম")
+            self.cost_form.ui.addBtn.clicked.connect(self.accept_information)
+            self.cost_form.ui.cancelBtn.clicked.connect(self.cost_form.close)
+            self.cost_form.exec()
+        except Exception as e:
+            print(f"Error opening cost entry form: {e}")
+            self.show_error_message("Failed to open the cost entry form.")
 
     def accept_information(self):
         try:
             session = self.Session()
-            entry_index = self.ui_form.entryName.currentIndex()
+            entry_index = self.cost_form.ui.entryName.currentIndex()
             entry_name = {
                 0: 'paid_to_seller', 1: 'get_paid_from_buyer',
                 2: 'capital_withdrawal', 3: 'capital_deposit',
                 4: 'borrowing', 5: 'loan_repayment',
-                6: 'salary', 7: 'other_cost', 8: 'mosque', 9: 'somiti', 10: 'other_cost_voucher'
+                6: 'salary', 7: 'other_cost', 8: 'mosque', 9: 'somiti', 10: 'other_cost_voucher', 11: 'giving_loan',
+                12: 'receiving_loan'
             }.get(entry_index, 'other_cost')
 
-            payerName = self.ui_form.payerName.text().strip()
-            receiverName = self.ui_form.receiverName.text().strip()
-            entry_date = self.ui_form.entryDate.date().toPyDate()
-            amount = self.ui_form.amount.text().strip()
+            payerName = self.cost_form.ui.payerName.text().strip()
+            receiverName = self.cost_form.ui.receiverName.text().strip()
+            entry_date = self.cost_form.ui.entryDate.date().toPyDate()
+            amount = self.cost_form.ui.amount.text().strip()
             entry_by = self.entry_by  # Replace with dynamic user input if necessary
+            description = self.cost_form.ui.description.text().strip()
+            if not description:
+                description = " "
 
             # Define a mapping for required fields per entry_name
             required_fields = {
@@ -272,6 +350,8 @@ class costExpensePage(QWidget):
                 'mosque': {'must_fill': 'receiverName', 'must_be_empty': 'payerName'},
                 'somiti': {'must_fill': 'receiverName', 'must_be_empty': 'payerName'},
                 'other_cost_voucher': {'must_fill': 'receiverName', 'must_be_empty': 'payerName'},
+                'giving_loan': {'must_fill': 'receiverName', 'must_be_empty': 'payerName'},
+                'receiving_loan': {'must_fill': 'payerName', 'must_be_empty': 'receiverName'},
             }
 
             # Validate mandatory fields
@@ -323,7 +403,8 @@ class costExpensePage(QWidget):
                     name=receiverName,
                     date=entry_date,
                     paying_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 # Capital
@@ -345,7 +426,8 @@ class costExpensePage(QWidget):
                     name=payerName,
                     date=entry_date,
                     receiving_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 # capital
@@ -359,7 +441,8 @@ class costExpensePage(QWidget):
                     name=receiverName,
                     date=entry_date,
                     paying_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 # capital
@@ -374,7 +457,8 @@ class costExpensePage(QWidget):
                     name=payerName,
                     date=entry_date,
                     receiving_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 # capital
@@ -388,7 +472,8 @@ class costExpensePage(QWidget):
                     name=payerName,
                     date=entry_date,
                     receiving_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 accounting = session.query(FinalAccounting).first()
@@ -397,10 +482,12 @@ class costExpensePage(QWidget):
                     loan_payer_name=payerName,
                     date=entry_date,
                     amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(loan_entry)
                 session.commit()
+
 
             elif entry_name == 'loan_repayment':
                 loan_receiver = session.query(LoanModel).filter_by(loan_payer_name=receiverName).first()
@@ -412,11 +499,61 @@ class costExpensePage(QWidget):
                     name=receiverName,
                     date=entry_date,
                     paying_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 accounting = session.query(FinalAccounting).first()
                 accounting.capital -= amount
+                loan_receiver.amount -= amount
+                session.commit()
+
+            elif entry_name == 'giving_loan':
+                loan_receiver = session.query(PayingLoanModel).filter_by(loan_receiver_name=receiverName).first()
+                if loan_receiver:
+                    loan_receiver.amount += amount
+                    session.commit()
+                    print("Loan receiver already exists. Amount added to the existing receiver.")
+                else:
+                    loan_entry = PayingLoanModel(
+                        loan_receiver_name=receiverName,
+                        date=entry_date,
+                        amount=amount,
+                        entry_by=entry_by
+                    )
+                    session.add(loan_entry)
+                    session.commit()
+                    print("New loan receiver created.")
+
+                dealer_entry = DealerModel(
+                    entry_name=entry_name,
+                    name=receiverName,
+                    date=entry_date,
+                    paying_amount=amount,
+                    entry_by=entry_by,
+                    description=description
+                )
+                session.add(dealer_entry)
+                accounting = session.query(FinalAccounting).first()
+                accounting.capital -= amount
+                session.commit()
+
+            elif entry_name == 'receiving_loan':
+                loan_receiver = session.query(PayingLoanModel).filter_by(loan_receiver_name=payerName).first()
+                if not loan_receiver:
+                    self.show_error_message("ঋণ প্রদানকারী কে পাওয়া যায়নি")
+                    return
+                dealer_entry = DealerModel(
+                    entry_name=entry_name,
+                    name=payerName,
+                    date=entry_date,
+                    receiving_amount=amount,
+                    entry_by=entry_by,
+                    description=description
+                )
+                session.add(dealer_entry)
+                accounting = session.query(FinalAccounting).first()
+                accounting.capital += amount
                 loan_receiver.amount -= amount
                 session.commit()
 
@@ -426,7 +563,8 @@ class costExpensePage(QWidget):
                     name=receiverName,
                     date=entry_date,
                     paying_amount=amount,
-                    entry_by=entry_by
+                    entry_by=entry_by,
+                    description=description
                 )
                 session.add(dealer_entry)
                 accounting = session.query(FinalAccounting).first()
@@ -448,61 +586,90 @@ class costExpensePage(QWidget):
                 self.show_error_message("অবৈধ এন্ট্রি নাম।")
                 return
             session.commit()
-            self.dialog.close()
+            self.cost_form.close()
+            data_save_signals.data_saved.emit()
         except Exception as e:
             print(f"Error in seller info: {e}")
             self.show_error_message("ডাটা প্রক্রিয়াকরণের সময় সমস্যা হয়েছে।")
         self.filter_data()
         data_save_signals.data_saved.emit()  # send signal after save data
 
-
     def openPrintMemo(self):
         try:
-            self.print_window = QtWidgets.QWidget()
-            self.ui_form = Ui_Form()
-            self.ui_form.setupUi(self.print_window)
+            # ✅ Create the print window
+            self.ui_print_form = Print_Form()
+            self.ui_print_form.ui.memoLabel.setText("আড়ৎ এর হিসাব")
+            self.ui_print_form.ui.date.setText(str(self.ui.startDateInput.text()))
 
-            # Table Update
+            # ✅ Define columns to exclude
+            excluded_columns = {0, 5}
             column_count = self.ui.tableWidget.columnCount()
-            column_count -= 2
             row_count = self.ui.tableWidget.rowCount()
-            headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+            headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
+                       i not in excluded_columns]
 
-            # Set up the table headers in the print window
-            self.ui_form.tableWidget.verticalHeader().setVisible(False)
-            self.ui_form.tableWidget.setColumnCount(column_count)
-            self.ui_form.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
+            self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
+            self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.setRowCount(row_count)
 
-            # Insert rows and data into the print window's table
-            self.ui_form.tableWidget.setRowCount(row_count)
+            # ✅ Copy table data excluding specified columns
             for row_idx in range(row_count):
+                new_col_idx = 0
                 for col_idx in range(column_count):
+                    if col_idx in excluded_columns:
+                        continue  # Skip excluded columns
                     item = self.ui.tableWidget.item(row_idx, col_idx)
                     if item:
-                        self.ui_form.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
+                        self.ui_print_form.ui.tableWidget.setItem(row_idx, new_col_idx,
+                                                                  QtWidgets.QTableWidgetItem(item.text()))
+                    new_col_idx += 1
 
-            self.print_window.show()
+            # ✅ Show the print window
+            self.ui_print_form.show()
+
+            # ✅ Set up the printer
             printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # Open print dialog
-            print_dialog = QtPrintSupport.QPrintDialog(printer)
-            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                painter = QtGui.QPainter(printer)
-                # Render the print window content to the printer
-                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
-                # Calculate the scaling factor
-                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
-                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
-                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
-                scale_y = dpi_y / 96.0
-                # Apply scaling to the painter
-                painter.scale(scale_x, scale_y)
-                self.print_window.render(painter)
-                painter.end()
-            else:
-                print("Print dialog canceled")
+
+            # ✅ Open print preview dialog
+            preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
+            preview_dialog.paintRequested.connect(self.renderPrintPreview)  # Connect to the custom render function
+            preview_dialog.exec()
+
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def renderPrintPreview(self, printer):
+        """
+        Custom function to render the print window content for the preview.
+        """
+        try:
+            # ✅ Use QPainter to render the print content
+            painter = QtGui.QPainter(printer)
+
+            # ✅ Improve rendering quality
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+
+            # ✅ Calculate the scaling factor
+            dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+            dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+            scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+            scale_y = dpi_y / 96.0
+
+            # ✅ Apply scaling to the painter
+            painter.scale(scale_x, scale_y)
+
+            # ✅ Render the print window content
+            self.ui_print_form.render(painter)
+
+            # ✅ Finish painting
+            painter.end()
+
+        except Exception as e:
+            print(f"An error occurred during print preview: {e}")
+
+
 
     def save_xlsx(self):
         try:
@@ -550,7 +717,7 @@ class costExpensePage(QWidget):
 
     def show_error_message(self, message):
         """Helper method to show error message."""
-        error_dialog = QtWidgets.QMessageBox(self.dialog)
+        error_dialog = QtWidgets.QMessageBox(None)
         error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
         error_dialog.setWindowTitle("Input Error")
         error_dialog.setText(message)

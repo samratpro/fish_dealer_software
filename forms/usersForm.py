@@ -3,6 +3,7 @@ from forms.usersForm_ui import Ui_userForm
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
 from models import *
+from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
 
 class userForm(QDialog):
@@ -13,6 +14,7 @@ class userForm(QDialog):
             self.username = username
             self.setup_database()
             self.setup_ui()
+
 
         def setup_database(self):
             self.Base = declarative_base()

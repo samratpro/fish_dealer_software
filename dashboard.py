@@ -1,6 +1,6 @@
 from PyQt6 import QtWidgets
-from pages.homePage import Ui_HomePageMain
-from pages.memoPage import Ui_memoPageMain
+from pages.homePage import homepage
+from pages.memoPage import memoPage
 from pages.costExpenseEntryPage import costExpensePage
 from pages.buyerProfiles import buyerProfiles
 from pages.sellerProfiles import sellerProfiles
@@ -11,6 +11,7 @@ from pages.loanPage import Ui_LoanPage
 from pages.commissionReportPage import commissionReportPage
 from pages.costReportPage import CostReport
 from pages.usersPage import userPage
+from pages.loanPayingPage import Ui_LoanPayingPage
 from ui.dashboard_ui import Ui_MainWindow
 from PyQt6.QtWidgets import QMainWindow
 
@@ -25,38 +26,32 @@ class DashboardPage(QMainWindow):
 
     def setup_ui(self):
         # ************  Home Page
-        print("debug 2")
-        self.homePageStack = QtWidgets.QWidget()
-        self.homePageStack.setObjectName("Home Page")
-        self.ui.stackedWidget.addWidget(self.homePageStack)
-        self.homePage = Ui_HomePageMain()
-        self.homePage.setupUi(self.homePageStack)
+        print("debug HomePage")
+        self.homePage = homepage()
+        self.ui.stackedWidget.addWidget(self.homePage)
 
         # ***********  Cash Memo page
-        print("debug 3")
-        self.cashMemoStack = QtWidgets.QWidget()
-        self.cashMemoStack.setObjectName("Cash Memo page")
-        self.ui.stackedWidget.addWidget(self.cashMemoStack)
-        self.cashMemoPage = Ui_memoPageMain()
-        self.cashMemoPage.setupUi(self.cashMemoStack, self.username)
+        print("debug CashMemoPage")
+        self.memoPage = memoPage(self.username)
+        self.ui.stackedWidget.addWidget(self.memoPage)
 
         # ************ debit credit page
-        print("debug 4")
+        print("debug CostExpensePage")
         self.costExpensePage = costExpensePage(self.username)
         self.ui.stackedWidget.addWidget(self.costExpensePage)
 
         # ************ buyers profiles
-        print("debug 5")
+        print("debug BuyerProfilePage")
         self.buyerProfilePage = buyerProfiles(self.username)  # Create the buyer profile page instance
         self.ui.stackedWidget.addWidget(self.buyerProfilePage)  # Add it to the stacked widget
 
         # ************ seller profiles
-        print("debug 6")
+        print("debug SellerProfilePage")
         self.sellerProfilePage = sellerProfiles(self.username)  # Create the buyer profile page instance
         self.ui.stackedWidget.addWidget(self.sellerProfilePage)
 
         # ************ receiveable report page
-        print("debug 7")
+        print("debug receivableReportPage")
         self.receivableReportStack = QtWidgets.QWidget()
         self.receivableReportStack.setObjectName("Receivable Report Page")
         self.ui.stackedWidget.addWidget(self.receivableReportStack)
@@ -64,7 +59,7 @@ class DashboardPage(QMainWindow):
         self.receivableReportPage.setupUi(self.receivableReportStack)
 
         # ************ rpayable report page
-        print("debug 8")
+        print("debug payableReportPage")
         self.payableReportStack = QtWidgets.QWidget()
         self.payableReportStack.setObjectName("Payable Report Page")
         self.ui.stackedWidget.addWidget(self.payableReportStack)
@@ -72,33 +67,41 @@ class DashboardPage(QMainWindow):
         self.payableReportPage.setupUi(self.payableReportStack)
 
         # ************ loan page
-        print("debug 9")
+        print("debug loanPage")
         self.loanStack = QtWidgets.QWidget()
         self.loanStack.setObjectName("Loan Report Page")
         self.ui.stackedWidget.addWidget(self.loanStack)
         self.loanPage = Ui_LoanPage()
         self.loanPage.setupUi(self.loanStack)
 
+        # ************ loan page
+        print("debug loanPage")
+        self.loanPayingStack = QtWidgets.QWidget()
+        self.loanPayingStack.setObjectName("Loan Report Page")
+        self.ui.stackedWidget.addWidget(self.loanPayingStack)
+        self.loanPayingPage = Ui_LoanPayingPage()
+        self.loanPayingPage.setupUi(self.loanPayingStack)
+
         # ************ commission page
-        print("debug 10")
+        print("debug commissionReportPage")
         self.commissionReportPage = commissionReportPage()
         self.ui.stackedWidget.addWidget(self.commissionReportPage)
 
         # ************ cost report
-        print("debug 11")
+        print("debug costreportPage")
         self.costreportPage = CostReport()
         self.ui.stackedWidget.addWidget(self.costreportPage)
 
         # ************ Users Pages
-        print("debug 12")
+        print("debug userPage")
         self.userPage = userPage(self.username)
         self.ui.stackedWidget.addWidget(self.userPage)
 
         # ************ settings page
-        print("debug 13")
+        print("debug settingsPage")
         self.settingsPage = settingsPage(self.username)
         self.ui.stackedWidget.addWidget(self.settingsPage)
-        print("debug 14")
+        print("debug after settingsPage")
         # End pages ***********************
         # Page switching
         try:
@@ -126,6 +129,9 @@ class DashboardPage(QMainWindow):
             self.ui.loanBtn.clicked.connect(lambda: self.switch_page("loan_page"))
             self.ui.loanIconBtn.clicked.connect(lambda: self.switch_page("loan_page"))
 
+            self.ui.loanPayingBtn.clicked.connect(lambda: self.switch_page("loan_paying_page"))
+            self.ui.loanPayingIconBtn.clicked.connect(lambda: self.switch_page("loan_paying_page"))
+
             self.ui.commissionIconBtn.clicked.connect(lambda: self.switch_page("commission_report"))
             self.ui.commissionBtn.clicked.connect(lambda: self.switch_page("commission_report"))
 
@@ -142,9 +148,9 @@ class DashboardPage(QMainWindow):
     def switch_page(self, page_name):
         try:
             if page_name == "home":
-                self.ui.stackedWidget.setCurrentWidget(self.homePageStack)
+                self.ui.stackedWidget.setCurrentWidget(self.homePage)
             elif page_name == "cash_memo":
-                self.ui.stackedWidget.setCurrentWidget(self.cashMemoStack)
+                self.ui.stackedWidget.setCurrentWidget(self.memoPage)
             elif page_name == "earn_expense":
                 self.ui.stackedWidget.setCurrentWidget(self.costExpensePage)
             elif page_name == "buyer_profile":
@@ -157,6 +163,8 @@ class DashboardPage(QMainWindow):
                 self.ui.stackedWidget.setCurrentWidget(self.payableReportStack)
             elif page_name == "loan_page":
                 self.ui.stackedWidget.setCurrentWidget(self.loanStack)
+            elif page_name == "loan_paying_page":
+                self.ui.stackedWidget.setCurrentWidget(self.loanPayingStack)
             elif page_name == "commission_report":
                 self.ui.stackedWidget.setCurrentWidget(self.commissionReportPage)
             elif page_name == "cost_report":

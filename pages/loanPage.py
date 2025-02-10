@@ -1,7 +1,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from models import *
 from features.data_save_signals import data_save_signals
-
+from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
 class Ui_LoanPage(object):
     def setupUi(self, costExpenseMain):
@@ -112,6 +112,15 @@ class Ui_LoanPage(object):
         self.tableWidget.verticalHeader().setVisible(False)
         self.filter_data()
         data_save_signals.data_saved.connect(self.filter_data)
+
+        self.apply_bangla_font()
+
+    def apply_bangla_font(self):
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        self.tableWidget.horizontalHeader().setFont(custom_font)
 
     def filter_data(self):
         try:

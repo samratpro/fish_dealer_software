@@ -2,8 +2,14 @@ from sqlalchemy import create_engine, Column, Integer, String, Date, ForeignKey,
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-
 Base = declarative_base()
+
+
+class VoucherNoModel(Base):
+    __tablename__ = "voucher_model"  # Corrected table name
+    id = Column(Integer, primary_key=True, autoincrement=True)  # Auto-incremented primary key
+    voucher_no = Column(Integer, nullable=False, unique=True)  # Unique voucher number
+
 
 # Seller Model
 class SellerProfileModel(Base):
@@ -71,17 +77,27 @@ class DealerModel(Base):
     id = Column(Integer, primary_key=True)
     entry_name = Column(String, nullable=False)  # all_accounting, paid_to_seller, get_paid_from_buyer,
     # capital_withdrawal, capital_deposit, borrowing, loan_repayment,salary, other_cost, mosque, somiti, other_cost_voucher
+    # giving_loan, receiving_loan
     name = Column(String, nullable=True)
     date = Column(Date, nullable=False)
     paying_amount = Column(Integer, default=0)
     receiving_amount = Column(Integer, default=0)
     entry_by = Column(String, nullable=True)
+    description = Column(String, nullable=True)
 
 
 class LoanModel(Base):
     __tablename__ = 'loan_model'
     id = Column(Integer, primary_key=True)
     loan_payer_name = Column(String)
+    date = Column(Date, nullable=False)
+    amount = Column(Integer)
+    entry_by = Column(String)
+
+class PayingLoanModel(Base):
+    __tablename__ = 'paying_loan_model'
+    id = Column(Integer, primary_key=True)
+    loan_receiver_name = Column(String)
     date = Column(Date, nullable=False)
     amount = Column(Integer)
     entry_by = Column(String)
@@ -102,7 +118,7 @@ class SettingModel(Base):
     username = Column(String, default='admin')
     commission = Column(Float, default=4)
     dhol = Column(Integer, default=100)
-    font= Column(String, default="Arial")
+    font = Column(String, default="Bangla")
 
 class UserModel(Base):
     __tablename__ ='user_model'

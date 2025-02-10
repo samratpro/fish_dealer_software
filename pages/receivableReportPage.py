@@ -13,15 +13,15 @@ from models import BuyerProfileModel, SettingModel
 from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from features.printmemo import Ui_Form
+from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog
 import xlsxwriter
-
+from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
 class receivableReport(object):
     def setupUi(self, cashReportMain):
-
+        self.main_widget = cashReportMain  # Store reference
         # ****************** Declear database ************************
         self.Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')    # change db url
@@ -376,16 +376,38 @@ class receivableReport(object):
         self.printBtn.clicked.connect(self.openPrintMemo)
         self.saveBtn.clicked.connect(self.save_xlsx)
 
+        self.apply_bangla_font()
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
+
+    def apply_bangla_font(self):
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.buyerFilterlabel.setFont(custom_font)
+        self.startDateLabel.setFont(custom_font)
+        self.endDateLabel.setFont(custom_font)
+        self.filterLabel.setFont(custom_font)
+        self.filterBtn.setFont(custom_font)
+        self.saveBtn.setFont(custom_font)
+        self.nameLabel.setFont(custom_font)
+        self.printBtn.setFont(custom_font)
 
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        setting_font = QtGui.QFont()
-        setting_font.setFamily(setting.font)
-        setting_font.setPointSize(12)
-        self.buyerFilterInput.setFont(setting_font)
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        english_font_path = "font/arial.ttf"
+        # Load the appropriate font
+        if setting.font == "Bangla":
+            font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        else:
+            font_id = QFontDatabase.addApplicationFont(english_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 12)  # Font size 12
+        self.buyerFilterInput.setFont(custom_font)
 
     def auto_completer(self, QTObject):
         """Refresh the QCompleter with the latest seller names."""
@@ -451,59 +473,83 @@ class receivableReport(object):
             print(f"Buyer Profile Error in filter_data: {e}")
             QtWidgets.QMessageBox.critical(None, "Buyer Profile Error", f"An error occurred while filtering data: {e}")
 
-
-
     def openPrintMemo(self):
         try:
-            self.print_window = QtWidgets.QWidget()
-            self.ui = Ui_Form()
-            self.ui.setupUi(self.print_window)
+            # ✅ Create the print window
+            self.ui_print_form = Print_Form()
+            self.ui_print_form.ui.memoLabel.setText("পাওনা রিপোর্ট")
+            self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
+            self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
 
-            # additional data
-            self.ui.name.setText(self.nameLabel.text())
-            self.ui.totalTaka.setText(self.amount.text())
-
-            # Table Update
+            # ✅ Define columns to exclude
+            excluded_columns = {5}
             column_count = self.tableWidget.columnCount()
-            column_count -= 1
             row_count = self.tableWidget.rowCount()
-            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count)]
+            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
+                       i not in excluded_columns]
 
-            # Set up the table headers in the print window
-            self.ui.tableWidget.verticalHeader().setVisible(False)
-            self.ui.tableWidget.setColumnCount(column_count)
-            self.ui.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
+            self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
+            self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
+            self.ui_print_form.ui.tableWidget.setRowCount(row_count)
 
-            # Insert rows and data into the print window's table
-            self.ui.tableWidget.setRowCount(row_count)
+            # ✅ Copy table data excluding specified columns
             for row_idx in range(row_count):
+                new_col_idx = 0
                 for col_idx in range(column_count):
+                    if col_idx in excluded_columns:
+                        continue  # Skip excluded columns
                     item = self.tableWidget.item(row_idx, col_idx)
                     if item:
-                        self.ui.tableWidget.setItem(row_idx, col_idx, QtWidgets.QTableWidgetItem(item.text()))
+                        self.ui_print_form.ui.tableWidget.setItem(row_idx, new_col_idx,
+                                                                  QtWidgets.QTableWidgetItem(item.text()))
+                    new_col_idx += 1
 
-            self.print_window.show()
+            # ✅ Show the print window
+            self.ui_print_form.show()
+
+            # ✅ Set up the printer
             printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
             printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
-            # Open print dialog
-            print_dialog = QtPrintSupport.QPrintDialog(printer)
-            if print_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                painter = QtGui.QPainter(printer)
-                # Render the print window content to the printer
-                painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)  # Improve rendering quality
-                # Calculate the scaling factor
-                dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
-                dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
-                scale_x = dpi_x / 96.0  # Assume screen DPI is 96
-                scale_y = dpi_y / 96.0
-                # Apply scaling to the painter
-                painter.scale(scale_x, scale_y)
-                self.print_window.render(painter)
-                painter.end()
-            else:
-                print("Print dialog canceled")
+
+            # ✅ Open print preview dialog
+            preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
+            preview_dialog.paintRequested.connect(self.renderPrintPreview)  # Connect to the custom render function
+            preview_dialog.exec()
+
         except Exception as e:
             print(f"An error occurred: {e}")
+
+    def renderPrintPreview(self, printer):
+        """
+        Custom function to render the print window content for the preview.
+        """
+        try:
+            # ✅ Use QPainter to render the print content
+            painter = QtGui.QPainter(printer)
+
+            # ✅ Improve rendering quality
+            painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
+
+            # ✅ Calculate the scaling factor
+            dpi_x = printer.logicalDpiX()  # Printer DPI in X direction
+            dpi_y = printer.logicalDpiY()  # Printer DPI in Y direction
+            scale_x = dpi_x / 96.0  # Assume screen DPI is 96
+            scale_y = dpi_y / 96.0
+
+            # ✅ Apply scaling to the painter
+            painter.scale(scale_x, scale_y)
+
+            # ✅ Render the print window content
+            self.ui_print_form.render(painter)
+
+            # ✅ Finish painting
+            painter.end()
+
+        except Exception as e:
+            print(f"An error occurred during print preview: {e}")
+
+
 
     def save_xlsx(self):
         try:

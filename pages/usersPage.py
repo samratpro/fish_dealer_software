@@ -5,7 +5,9 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
 from ui.usersPage_ui import Ui_usersPage
 from models import *
-from forms.usersForm import userForm, Ui_userForm
+from forms.usersForm import userForm
+from PyQt6.QtGui import QFont, QFontDatabase
+
 
 class userPage(QWidget):
     def __init__(self, username):
@@ -13,7 +15,7 @@ class userPage(QWidget):
         self.setup_database()  # First setup database
         self.username = username
         session = self.Session()
-        user = session.query(UserModel).filter(UserModel.username==self.username).one()
+        user = session.query(UserModel).filter(UserModel.username == self.username).one()
         self.user_role = user.role
         self.ui = Ui_usersPage()
         self.ui.setupUi(self)
@@ -32,7 +34,16 @@ class userPage(QWidget):
             self.ui.tableWidget.verticalHeader().setVisible(False)
             data_save_signals.data_saved.connect(self.filter_data)
             self.filter_data()
-            self.ui.addUser.clicked.connect(lambda : self.open_add_user_form())
+            self.ui.addUser.clicked.connect(lambda: self.open_add_user_form())
+            self.apply_bangla_font()
+
+    def apply_bangla_font(self):
+        bangla_font_path = "font/SutonnyMJ.ttf"
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        # self.setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setFont(custom_font)
 
     def edit_profile(self, username):
         self.open_add_user_form(username)
@@ -148,7 +159,7 @@ class userPage(QWidget):
             if reply == QtWidgets.QMessageBox.StandardButton.Yes:
                 entry_id = self.ui.tableWidget.item(row, 0).text()
                 session = self.Session()
-                user = session.query(UserModel).filter(UserModel.id==entry_id).one()
+                user = session.query(UserModel).filter(UserModel.id == entry_id).one()
                 if user.delete == False:
                     user.password = 'admin'
                     session.commit()

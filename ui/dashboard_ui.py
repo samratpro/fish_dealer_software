@@ -223,6 +223,25 @@ class Ui_MainWindow:
         self.loanIconBtn.setObjectName("payableIconBtn")
         self.verticalLayout_2.addWidget(self.loanIconBtn)
 
+
+        self.loanPayingIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.loanPayingIconBtn.setFont(font)
+        self.loanPayingIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.loanPayingIconBtn.setText("")
+        loanIcon = QtGui.QIcon()
+        loanIcon.addPixmap(QtGui.QPixmap("./icons/clock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.loanPayingIconBtn.setIcon(loanIcon)
+        self.loanPayingIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.loanPayingIconBtn.setCheckable(True)
+        self.loanPayingIconBtn.setAutoExclusive(True)
+        self.loanPayingIconBtn.setAutoRepeatDelay(100)
+        self.loanPayingIconBtn.setAutoDefault(False)
+        self.loanPayingIconBtn.setFlat(False)
+        self.loanPayingIconBtn.setObjectName("loanPayingIconBtn")
+        self.verticalLayout_2.addWidget(self.loanPayingIconBtn)
+
         self.commissionIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -471,6 +490,23 @@ class Ui_MainWindow:
         self.loanBtn.setObjectName("payableBtn")
         self.verticalLayout_3.addWidget(self.loanBtn)
 
+
+        self.loanPayingBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.loanPayingBtn.setFont(font)
+        self.loanPayingBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.loanPayingBtn.setIcon(loanIcon)
+        self.loanPayingBtn.setIconSize(QtCore.QSize(28, 28))
+        self.loanPayingBtn.setCheckable(True)
+        self.loanPayingBtn.setAutoExclusive(True)
+        self.loanPayingBtn.setAutoRepeatDelay(100)
+        self.loanPayingBtn.setAutoDefault(False)
+        self.loanPayingBtn.setFlat(False)
+        self.loanPayingBtn.setObjectName("loanPayingBtn")
+        self.verticalLayout_3.addWidget(self.loanPayingBtn)
+
         self.commissionBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -664,6 +700,8 @@ class Ui_MainWindow:
         self.payableIconBtn.toggled['bool'].connect(self.payableBtn.setChecked)  # type: ignore
         self.loanBtn.toggled['bool'].connect(self.loanIconBtn.setChecked)  # type: ignore
         self.loanIconBtn.toggled['bool'].connect(self.loanBtn.setChecked)  # type: ignore
+        self.loanPayingBtn.toggled['bool'].connect(self.loanPayingIconBtn.setChecked)  # type: ignore
+        self.loanPayingIconBtn.toggled['bool'].connect(self.loanPayingBtn.setChecked)  # type: ignore
         self.commissionBtn.toggled['bool'].connect(self.commissionIconBtn.setChecked)
         self.commissionIconBtn.toggled['bool'].connect(self.commissionBtn.setChecked)
         self.costBtn.toggled['bool'].connect(self.costIconBtn.setChecked)
@@ -700,8 +738,10 @@ class Ui_MainWindow:
         self.receivableBtn.setToolTip(_translate("MainWindow", "পাওনা"))
         self.payableBtn.setText(_translate("MainWindow", "দেনা"))
         self.payableBtn.setToolTip(_translate("MainWindow", "দেনা"))
-        self.loanBtn.setText(_translate("MainWindow", "ঋণ"))
-        self.loanBtn.setToolTip(_translate("MainWindow", "ঋণ"))
+        self.loanBtn.setText(_translate("MainWindow", "ঋণ গ্রহণ"))
+        self.loanBtn.setToolTip(_translate("MainWindow", "ঋণ গ্রহণ"))
+        self.loanPayingBtn.setText(_translate("MainWindow", "ঋণ প্রদান"))
+        self.loanPayingBtn.setToolTip(_translate("MainWindow", "ঋণ প্রদান"))
         self.commissionBtn.setText(_translate("MainWindow", "কমিশন রিপোর্ট"))
         self.commissionBtn.setToolTip(_translate("MainWindow", "কমিশন রিপোর্ট"))
         self.costBtn.setText(_translate("MainWindow", "খরচের রিপোর্ট"))

@@ -1,52 +1,27 @@
-from PyQt6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
-)
-from PyQt6.QtPrintSupport import QPrinter, QPrintDialog
-from PyQt6.QtGui import QPainter
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 
+Base = declarative_base()
 
-class PrintExample(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("PyQt6 Print Entire Widget Example")
-        self.setGeometry(200, 200, 600, 400)
+# Define a test model
+class TestModel(Base):
+    __tablename__ = "test_table"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)  # String should support Unicode
 
-        # Main layout
-        self.layout = QVBoxLayout()
+# Connect to database
+engine = create_engine("sqlite:///test.db", echo=True)  # Ensure debug mode (echo=True)
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
+session = Session()
 
-        # QTextEdit to enter text
-        self.text_edit = QTextEdit(self)
-        self.text_edit.setPlaceholderText("Type something to print...")
-        self.layout.addWidget(self.text_edit)
+# Insert Bangla text
+bangla_text = "বাংলা নাম"  # Unicode Bangla text
+new_entry = TestModel(name=bangla_text)
+session.add(new_entry)
+session.commit()
 
-        # Print button
-        self.print_button = QPushButton("Print Widget", self)
-        self.print_button.clicked.connect(self.print_widget)
-        self.layout.addWidget(self.print_button)
-
-        # Set the layout
-        self.setLayout(self.layout)
-
-    def print_widget(self):
-        # Create a QPrinter object
-        printer = QPrinter()
-
-        # Open a print dialog
-        print_dialog = QPrintDialog(printer, self)
-        if print_dialog.exec():  # Show the print dialog
-            try:
-                # Use QPainter to render the widget onto the printer
-                painter = QPainter(printer)
-                self.render(painter)  # Render the entire widget
-                painter.end()
-
-                QMessageBox.information(self, "Success", "Widget sent to printer.")
-            except Exception as e:
-                QMessageBox.warning(self, "Print Error", f"An error occurred: {e}")
-
-
-if __name__ == "__main__":
-    app = QApplication([])
-    window = PrintExample()
-    window.show()
-    app.exec()
+# Fetch and print
+retrieved = session.query(TestModel).first()
+print("Stored Name:", retrieved.name)  # Expected Output: বাংলা নাম
