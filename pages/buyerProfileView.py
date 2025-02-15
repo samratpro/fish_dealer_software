@@ -326,11 +326,12 @@ class BuyerProfileView(QtWidgets.QWidget):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.tableWidget.verticalHeader().setFont(custom_font)
         self.startDateLabel.setFont(custom_font)
         self.endDateLabel.setFont(custom_font)
         self.filterLabel.setFont(custom_font)
@@ -395,6 +396,8 @@ class BuyerProfileView(QtWidgets.QWidget):
             self.ui_print_form.ui.name.setText(str(self.nameLabel.text()))
             self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
             self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
+
+            self.ui_print_form.ui.recevied_frame.setVisible(False)
 
             # ✅ Define columns to exclude
             excluded_columns = {0, 3, 8, 9}

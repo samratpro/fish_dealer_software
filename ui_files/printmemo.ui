@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>695</width>
-    <height>2000</height>
+    <width>699</width>
+    <height>2088</height>
    </rect>
   </property>
   <property name="font">
@@ -43,21 +43,6 @@ QLineEdit{border:1px solid #C3D1DF;border-radius:8px;pdding:5px 15px}
    <item>
     <widget class="QWidget" name="widget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>3</number>
-      </property>
-      <property name="topMargin">
-       <number>3</number>
-      </property>
-      <property name="rightMargin">
-       <number>6</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
       <item>
        <widget class="QFrame" name="frame">
         <property name="maximumSize">
@@ -522,7 +507,7 @@ border-radius:5px;padding:3px 8px;</string>
           <widget class="QWidget" name="rightheader" native="true">
            <property name="minimumSize">
             <size>
-             <width>240</width>
+             <width>255</width>
              <height>0</height>
             </size>
            </property>
@@ -534,7 +519,7 @@ border-radius:5px;padding:3px 8px;</string>
            </property>
            <property name="baseSize">
             <size>
-             <width>240</width>
+             <width>250</width>
              <height>0</height>
             </size>
            </property>
@@ -613,7 +598,7 @@ color: rgb(255, 255, 255);
 border-radius:5px;padding:3px 8px;</string>
               </property>
               <property name="text">
-               <string>পরিচালনায় :  শাহ আলম সরদার ( নিলু )</string>
+               <string>পরিচালনায় :  শাহ আলম সরদার(নিলু)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -798,8 +783,8 @@ border-radius:5px;padding:3px 8px;</string>
         </layout>
        </widget>
       </item>
-      <item alignment="Qt::AlignBottom">
-       <widget class="QWidget" name="widget_4" native="true">
+      <item>
+       <widget class="QWidget" name="finaTakaWidget" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_13">
          <property name="spacing">
           <number>0</number>
@@ -1234,7 +1219,61 @@ border-radius:5px;padding:3px 8px;</string>
         </layout>
        </widget>
       </item>
-      <item alignment="Qt::AlignBottom">
+      <item>
+       <widget class="QFrame" name="recevied_frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>মোট গ্রহণ :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="receivedAmount">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_28">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>মোট প্রদান :</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="paidAmount">
+           <property name="font">
+            <font>
+             <pointsize>13</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QWidget" name="widget_5" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <property name="spacing">

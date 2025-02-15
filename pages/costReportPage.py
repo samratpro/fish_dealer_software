@@ -1,4 +1,3 @@
-from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QWidget
 from PyQt6.QtCore import Qt
 from datetime import datetime
@@ -59,11 +58,12 @@ class CostReport(QWidget):
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.startDateLabel.setFont(custom_font)
         self.ui.endDateLabel.setFont(custom_font)
         self.ui.filterLabel.setFont(custom_font)
@@ -79,17 +79,21 @@ class CostReport(QWidget):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         english_font_path = "font/arial.ttf"
         # Load the appropriate font
         if setting.font == "Bangla":
             font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
         else:
             font_id = QFontDatabase.addApplicationFont(english_font_path)
-        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        # Apply the custom font
-        custom_font = QFont(custom_font_family, 12)  # Font size 12
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
+
+        from bangla_typing import enable_bangla_typing
         self.ui.filterNameInput.setFont(custom_font)
+        enable_bangla_typing(self.ui.filterNameInput, setting.font)
 
     def auto_completer(self):
         """Refresh the QCompleter with the latest seller names."""
@@ -176,6 +180,8 @@ class CostReport(QWidget):
             self.ui_print_form = Print_Form()
             self.ui_print_form.ui.memoLabel.setText("খরচের রিপোর্ট")
             self.ui_print_form.ui.finalTaka.setText(str(self.ui.amount.text()))
+
+            self.ui_print_form.ui.recevied_frame.setVisible(False)
 
             # ✅ Define columns to exclude
             excluded_columns = {0, 5}

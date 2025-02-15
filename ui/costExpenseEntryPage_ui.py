@@ -450,7 +450,7 @@ class Ui_costExpenseMain(object):
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("costExpenseMain", "হিসাবের নাম"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("costExpenseMain", "প্রদান/গ্রহণ কারীর নাম"))
+        item.setText(_translate("costExpenseMain", "নাম"))
         item = self.tableWidget.horizontalHeaderItem(4)
         item.setText(_translate("costExpenseMain", "গ্রহণের পরিমান"))
         item = self.tableWidget.horizontalHeaderItem(5)

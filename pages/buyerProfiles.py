@@ -65,11 +65,12 @@ class buyerProfiles(QWidget):
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.startDateLabel.setFont(custom_font)
         self.ui.endDateLabel.setFont(custom_font)
         self.ui.filterLabel.setFont(custom_font)
@@ -80,17 +81,21 @@ class buyerProfiles(QWidget):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         english_font_path = "font/arial.ttf"
         # Load the appropriate font
         if setting.font == "Bangla":
             font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
         else:
             font_id = QFontDatabase.addApplicationFont(english_font_path)
-        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        # Apply the custom font
-        custom_font = QFont(custom_font_family, 12)  # Font size 12
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
+
+        from bangla_typing import enable_bangla_typing
         self.ui.buyerFilterInput.setFont(custom_font)
+        enable_bangla_typing(self.ui.buyerFilterInput, setting.font)
 
     def setup_database(self):
         self.Base = declarative_base()
@@ -211,7 +216,7 @@ class buyerProfiles(QWidget):
             self.ui_print_form.ui.memoLabel.setText("ক্রেতাদের প্রোফাইল")
 
             # ✅ Define columns to exclude
-            excluded_columns = {0, 3, 7, 8, 9}
+            excluded_columns = {0, 2, 3, 7, 8, 9}
             column_count = self.ui.tableWidget.columnCount()
             row_count = self.ui.tableWidget.rowCount()
             headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
@@ -221,6 +226,8 @@ class buyerProfiles(QWidget):
             self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
             self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
             self.ui_print_form.ui.tableWidget.setRowCount(row_count)
+
+            self.ui_print_form.ui.recevied_frame.setVisible(False)
 
             # ✅ Copy table data excluding specified columns
             for row_idx in range(row_count):

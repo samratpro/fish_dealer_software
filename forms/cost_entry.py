@@ -64,10 +64,10 @@ class CostEntry_Form(QDialog):
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)
+        custom_font = QFont(custom_font_family, 13)
         self.ui.label_3.setFont(custom_font)
         self.ui.label_4.setFont(custom_font)
         self.ui.label_5.setFont(custom_font)
@@ -81,18 +81,26 @@ class CostEntry_Form(QDialog):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         english_font_path = "font/arial.ttf"
         # Load the appropriate font
         if setting.font == "Bangla":
             font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
         else:
             font_id = QFontDatabase.addApplicationFont(english_font_path)
-        custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 12)  # Font size 12
+            custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            custom_font = QFont(custom_font_family, 12)  # Font size 12
+
+        from bangla_typing import enable_bangla_typing
         self.ui.payerName.setFont(custom_font)
         self.ui.receiverName.setFont(custom_font)
         self.ui.description.setFont(custom_font)
+        enable_bangla_typing(self.ui.payerName, setting.font)
+        enable_bangla_typing(self.ui.receiverName, setting.font)
+        enable_bangla_typing(self.ui.description, setting.font)
+
 
     def make_capital(self, element):
         element.textChanged.disconnect()

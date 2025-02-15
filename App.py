@@ -1,6 +1,6 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
-from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6.QtGui import QIcon, QKeyEvent
+from PyQt6.QtCore import Qt, pyqtSignal
 from login import LoginPage
 from dashboard import DashboardPage
 import sys
@@ -65,6 +65,21 @@ class App(QMainWindow):
             self.setCentralWidget(self.dashboard)
         except Exception as e: 
             print(f"Error in show_dashboard: {e}")
+
+    def keyPressEvent(self, event: QKeyEvent):
+        """
+        Override the keyPressEvent to handle F11 for fullscreen toggling.
+        """
+        if event.key() == Qt.Key.Key_F11:
+            # Toggle fullscreen mode
+            if self.isFullScreen():
+                self.showNormal()  # Exit fullscreen
+            else:
+                self.showFullScreen()  # Enter fullscreen
+        else:
+            # Call the base class keyPressEvent for other keys
+            super().keyPressEvent(event)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

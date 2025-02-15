@@ -15,7 +15,6 @@ class userForm(QDialog):
             self.setup_database()
             self.setup_ui()
 
-
         def setup_database(self):
             self.Base = declarative_base()
             self.engine = create_engine('sqlite:///business.db')

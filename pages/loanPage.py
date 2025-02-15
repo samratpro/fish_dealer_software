@@ -116,11 +116,12 @@ class Ui_LoanPage(object):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)  # Font size 14
+        custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.tableWidget.verticalHeader().setFont(custom_font)
 
     def filter_data(self):
         try:

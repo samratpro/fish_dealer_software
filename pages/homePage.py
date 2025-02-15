@@ -5,7 +5,7 @@ from features.data_save_signals import data_save_signals
 from sqlalchemy import create_engine, not_
 from sqlalchemy.orm import sessionmaker, declarative_base
 from ui.homePage_ui import Ui_HomePageMain
-from PyQt6 import QtWidgets, QtGui, QtPrintSupport
+from PyQt6 import QtWidgets
 from models import *
 from PyQt6.QtGui import QFont, QFontDatabase
 
@@ -41,10 +41,10 @@ class homepage(QWidget):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/SutonnyMJ.ttf"
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 14)
+        custom_font = QFont(custom_font_family, 13)
         custom_font_low = QFont(custom_font_family, 12)
         custom_font_high = QFont(custom_font_family, 18)
         # Recursively apply font to all child widgets
