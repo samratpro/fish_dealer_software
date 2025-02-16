@@ -34,19 +34,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Application files
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\business.db"; DestDir: "{commonappdata}\{#MyAppName}"; Flags: ignoreversion; Permissions: users-modify
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\logo.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\logo.bmp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\icons\*.svg"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\images\*.png"; DestDir: "{app}\images"; Flags: ignoreversion
-
-; Font files
-Source: "C:\Users\pc\Desktop\fish_dealer_software\font\arial.ttf"; DestDir: "{fonts}"; FontInstall: "Arial"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "C:\Users\pc\Desktop\fish_dealer_software\font\nato.ttf"; DestDir: "{fonts}"; FontInstall: "Nato"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\*.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
 
 [Registry]
-; File associations
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
@@ -59,3 +55,12 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilen
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+
+
+
+add font path here
+
+
+location 
+font/arial.ttf
+font/nato.ttf
