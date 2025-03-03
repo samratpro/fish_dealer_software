@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import QFileDialog
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 from ui.memoPage_ui import Ui_memoPageMain
-from PyQt6.QtWidgets import QWidget
+from PyQt6.QtWidgets import QWidget, QHeaderView
 from PyQt6.QtCore import Qt
 
 
@@ -111,8 +111,10 @@ class memoPage(QWidget):
         bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        custom_font = QFont(custom_font_family, 13)  # Font size 14
+        custom_font = QFont(custom_font_family, 13)  # Font size 1
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.voucharLabel.setFont(custom_font)
@@ -592,7 +594,7 @@ class memoPage(QWidget):
             self.ui_print_form.ui.tableWidget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
             # ✅ Set up labels with corresponding values
-            self.ui_print_form.ui.memoLabel.setText("ক্যাশমেমো")
+            self.ui_print_form.ui.memoLabel.setText("বিক্রেতার ক্যাশমেমো")
             self.ui_print_form.ui.name.setText(str(self.ui.sellerNameInput.text()))
             self.ui_print_form.ui.date.setText(str(self.ui.sellingDateInput.text()))
             self.ui_print_form.ui.address.setText(str(self.ui.sellerAddressInput.text()))

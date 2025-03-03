@@ -18,7 +18,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from ui.sellerProfiles_ui import UI_sellerprofiles
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
@@ -80,6 +80,8 @@ class sellerProfiles(QWidget):
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.startDateLabel.setFont(custom_font)

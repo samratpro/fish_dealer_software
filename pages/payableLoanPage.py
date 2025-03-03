@@ -2,6 +2,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 from models import *
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
+from PyQt6.QtWidgets import QHeaderView
 
 class Ui_PayableLoanPage(object):
     def setupUi(self, costExpenseMain):
@@ -119,9 +120,12 @@ class Ui_PayableLoanPage(object):
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
+
         self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.tableWidget.setFont(custom_font)
-        self.tableWidget.verticalHeader().setFont(custom_font)
         self.tableWidget.viewport().update()
 
     def filter_data(self):

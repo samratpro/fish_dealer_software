@@ -6,7 +6,7 @@ from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QIcon
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
 
@@ -325,6 +325,8 @@ class SellerProfileView(QtWidgets.QWidget):
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.tableWidget.setFont(custom_font)
         self.tableWidget.verticalHeader().setFont(custom_font)
         self.startDateLabel.setFont(custom_font)

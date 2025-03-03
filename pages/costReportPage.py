@@ -8,8 +8,8 @@ from sqlalchemy import or_
 from features.data_save_signals import data_save_signals
 from ui.costReportPage_ui import costReport_ui
 from features.printmemo import Print_Form
-from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6 import QtWidgets, QtGui, QtPrintSupport, QtCore
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
 
@@ -62,9 +62,12 @@ class CostReport(QWidget):
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
+
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.ui.tableWidget.setFont(custom_font)
-        self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.startDateLabel.setFont(custom_font)
         self.ui.endDateLabel.setFont(custom_font)
         self.ui.filterLabel.setFont(custom_font)

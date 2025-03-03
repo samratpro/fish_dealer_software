@@ -15,7 +15,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
@@ -385,6 +385,9 @@ class receivableReport(object):
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
+        self.tableWidget.horizontalHeader().setFont(custom_font)
+        self.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.tableWidget.horizontalHeader().setFont(custom_font)
         self.tableWidget.setFont(custom_font)
         self.tableWidget.verticalHeader().setFont(custom_font)

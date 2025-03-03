@@ -17,7 +17,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from ui.commissionReportPage_ui import commissionReportPage_ui
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
 
@@ -64,6 +64,11 @@ class commissionReportPage(QWidget):
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
+        # Apply font to table headers
+        self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
         self.ui.tableWidget.setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)

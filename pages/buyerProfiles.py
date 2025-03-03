@@ -10,7 +10,7 @@ from ui.buyerProfiles_ui import buyerProfiles_ui
 from models import UserModel, BuyerProfileModel, SettingModel
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
 
@@ -71,6 +71,11 @@ class buyerProfiles(QWidget):
         custom_font_family = font_families[0]  # Take the first available font family
         print(f"✅ Font loaded successfully: {custom_font_family}")
         custom_font = QFont(custom_font_family, 13)  # Set font size
+
+        self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.tableWidget.setFont(custom_font)

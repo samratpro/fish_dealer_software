@@ -11,7 +11,7 @@ from datetime import datetime
 from PyQt6.QtCore import QDate
 from features.printmemo import Print_Form
 from PyQt6 import QtPrintSupport
-from PyQt6.QtWidgets import QFileDialog
+from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 
@@ -68,9 +68,12 @@ class costExpensePage(QWidget):
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
+        # Apply font to table headers
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
         self.ui.tableWidget.setFont(custom_font)
-        self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.endDateLabel.setFont(custom_font)
         self.ui.filterLabel.setFont(custom_font)
         self.ui.filterBtn.setFont(custom_font)
