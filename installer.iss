@@ -16,16 +16,20 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={userappdata}\{#MyAppName}
+DefaultGroupName={#MyAppName}
+UninstallDisplayName={#MyAppName}
+UninstallDisplayIcon={app}\{#MyAppExeName}
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
 DisableDirPage=no
 OutputBaseFilename=mysetup
-SetupIconFile=C:\Users\pc\Desktop\fish_dealer_software\logo.ico
-WizardSmallImageFile=C:\Users\pc\Desktop\fish_dealer_software\logo.bmp
+WizardImageFile=C:\Users\pc\Desktop\fish_dealer_software\output\appbanner.bmp
+WizardSmallImageFile=C:\Users\pc\Desktop\fish_dealer_software\output\logo.bmp
+SetupIconFile=C:\Users\pc\Desktop\fish_dealer_software\output\logo.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-UninstallFilesDir=Uninstall\exe\{#MyAppName}
+UninstallFilesDir={app}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -34,13 +38,18 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\business.db"; DestDir: "{commonappdata}\{#MyAppName}"; Flags: ignoreversion; Permissions: users-modify
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\logo.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\logo.bmp"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\logo.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\logo.bmp"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\appbanner.bmp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\icons\*.svg"; DestDir: "{app}\icons"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\images\*.png"; DestDir: "{app}\images"; Flags: ignoreversion
 Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\*.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\arial.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\nato.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
+
+[Dirs]
+Name: "{commonappdata}\{#MyAppName}"; Permissions: users-full
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
@@ -56,11 +65,13 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilen
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
-
-
-add font path here
-
-
-location 
-font/arial.ttf
-font/nato.ttf
+[UninstallDelete]
+Type: files; Name: "{app}\business.db"
+Type: files; Name: "{app}\logo.ico"
+Type: files; Name: "{app}\logo.bmp"
+Type: files; Name: "{app}\appbanner.bmp"
+Type: files; Name: "{app}\icons\*.svg"
+Type: files; Name: "{app}\images\*.png"
+Type: files; Name: "{app}\font\*.ttf"
+Type: files; Name: "{app}\font\arial.ttf"
+Type: files; Name: "{app}\font\nato.ttf"
