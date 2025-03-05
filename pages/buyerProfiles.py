@@ -223,6 +223,20 @@ class buyerProfiles(QWidget):
             # ✅ Create the print window
             self.ui_print_form = Print_Form()
             self.ui_print_form.ui.memoLabel.setText("ক্রেতাদের প্রোফাইল")
+            self.ui_print_form.ui.name.setVisible(False)
+            self.ui_print_form.ui.date.setVisible(False)
+            self.ui_print_form.ui.address.setVisible(False)
+            self.ui_print_form.ui.mobile.setVisible(False)
+            self.ui_print_form.ui.label_2.setVisible(False)
+            self.ui_print_form.ui.label_3.setVisible(False)
+            self.ui_print_form.ui.label_4.setVisible(False)
+            self.ui_print_form.ui.label_5.setVisible(False)
+            self.ui_print_form.ui.label_6.setVisible(False)
+            self.ui_print_form.ui.label_7.setVisible(False)
+            self.ui_print_form.ui.label_11.setVisible(False)
+            self.ui_print_form.ui.label_12.setVisible(False)
+            self.ui_print_form.ui.label_13.setVisible(False)
+            self.ui_print_form.ui.label_14.setVisible(False)
 
             # ✅ Define columns to exclude
             excluded_columns = {0, 2, 3, 7, 8, 9, 11}

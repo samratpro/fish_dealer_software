@@ -516,6 +516,18 @@ class payableableReport(object):
             self.ui_print_form.ui.memoLabel.setText("দেনার রিপোর্ট")
             self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
             self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
+            self.ui_print_form.ui.name.setVisible(False)
+            self.ui_print_form.ui.address.setVisible(False)
+            self.ui_print_form.ui.mobile.setVisible(False)
+            self.ui_print_form.ui.label_2.setVisible(False)
+            self.ui_print_form.ui.label_3.setVisible(False)
+            self.ui_print_form.ui.label_4.setVisible(False)
+            self.ui_print_form.ui.label_5.setVisible(False)
+            self.ui_print_form.ui.label_6.setVisible(False)
+            self.ui_print_form.ui.label_7.setVisible(False)
+            self.ui_print_form.ui.label_11.setVisible(False)
+            self.ui_print_form.ui.label_12.setVisible(False)
+            self.ui_print_form.ui.label_14.setVisible(False)
 
             self.ui_print_form.ui.recevied_frame.setVisible(False)
 

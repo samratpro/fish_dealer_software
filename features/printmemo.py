@@ -3,15 +3,16 @@ from ui.printmemo_ui import Ui_Form
 from PyQt6.QtGui import QFont, QFontDatabase
 
 class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
-    def __init__(self):
+    def __init__(self, min_section_size=135):
         super().__init__()  # ✅ Properly initialize QWidget
         self.ui = Ui_Form()
         self.ui.setupUi(self)  # ✅ Set up UI on self (which is now a QWidget)
+        self.min_section_size = min_section_size
         self.setup_ui()
 
     def setup_ui(self):
         self.apply_bangla_font()
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(145)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(self.min_section_size)
 
     def apply_bangla_font(self):
         bangla_font_path = "font/nato.ttf"
