@@ -8,27 +8,27 @@
 8. data save, field clear and setText
 9. Signal  (pysignal, shared_signal)
 10. current date update, Date formating, icon, calender setup, CSS, date filter, date subtraction
-11. signal, click event shoul be in retranslateUi method
-13. Open Form Accpect form
-14. single profile view with session pass
-16. how to handle data save with validation before accept form information in another page,
+11. signal, click event should be in retranslateUi method
+12. Open Form Accept form
+13. single profile view with session pass
+14. how to handle data save with validation before accept form information in another page,
     handle_and_accept_information with error message
-18. Dynamic make capital or others event pass, editingFinihed or many event
-19. Row delete with many database delete
-20. confirm dailog, entry dailog before delete
-23. single page views, delete row and models entry
-24. entry disable
-25. show_error_method setup, Different type of error, info, warning, criticalerror
-26. floating toggle widget
-27. xlsxwriter
-28. Font, dynamic font add in table data
-29. Backup
-30. Print memo, update memo data also skipp rows (width : 795, height : 2000)
-31. custom font with file, combofont,
-32. auto increment
-33. make capital in add buyer form
-34. bangla font from models.py
-
+15. Dynamic make capital or others event pass, editingFinihed or many event
+16. Row delete with many database delete
+17. confirm dialog, entry dialog before delete
+18. single page views, delete row and models entry
+19. entry disable
+20. show_error_method setup, Different type of error, info, warning, criticalerror
+21. floating toggle widget
+22. xlsxwriter
+23. Font, dynamic font add in table data
+24. Backup
+25. Print memo, update memo data also skipp rows (width : 795, height : 2000)
+26. custom font with file, combofont,
+27. auto increment
+28. make capital in add buyer form
+29. bangla font from models.py
+pip install --no-deps auto-py-to-exe
 
 
 27.   Seperate homepageui.py to homepage.py

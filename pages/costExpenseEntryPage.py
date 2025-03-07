@@ -4,6 +4,7 @@ from PyQt6.QtWidgets import QWidget
 from features.data_save_signals import data_save_signals
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
+from sqlalchemy import desc
 from ui.costExpenseEntryPage_ui import Ui_costExpenseMain
 from models import *
 from forms.cost_entry import CostEntry_Form
@@ -52,7 +53,7 @@ class costExpensePage(QWidget):
         self.ui.costExpenseEntryBtn.clicked.connect(self.open_entry_form)  # Open Entry and entry data
         self.filter_data()
         self.ui.filterBtn.clicked.connect(self.filter_data)
-        self.ui.filterNameInput.textChanged.connect(lambda: self.make_capital(self.ui.filterNameInput))
+        # self.ui.filterNameInput.textChanged.connect(lambda: self.make_capital(self.ui.filterNameInput))
 
         self.ui.printBtn.clicked.connect(self.openPrintMemo)
         self.ui.saveBtn.clicked.connect(self.save_xlsx)
@@ -131,10 +132,10 @@ class costExpensePage(QWidget):
         session.close()
         return [entry_name.name for entry_name in name_entries]
 
-    def make_capital(self, element):
-        element.textChanged.disconnect()
-        element.setText(element.text().title())
-        element.textChanged.connect(lambda: self.make_capital(element))
+    # def make_capital(self, element):
+    #     element.textChanged.disconnect()
+    #     element.setText(element.text().title())
+    #     element.textChanged.connect(lambda: self.make_capital(element))
 
     def filter_data(self):
         try:
@@ -157,6 +158,7 @@ class costExpensePage(QWidget):
                 query = query.filter(DealerModel.entry_name.ilike(f"%{entry_name}%"))
             if entry_name:
                 query = query.filter(DealerModel.name.ilike(f"%{search_name}%"))
+            query = query.order_by(desc(DealerModel.date))
             all_entries = query.all()
 
             # Clear existing table data

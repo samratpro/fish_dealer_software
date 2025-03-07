@@ -1,6 +1,8 @@
 from PyQt6 import QtWidgets
 from ui.printmemo_ui import Ui_Form
 from PyQt6.QtGui import QFont, QFontDatabase
+from PyQt6.QtWidgets import QHeaderView
+from PyQt6 import QtCore
 
 class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
     def __init__(self, min_section_size=135):
@@ -22,6 +24,8 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         custom_font_high = QFont(custom_font_family, 22)  # Font size 14
         custom_font = QFont(custom_font_family, 11)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)
         self.ui.label.setFont(custom_font_low)
