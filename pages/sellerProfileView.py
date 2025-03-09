@@ -9,6 +9,7 @@ from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
+import os
 
 class SellerProfileView(QtWidgets.QWidget):
 
@@ -320,7 +321,12 @@ class SellerProfileView(QtWidgets.QWidget):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/nato.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14

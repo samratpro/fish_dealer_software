@@ -21,7 +21,7 @@
 20. show_error_method setup, Different type of error, info, warning, criticalerror
 21. floating toggle widget
 22. xlsxwriter
-23. Font, dynamic font add in table data
+23. Font, dynamic font (memopage) add in table data
 24. Backup
 25. Print memo, update memo data also skipp rows (width : 795, height : 2000)
 26. custom font with file, combofont,

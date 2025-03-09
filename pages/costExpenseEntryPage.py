@@ -15,7 +15,7 @@ from PyQt6 import QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
-
+import os
 
 class costExpensePage(QWidget):
     def __init__(self, username):
@@ -65,7 +65,12 @@ class costExpensePage(QWidget):
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/nato.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
@@ -101,8 +106,13 @@ class costExpensePage(QWidget):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        bangla_font_path = "font/nato.ttf"
-        english_font_path = "font/arial.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        english_font_path = os.path.join(base_dir, "font", "arial.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         # Load the appropriate font
         if setting.font == "Bangla":
             font_id = QFontDatabase.addApplicationFont(bangla_font_path)

@@ -4,11 +4,12 @@ from PyQt6.QtCore import Qt
 from models import *
 from datetime import datetime
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
+from sqlalchemy.orm import sessionmaker
 from ui.add_buyer_form_ui import Ui_AddBuyer
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from features.data_save_signals import data_save_signals
-
+import os
 
 class AddBuyer_Form(QDialog):
     def __init__(self, username):
@@ -50,7 +51,12 @@ class AddBuyer_Form(QDialog):
 
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/nato.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
@@ -74,8 +80,13 @@ class AddBuyer_Form(QDialog):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        bangla_font_path = "font/nato.ttf"
-        english_font_path = "font/arial.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        english_font_path = os.path.join(base_dir, "font", "arial.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         # Load the appropriate font
         if setting.font == "Bangla":
             font_id = QFontDatabase.addApplicationFont(bangla_font_path)

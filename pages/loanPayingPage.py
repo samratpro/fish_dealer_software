@@ -3,6 +3,7 @@ from models import *
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 from PyQt6.QtWidgets import QHeaderView
+import os
 
 class Ui_LoanPayingPage(object):
     def setupUi(self, costExpenseMain):
@@ -117,7 +118,12 @@ class Ui_LoanPayingPage(object):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/nato.ttf"
+        base_dir = os.path.dirname(os.path.dirname(__file__))
+        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        if font_id == -1:
+            print(f"❌ Failed to load font: {bangla_font_path}")
+            return
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
@@ -159,4 +165,4 @@ if __name__ == "__main__":
     ui = Ui_LoanPayingPage()
     ui.setupUi(costExpenseMain)
     costExpenseMain.show()
-    sys.exit(app.exec())
+    sys.exit(exec())
