@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>796</width>
-    <height>2088</height>
+    <height>2086</height>
    </rect>
   </property>
   <property name="font">
@@ -802,7 +802,7 @@ border-radius:5px;padding:3px 8px;</string>
             <string notr="true">QHeaderView::section, QHeaderView{
     background-color: #2D221B;
     color: white;   
-    font-size: 12pt;  
+    font-size: 11pt;  
     text-align: center; 
 }
 </string>
@@ -822,7 +822,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>
@@ -842,7 +841,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>
@@ -853,7 +851,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>
@@ -864,7 +861,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>
@@ -875,7 +871,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>
@@ -886,7 +881,6 @@ border-radius:5px;padding:3px 8px;</string>
             </property>
             <property name="font">
              <font>
-              <family>Noto Sans Bengali</family>
               <pointsize>11</pointsize>
              </font>
             </property>

@@ -33,6 +33,16 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
         self.ui.tableWidget.verticalHeader().setFont(custom_font)
+        self.ui.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
+                                             background-color: #2D221B;
+                                             color: white;
+                                             font-size: 11pt; 
+                                             text-align: center;
+                                             height:35px;
+                                             }
+                                       """)
+
+
         self.ui.label.setFont(custom_font_low)
         self.ui.memoLabel.setFont(custom_font)
         self.ui.label_9.setFont(custom_font_high)
@@ -60,3 +70,4 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         self.ui.label_17.setFont(custom_font_low)
         self.ui.label_18.setFont(custom_font)
         self.ui.date.setFont(custom_font)
+        self.ui.tableWidget.viewport().update()

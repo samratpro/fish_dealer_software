@@ -341,7 +341,7 @@ class Ui_Form(object):
         self.tableWidget.setStyleSheet("QHeaderView::section, QHeaderView{\n"
 "    background-color: #2D221B;\n"
 "    color: white;   \n"
-"    font-size: 12pt;  \n"
+"    font-size: 11pt;  \n"
 "    text-align: center; \n"
 "}\n"
 "")
@@ -350,7 +350,6 @@ class Ui_Form(object):
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -359,31 +358,26 @@ class Ui_Form(object):
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         self.tableWidget.setHorizontalHeaderItem(1, item)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         self.tableWidget.setHorizontalHeaderItem(2, item)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         self.tableWidget.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         self.tableWidget.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
         font = QtGui.QFont()
-        font.setFamily("Noto Sans Bengali")
         font.setPointSize(11)
         item.setFont(font)
         self.tableWidget.setHorizontalHeaderItem(5, item)
