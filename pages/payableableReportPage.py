@@ -614,8 +614,6 @@ class payableableReport(object):
             # If no file is selected, return early
             if not file_path:
                 return
-
-            # Ensure the file has the correct extension
             if not file_path.endswith(".xlsx"):
                 file_path += ".xlsx"
 

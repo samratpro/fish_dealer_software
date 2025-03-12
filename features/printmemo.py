@@ -18,15 +18,13 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(self.min_section_size)
 
     def apply_bangla_font(self):
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
-        print("bangla_font_path : ", bangla_font_path)
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         if font_id == -1:
             print(f"❌ Failed to load font: {bangla_font_path}")
             return
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
-        print(f"✅ Font loaded successfully: {custom_font_family}")
+        print(f"✅[Print Memo] Font Family : {custom_font_family}")
         custom_font_low = QFont(custom_font_family, 11)  # Font size 11
         custom_font_high = QFont(custom_font_family, 22)  # Font size 22
         custom_font = QFont(custom_font_family, 11)  # Font size 11

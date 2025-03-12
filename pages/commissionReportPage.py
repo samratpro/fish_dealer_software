@@ -61,8 +61,7 @@ class commissionReportPage(QWidget):
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def apply_bangla_font(self):
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         if font_id == -1:
             print(f"❌ Failed to load font: {bangla_font_path}")
@@ -91,9 +90,8 @@ class commissionReportPage(QWidget):
     def update_setting_font(self):
         session = self.Session()
         setting = session.query(SettingModel).first()
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
-        english_font_path = os.path.join(base_dir, "font", "arial.ttf")
+        bangla_font_path = "font/nato.ttf"
+        english_font_path = "fint/arial.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         if font_id == -1:
             print(f"❌ Failed to load font: {bangla_font_path}")

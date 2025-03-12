@@ -321,8 +321,7 @@ class SellerProfileView(QtWidgets.QWidget):
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
-        base_dir = os.path.dirname(os.path.dirname(__file__))
-        bangla_font_path = os.path.join(base_dir, "font", "nato.ttf")
+        bangla_font_path = "font/nato.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         if font_id == -1:
             print(f"❌ Failed to load font: {bangla_font_path}")
