@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from PyQt6.QtCore import pyqtSignal
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget

@@ -1,77 +1,55 @@
-#define MyAppName "Fish Dealer Software"
-#define MyAppVersion "1.5"
-#define MyAppPublisher "Osman Fish"
-#define MyAppURL "https://www.example.com/"
-#define MyAppExeName "App.exe"
-#define MyAppAssocName MyAppName + " File"
-#define MyAppAssocExt ".myp"
-#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
-
+; Define installer name and output directory
 [Setup]
-AppId={{77B47AEF-8BD1-4F85-9E7F-DEE89A05DFC1}
-AppName={#MyAppName}
-AppVersion={#MyAppVersion}
-AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
-DefaultDirName={userappdata}\{#MyAppName}
-DefaultGroupName={#MyAppName}
-UninstallDisplayName={#MyAppName}
-UninstallDisplayIcon={app}\{#MyAppExeName}
-ChangesAssociations=yes
-DisableProgramGroupPage=yes
-DisableDirPage=no
-OutputBaseFilename=mysetup
-WizardImageFile=C:\Users\pc\Desktop\fish_dealer_software\output\appbanner.bmp
-WizardSmallImageFile=C:\Users\pc\Desktop\fish_dealer_software\output\logo.bmp
-SetupIconFile=C:\Users\pc\Desktop\fish_dealer_software\output\logo.ico
+AppName=Fish Dealer Software
+AppVersion=1.0
+DefaultDirName={localappdata}\FishDealerSoftware
+DefaultGroupName=Fish Dealer Software
+OutputBaseFilename=FishDealerSetup
 Compression=lzma
 SolidCompression=yes
-WizardStyle=modern
-UninstallFilesDir={app}
+SetupIconFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\logo.ico
 
-[Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
+; Wizard images (if needed)
+WizardImageFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\appbanner.bmp
+WizardSmallImageFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\logo.bmp
 
-[Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+; Silent installation option
+DisableDirPage=no
+DisableProgramGroupPage=yes
 
+; Include Python interpreter and app files
 [Files]
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\logo.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\logo.bmp"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\appbanner.bmp"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\icons\*.svg"; DestDir: "{app}\icons"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\images\*.png"; DestDir: "{app}\images"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\*.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\arial.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
-Source: "C:\Users\pc\Desktop\fish_dealer_software\output\font\nato.ttf"; DestDir: "{app}\font"; Flags: ignoreversion
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\python\*"; DestDir: "{app}\python"; Flags: recursesubdirs
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\font\*"; DestDir: "{app}\font"; Flags: recursesubdirs
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\icons\*"; DestDir: "{app}\icons"; Flags: recursesubdirs
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
+Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\run.vbs"; DestDir: "{app}"
 
+; Create necessary folders
 [Dirs]
-Name: "{commonappdata}\{#MyAppName}"; Permissions: users-full
+Name: "{app}"; Permissions: everyone-full
+Name: "{localappdata}\FishDealerSoftware"; Permissions: everyone-full
 
+; Registry settings (optional)
 [Registry]
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
-Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
+Root: HKCU; Subkey: "Software\FishDealerSoftware2"; Flags: uninsdeletekey
 
+; Shortcuts
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\logo.ico"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\logo.ico"; Tasks: desktopicon
+Name: "{group}\Fish Dealer Software"; Filename: "{app}\run.vbs"; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"
+Name: "{group}\Uninstall Fish Dealer Software"; Filename: "{uninstallexe}"; IconFilename: "{app}\static\logo.ico"
+Name: "{commondesktop}\Fish Dealer Software"; Filename: "{app}\run.vbs"; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"; Tasks: desktopicon
 
+; Run the application after installation
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\run.vbs"; Description: "{cm:LaunchProgram, Fish Dealer Software}"; Flags: nowait postinstall skipifsilent
 
+; Uninstaller (removes everything)
 [UninstallDelete]
-Type: files; Name: "{app}\business.db"
-Type: files; Name: "{app}\logo.ico"
-Type: files; Name: "{app}\logo.bmp"
-Type: files; Name: "{app}\appbanner.bmp"
-Type: files; Name: "{app}\icons\*.svg"
-Type: files; Name: "{app}\images\*.png"
-Type: files; Name: "{app}\font\*.ttf"
-Type: files; Name: "{app}\font\arial.ttf"
-Type: files; Name: "{app}\font\nato.ttf"
+Type: filesandordirs; Name: "{app}"
+Type: filesandordirs; Name: "{localappdata}\FishDealerSoftware"
+
+; Optional tasks
+[Tasks]
+Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; Flags: unchecked
