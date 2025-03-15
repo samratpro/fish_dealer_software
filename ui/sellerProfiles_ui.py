@@ -1,12 +1,5 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from datetime import datetime, timedelta
-from PyQt6.QtCore import Qt, QDate
-from models import SellerProfileModel
-from pages.sellerProfileView import SellerProfileView
-from features.data_save_signals import data_save_signals
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
 
 class UI_sellerprofiles(object):
     def setupUi(self, cashReportMain):

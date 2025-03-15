@@ -222,12 +222,13 @@ class sellerProfiles(QWidget):
         except Exception as ops:
             print(f'error in delete of buyer profile: ({ops})')
         data_save_signals.data_saved.emit()
+
     def view_profile(self, seller_name, phone, address):
         try:
             self.transactions_window = SellerProfileView(seller_name, phone, address, self.session)
             self.transactions_window.show()
         except Exception as e:
-            print(f' err o : {str(e)}')
+            print(f'Error: {str(e)}')
 
 
     def openPrintMemo(self):

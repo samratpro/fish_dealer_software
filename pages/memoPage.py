@@ -110,12 +110,7 @@ class memoPage(QWidget):
         session.close()
 
     def apply_bangla_font(self):
-        bangla_font_path = "font/nato.ttf"
-        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
-        if font_id == -1:
-            print(f"❌ Failed to load font: {bangla_font_path}")
-            return
-        font_id = QFontDatabase.addApplicationFont(bangla_font_path)
+        font_id = QFontDatabase.addApplicationFont("font/nato.ttf")
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         print("✅ [Memo Page]bangla_font_path : ", custom_font_family)
         custom_font = QFont(custom_font_family, 13)  # Font size 1
@@ -200,7 +195,6 @@ class memoPage(QWidget):
         self.ui.sellerAddressInput.setText(name_model.address)
         self.ui.sellerMobileInput.setText(name_model.phone)
         session.close()
-
 
 
     def commision_call(self):
