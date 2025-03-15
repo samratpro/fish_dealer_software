@@ -611,7 +611,7 @@ class costExpensePage(QWidget):
         total_rows = self.ui.tableWidget.rowCount()
         rows_per_page = 11
         total_pages = math.ceil(total_rows / rows_per_page)
-
+        total_pages = 1 if total_pages == 0 else total_pages
         for page in range(total_pages):
             try:
                 # ✅ Create the print window

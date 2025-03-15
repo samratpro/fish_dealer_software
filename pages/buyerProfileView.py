@@ -17,7 +17,7 @@ from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
-import os
+import math
 
 class BuyerProfileView(QtWidgets.QWidget):
 
@@ -405,55 +405,63 @@ class BuyerProfileView(QtWidgets.QWidget):
             QtWidgets.QMessageBox.critical(None, "seller Profile View Error", f"An error occurred while filtering data: {e}")
 
     def openPrintMemo(self):
-        try:
-            # ✅ Create the print window
-            self.ui_print_form = Print_Form(min_section_size=120)
-            self.ui_print_form.ui.memoLabel.setText("ক্রেতার ক্যাশমেমো")
-            self.ui_print_form.ui.name.setText(str(self.nameLabel.text()))
-            self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
-            self.ui_print_form.ui.mobile.setText(str(self.phone))
-            self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
-            self.ui_print_form.ui.recevied_frame.setVisible(False)
+        total_rows = self.tableWidget.rowCount()
+        rows_per_page = 11
+        total_pages = math.ceil(total_rows / rows_per_page)
+        total_pages = 1 if total_pages == 0 else total_pages
 
-            # ✅ Define columns to exclude
-            excluded_columns = {0, 5, 8, 9}
-            column_count = self.tableWidget.columnCount()
-            row_count = self.tableWidget.rowCount()
-            headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
-                       i not in excluded_columns]
+        for page in range(total_pages):
+            try:
+                # ✅ Create the print window
+                self.ui_print_form = Print_Form(min_section_size=120)
+                self.ui_print_form.ui.memoLabel.setText("ক্রেতার ক্যাশমেমো")
+                self.ui_print_form.ui.name.setText(str(self.nameLabel.text()))
+                self.ui_print_form.ui.date.setText(str(self.startDateInput.text()))
+                self.ui_print_form.ui.mobile.setText(str(self.phone))
+                self.ui_print_form.ui.finalTaka.setText(str(self.amount.text()))
+                self.ui_print_form.ui.recevied_frame.setVisible(False)
 
-            self.ui_print_form.ui.tableWidget.horizontalHeader().setMinimumSectionSize(50)
-            self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
-            self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
-            self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
-            self.ui_print_form.ui.tableWidget.setRowCount(row_count)
+                # ✅ Define columns to exclude
+                excluded_columns = {0, 5, 8, 9}
+                column_count = self.tableWidget.columnCount()
+                headers = [self.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
+                           i not in excluded_columns]
 
-            # ✅ Copy table data excluding specified columns
-            for row_idx in range(row_count):
-                new_col_idx = 0
-                for col_idx in range(column_count):
-                    if col_idx in excluded_columns:
-                        continue  # Skip excluded columns
-                    item = self.tableWidget.item(row_idx, col_idx)
-                    if item:
-                        self.ui_print_form.ui.tableWidget.setItem(row_idx, new_col_idx,
-                                                                  QtWidgets.QTableWidgetItem(item.text()))
-                    new_col_idx += 1
+                self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
+                self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
+                self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
 
-            # ✅ Show the print window
-            self.ui_print_form.show()
+                # ✅ Set the row count for current page
+                start_row = page * rows_per_page
+                end_row = min(start_row + rows_per_page, total_rows)
+                self.ui_print_form.ui.tableWidget.setRowCount(end_row - start_row)
 
-            # ✅ Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
-            printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
+                # ✅ Copy table data excluding specified columns
+                for row_idx in range(start_row, end_row):
+                    new_col_idx = 0
+                    for col_idx in range(column_count):
+                        if col_idx in excluded_columns:
+                            continue  # Skip excluded columns
+                        item = self.tableWidget.item(row_idx, col_idx)
+                        if item:
+                            self.ui_print_form.ui.tableWidget.setItem(row_idx - start_row, new_col_idx,
+                                                                      QtWidgets.QTableWidgetItem(item.text()))
+                        new_col_idx += 1
 
-            # ✅ Open print preview dialog
-            preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
-            preview_dialog.paintRequested.connect(self.renderPrintPreview)  # Connect to the custom render function
-            preview_dialog.exec()
+                # ✅ Show the print window
+                self.ui_print_form.show()
 
-        except Exception as e:
-            print(f"An error occurred: {e}")
+                # ✅ Set up the printer
+                printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
+                printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))  # Set paper size to A4
+
+                # ✅ Open print preview dialog
+                preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
+                preview_dialog.paintRequested.connect(self.renderPrintPreview)  # Connect to the custom render function
+                preview_dialog.exec()
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
     def renderPrintPreview(self, printer):
         """
