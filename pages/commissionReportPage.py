@@ -91,7 +91,7 @@ class commissionReportPage(QWidget):
         session = self.Session()
         setting = session.query(SettingModel).first()
         bangla_font_path = "font/nato.ttf"
-        english_font_path = "fint/arial.ttf"
+        english_font_path = "font/arial.ttf"
         font_id = QFontDatabase.addApplicationFont(bangla_font_path)
         if font_id == -1:
             print(f"❌ Failed to load font: {bangla_font_path}")
