@@ -29,7 +29,8 @@
 22. xlsxwriter
 23. Font, dynamic font (memopage) add in table data
 24. Backup
-25. Print memo, update memo data also skipp rows, print per page, row count(memopage), column count, (width : 795, height : 2000)
+25. Print memo, update memo data also skipp rows, print per page, row count(memopage), column count, (width : 786, height : 903)
+    (memopage (normal print))
 26. custom font with file, combofont,
 27. auto increment
 28. make capital in add buyer form
