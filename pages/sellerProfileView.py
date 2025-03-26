@@ -69,6 +69,14 @@ class SellerProfileView(QtWidgets.QWidget):
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
+                                             background-color: #2D221B;
+                                             color: white;
+                                             font-size: 11pt; 
+                                             text-align: center;
+                                             height:35px;
+                                             }
+                                       """)
         self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
@@ -146,64 +154,81 @@ class SellerProfileView(QtWidgets.QWidget):
         print(vouchar_no, seller_name, sell_amount, commission_amount, total_cost_amount)
         session = self.Session()
         seller_data = session.query(SellerProfileModel).filter(SellerProfileModel.seller_name == seller_name).one_or_none()
+
+        # Fetch all buyers for the given voucher number
+        buying_model = session.query(BuyingModel).filter(BuyingModel.vouchar_no == vouchar_no)
+        buyers = buying_model.all()
+
+        total_rows = len(buyers)
+        rows_per_page = 13
+        total_pages = math.ceil(total_rows / rows_per_page)
+        total_pages = 1 if total_pages == 0 else total_pages
+
         try:
-            # ✅ Create the print window
-            self.ui_print_form = Print_Form()
-            self.ui_print_form.ui.tableWidget.horizontalHeader().setMinimumSectionSize(123)
-            self.ui_print_form.ui.tableWidget.horizontalHeader().setSectionResizeMode(
-                QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+            for page in range(total_pages):
+                # ✅ Create the print window
+                self.ui_print_form = Print_Form()
+                self.ui_print_form.ui.tableWidget.horizontalHeader().setMinimumSectionSize(125)
+                self.ui_print_form.ui.tableWidget.horizontalHeader().setSectionResizeMode(
+                    QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
-            # ✅ Set up labels with corresponding values
-            self.ui_print_form.ui.memoLabel.setText("বিক্রেতার ক্যাশমেমো")
-            self.ui_print_form.ui.name.setText(seller_name)
-            self.ui_print_form.ui.date.setText(str(date))
-            self.ui_print_form.ui.address.setText(str(seller_data.address))
-            self.ui_print_form.ui.mobile.setText(str(seller_data.phone))
-            self.ui_print_form.ui.commission.setText(str(commission_amount))
-            self.ui_print_form.ui.totalCost_raw.setText(str(total_cost_amount))
-            self.ui_print_form.ui.totalCost.setText(str(total_cost_amount))
-            self.ui_print_form.ui.finalTaka.setText(str(sell_amount))
-            self.ui_print_form.ui.recevied_frame.setVisible(False)
+                # ✅ Set up labels with corresponding values
+                self.ui_print_form.ui.memoLabel.setText("বিক্রেতার ক্যাশমেমো")
+                self.ui_print_form.ui.name.setText(seller_name)
+                self.ui_print_form.ui.date.setText(str(date))
+                self.ui_print_form.ui.address.setText(str(seller_data.address))
+                self.ui_print_form.ui.mobile.setText(str(seller_data.phone))
+                self.ui_print_form.ui.commission.setText(str(commission_amount))
+                self.ui_print_form.ui.totalTaka.setText(str(total_cost_amount+sell_amount))
+                self.ui_print_form.ui.totalCost_raw.setText(str(total_cost_amount))
+                self.ui_print_form.ui.totalCost.setText(str(total_cost_amount))
+                self.ui_print_form.ui.finalTaka.setText(str(sell_amount))
+                self.ui_print_form.ui.recevied_frame.setVisible(False)
 
-            buying_model = session.query(BuyingModel).filter(BuyingModel.vouchar_no == vouchar_no)
-            buyers = buying_model.all()
+                headers = ["ক্রেতার নাম", "মাছের নাম", "রেট", "কাঁচা ওজন", "পাকা ওজন", "দাম"]
 
-            headers = ["ক্রেতার নাম", "মাছের নাম", "রেট", "কাঁচা ওজন", "পাকা ওজন", "দাম"]
+                self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
+                self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
+                self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
 
-            self.ui_print_form.ui.tableWidget.verticalHeader().setVisible(False)
-            self.ui_print_form.ui.tableWidget.setColumnCount(len(headers))
-            self.ui_print_form.ui.tableWidget.setHorizontalHeaderLabels(headers)
-            self.ui_print_form.ui.tableWidget.setRowCount(len(buyers))
+                # ✅ Set up rows for the current page
+                start_index = page * rows_per_page
+                end_index = min(start_index + rows_per_page, total_rows)
+                page_buyers = buyers[start_index:end_index]
 
-            # ✅ Copy table data excluding column 6
-            row = 0
-            for buyer in buyers:
-                self.ui_print_form.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(buyer.buyer_name)))
-                self.ui_print_form.ui.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(buyer.fish_name)))
-                self.ui_print_form.ui.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(buyer.fish_rate)))
-                self.ui_print_form.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(buyer.raw_weight)))
-                self.ui_print_form.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(buyer.final_weight)))
-                self.ui_print_form.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(buyer.buying_amount)))
-                row += 1
+                self.ui_print_form.ui.tableWidget.setRowCount(len(page_buyers))
 
-            # ✅ Show the print window
-            self.ui_print_form.show()
+                # ✅ Copy table data for the current page
+                row = 0
+                for buyer in page_buyers:
+                    self.ui_print_form.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(buyer.buyer_name)))
+                    self.ui_print_form.ui.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(buyer.fish_name)))
+                    self.ui_print_form.ui.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(buyer.fish_rate)))
+                    self.ui_print_form.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(buyer.raw_weight)))
+                    self.ui_print_form.ui.tableWidget.setItem(row, 4,
+                                                              QtWidgets.QTableWidgetItem(str(buyer.final_weight)))
+                    self.ui_print_form.ui.tableWidget.setItem(row, 5,
+                                                              QtWidgets.QTableWidgetItem(str(buyer.buying_amount)))
+                    row += 1
 
-            # ✅ Set up the printer
-            printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
-            printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))
+                # ✅ Show the print window
+                self.ui_print_form.show()
 
-            # ✅ Open print preview dialog
-            preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
-            preview_dialog.paintRequested.connect(self.renderPrintPreview)
-            preview_dialog.exec()
+                # ✅ Set up the printer
+                printer = QtPrintSupport.QPrinter(QtPrintSupport.QPrinter.PrinterMode.HighResolution)
+                printer.setPageSize(QtGui.QPageSize(QtGui.QPageSize.PageSizeId.A4))
+
+                # ✅ Open print preview dialog
+                preview_dialog = QtPrintSupport.QPrintPreviewDialog(printer)
+                preview_dialog.paintRequested.connect(self.renderPrintPreview)
+                preview_dialog.exec()
 
         except Exception as e:
             print(f"An error occurred: {e}")
 
     def openPrintMemo(self):
         total_rows = self.ui.tableWidget.rowCount()
-        rows_per_page = 11
+        rows_per_page = 13
         total_pages = math.ceil(total_rows / rows_per_page)
         total_pages = 1 if total_pages == 0 else total_pages
         for page in range(total_pages):

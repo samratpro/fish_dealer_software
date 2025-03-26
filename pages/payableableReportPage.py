@@ -511,7 +511,7 @@ class payableableReport(object):
 
     def openPrintMemo(self):
         total_rows = self.tableWidget.rowCount()
-        rows_per_page = 11
+        rows_per_page = 13
         total_pages = math.ceil(total_rows / rows_per_page)
         total_pages = 1 if total_pages == 0 else total_pages
         for page in range(total_pages):

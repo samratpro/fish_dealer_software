@@ -26,7 +26,7 @@ class Print_Form(QtWidgets.QWidget):  # ✅ Inherit QWidget
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         print(f"✅[Print Memo] Font Family : {custom_font_family}")
         custom_font_low = QFont(custom_font_family, 11)  # Font size 11
-        custom_font_high = QFont(custom_font_family, 22)  # Font size 22
+        custom_font_high = QFont(custom_font_family, 18)  # Font size 22
         custom_font = QFont(custom_font_family, 11)  # Font size 11
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
         self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)

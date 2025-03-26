@@ -1,6 +1,12 @@
 1. QDate
 2. table operation, row vertical header disable, tablewidget,, itemChanged event,, set size, font, css, vartical header disabe
-3. autoCompleted text, with other filled update accroding to autoCompleted, update Completer, ((cost_entry page))
+3. autoCompleted:
+    - Autocomplete with setup_ui signal connection (forms/add_buyer_form.py -- approx 111 line )
+    - Autocomplete with static list (forms/add_buyer_form.py -- approx 44 line )
+    - Autocomplete with setup_ui connection (forms/cost_entry.py -- approx 36 line )
+    - Autofill different way (forms/cost_entry.py -- approx 48 line )
+    - Autofill (forms/cost_entry.py -- approx 52 line )
+4. Make capital of inputted text (forms/cost_entry.py -- approx 62 line )
 4. Page connection
 5. authentication - login signal, username pass
 6. DB Query

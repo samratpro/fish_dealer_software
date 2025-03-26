@@ -44,11 +44,6 @@ class CostEntry_Form(QDialog):
         self.receiverCompleter.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.ui.receiverName.setCompleter(self.receiverCompleter)
 
-        # change input field
-        # *************** end autocomplete *******************************
-        # self.ui.payerName.textChanged.connect(lambda: self.make_capital(self.ui.payerName))
-        # self.ui.receiverName.textChanged.connect(lambda: self.make_capital(self.ui.receiverName))
-
         # autofill amount
         self.receiverCompleter.activated.connect(lambda text: self.autofill_amount(text))
         self.payerCompleter.activated.connect(lambda text: self.autofill_amount(text))
@@ -63,6 +58,11 @@ class CostEntry_Form(QDialog):
         self.apply_bangla_font()
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
+
+        # change input field
+        # *************** end autocomplete *******************************
+        # self.ui.payerName.textChanged.connect(lambda: self.make_capital(self.ui.payerName))
+        # self.ui.receiverName.textChanged.connect(lambda: self.make_capital(self.ui.receiverName))
 
     def apply_bangla_font(self):
         bangla_font_path = "font/nato.ttf"

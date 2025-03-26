@@ -1,3 +1,5 @@
+import math
+
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QDialog
 from PyQt6.QtCore import Qt
@@ -10,6 +12,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from features.data_save_signals import data_save_signals
 import os
+
 
 class AddBuyer_Form(QDialog):
     def __init__(self, username):
@@ -37,6 +40,11 @@ class AddBuyer_Form(QDialog):
         # *************** end autocomplete *******************************
         # self.ui.buyerName.textChanged.connect(lambda: self.make_capital(self.buyerName))
 
+        # fish name autocompleter
+        self.fishNameCompleter = QtWidgets.QCompleter(self.get_fish_name(), self)
+        self.fishNameCompleter.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self.ui.fishName.setCompleter(self.fishNameCompleter)
+
         # final weight change
         self.ui.finalWeight.textEdited.connect(self.final_weight_change)
 
@@ -44,11 +52,9 @@ class AddBuyer_Form(QDialog):
         self.dhol_amount_calculation()
         data_save_signals.data_saved.connect(self.dhol_amount_calculation)
 
-
         self.apply_bangla_font()
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
-
 
     def apply_bangla_font(self):
         bangla_font_path = "font/nato.ttf"
@@ -102,13 +108,17 @@ class AddBuyer_Form(QDialog):
         enable_bangla_typing(self.ui.buyerName, setting.font)
         enable_bangla_typing(self.ui.fishName, setting.font)
 
+    def get_fish_name(self):
+        return ["রুই", "কাতলা", "মৃগেল", "তেলাপিয়া", "কৈ", "বোয়াল", "মিনার কার্প", "গলদা", "বাগদা",
+                     "রয়না", "হরিণা", "পাংগাস", "ফাইস্যা", "টেংরা", "শৈল", "টাকি", "পাতাড়ি", "দাতনে",
+                     "গ্রাস কার্প", "সিলভার কার্প", "ব্লাড কার্প"]
+
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
         name_entires = session.query(BuyerProfileModel).all()  # change Model name
         session.close()
         return [name_entry.buyer_name for name_entry in name_entires]  # change field name
-
     def auto_completer(self):
         """Refresh the QCompleter with the latest seller names."""
         self.all_name = self.get_all_names()
@@ -116,7 +126,6 @@ class AddBuyer_Form(QDialog):
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.ui.buyerName.setCompleter(self.completer)  # change input field
         self.completer.activated.connect(lambda text: self.fill_phone_number(text))
-
     def fill_phone_number(self, name):
         session = self.Session()
         user = session.query(BuyerProfileModel).filter_by(buyer_name=name).first()
@@ -131,7 +140,12 @@ class AddBuyer_Form(QDialog):
     def calculate_price(self):
         def custom_round(value):
             try:
-                return round(float(value) + 0.01)
+                number = float(value)
+                fractional_part = number - int(number)
+                if fractional_part >= 0.7:
+                    return math.ceil(number)
+                else:
+                    return math.floor(number)
             except ValueError:
                 return 0
 
@@ -235,7 +249,8 @@ class AddBuyer_Form(QDialog):
     def name_exists(self, name):
         """Check if the seller exists in the database."""
         session = self.Session()
-        exists = session.query(BuyerProfileModel).filter(BuyerProfileModel.buyer_name == name).first() is not None  # Change Model & Field name
+        exists = session.query(BuyerProfileModel).filter(
+            BuyerProfileModel.buyer_name == name).first() is not None  # Change Model & Field name
         session.close()
         return exists
 

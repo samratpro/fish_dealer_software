@@ -86,6 +86,14 @@ class sellerProfiles(QWidget):
         custom_font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
         custom_font = QFont(custom_font_family, 13)  # Font size 14
         self.ui.tableWidget.horizontalHeader().setFont(custom_font)
+        self.ui.tableWidget.setStyleSheet("""QHeaderView::section, QHeaderView{
+                                             background-color: #2D221B;
+                                             color: white;
+                                             font-size: 11pt; 
+                                             text-align: center;
+                                             height:35px;
+                                             }
+                                       """)
         self.ui.tableWidget.horizontalHeader().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.ui.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.ui.tableWidget.setFont(custom_font)
@@ -233,7 +241,7 @@ class sellerProfiles(QWidget):
 
     def openPrintMemo(self):
         total_rows = self.ui.tableWidget.rowCount()
-        rows_per_page = 11
+        rows_per_page = 13
         total_pages = math.ceil(total_rows / rows_per_page)
         total_pages = 1 if total_pages == 0 else total_pages
         for page in range(total_pages):

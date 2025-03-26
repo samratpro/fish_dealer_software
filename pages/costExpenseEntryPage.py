@@ -609,7 +609,7 @@ class costExpensePage(QWidget):
 
     def openPrintMemo(self):
         total_rows = self.ui.tableWidget.rowCount()
-        rows_per_page = 11
+        rows_per_page = 13
         total_pages = math.ceil(total_rows / rows_per_page)
         total_pages = 1 if total_pages == 0 else total_pages
         for page in range(total_pages):
@@ -617,10 +617,10 @@ class costExpensePage(QWidget):
                 # ✅ Create the print window
                 self.ui_print_form = Print_Form()
                 self.ui_print_form.ui.memoLabel.setText("আড়ৎ-এর হিসাব")
-                self.ui_print_form.ui.date.setText(str(self.ui.startDateInput.text()))
                 self.ui_print_form.ui.receivedAmount.setText(str(self.ui.receivedAmount.text()))
                 self.ui_print_form.ui.paidAmount.setText(str(self.ui.paidAmount.text()))
                 self.ui_print_form.ui.finaTakaWidget.setVisible(False)
+                self.ui_print_form.ui.date.setVisible(False)
                 self.ui_print_form.ui.label_2.setVisible(False)
                 self.ui_print_form.ui.label_3.setVisible(False)
                 self.ui_print_form.ui.label_4.setVisible(False)
@@ -629,6 +629,7 @@ class costExpensePage(QWidget):
                 self.ui_print_form.ui.label_7.setVisible(False)
                 self.ui_print_form.ui.label_11.setVisible(False)
                 self.ui_print_form.ui.label_12.setVisible(False)
+                self.ui_print_form.ui.label_13.setVisible(False)
                 self.ui_print_form.ui.label_14.setVisible(False)
                 self.ui_print_form.ui.name.setVisible(False)
                 self.ui_print_form.ui.mobile.setVisible(False)
