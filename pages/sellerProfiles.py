@@ -20,8 +20,7 @@ from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
-from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
-import os
+from PyQt6.QtGui import QFont, QFontDatabase
 
 
 class sellerProfiles(QWidget):
@@ -45,8 +44,8 @@ class sellerProfiles(QWidget):
         self.session = self.Session()
 
     def setup_ui(self):
-        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(112)
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(112)
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(108)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(108)
         self.ui.tableWidget.verticalHeader().setVisible(False)
         # Set current date ****************
         self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
@@ -192,6 +191,16 @@ class sellerProfiles(QWidget):
                 view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name, seller.phone, seller.address))
                 self.ui.tableWidget.setCellWidget(row, 10, view_button)
 
+                # Add a delete button in the last column
+                edit_button = QtWidgets.QPushButton("")
+                edit_icon = QtGui.QIcon("./images/edit.png")  # Path to your delete icon
+                edit_button.setIcon(edit_icon)
+                edit_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                edit_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                edit_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                edit_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name, seller.phone, seller.address))
+                self.ui.tableWidget.setCellWidget(row, 11, edit_button)
+
                 delete_button = QtWidgets.QPushButton("")
                 delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
                 delete_button.setIcon(delete_icon)
@@ -199,7 +208,7 @@ class sellerProfiles(QWidget):
                 delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-                self.ui.tableWidget.setCellWidget(row, 11, delete_button)
+                self.ui.tableWidget.setCellWidget(row, 12, delete_button)
                 row += 1
 
         except Exception as e:

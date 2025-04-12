@@ -1,4 +1,6 @@
 1. QDate
+    - Configure Data : (pages/homePage.py -- Approx 31-37 lines)
+    -
 2. table operation, row vertical header disable, tablewidget,, itemChanged event,, set size, font, css, vartical header disabe
 3. autoCompleted:
     - Autocomplete with setup_ui signal connection (forms/add_buyer_form.py -- approx 111 line )
@@ -35,6 +37,7 @@
 27. auto increment
 28. make capital in add buyer form
 29. bangla font from models.py
+30. Profile Edit(pages/buyerProfiles.py  )
 pip install --no-deps auto-py-to-exe
 
 

@@ -22,6 +22,7 @@ import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
 import os
 
+
 class commissionReportPage(QWidget):
     def __init__(self):
         super().__init__()
@@ -29,7 +30,6 @@ class commissionReportPage(QWidget):
         self.ui = commissionReportPage_ui()
         self.ui.setupUi(self)
         self.setup_ui()
-
 
     def setup_ui(self):
         self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(160)
@@ -50,7 +50,7 @@ class commissionReportPage(QWidget):
         self.ui.filterBtn.clicked.connect(self.filter_data)
 
         # ************ Autocomplete *****************************
-        self.ui.sellerFilterInput.textChanged.connect(lambda : self.make_capital(self.ui.sellerFilterInput))
+        self.ui.sellerFilterInput.textChanged.connect(lambda: self.make_capital(self.ui.sellerFilterInput))
         self.auto_completer()
 
         self.ui.printBtn.clicked.connect(self.openPrintMemo)
@@ -110,8 +110,6 @@ class commissionReportPage(QWidget):
         self.ui.sellerFilterInput.setFont(custom_font)
         enable_bangla_typing(self.ui.sellerFilterInput, setting.font)
 
-
-
     def setup_database(self):
         from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker, declarative_base
@@ -127,12 +125,14 @@ class commissionReportPage(QWidget):
         self.completer = QtWidgets.QCompleter(self.all_name, self)
         self.completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.ui.sellerFilterInput.setCompleter(self.completer)
+
     def get_all_names(self):
         """Fetch all seller names from the database for autocomplete."""
         session = self.Session()
-        name_entries = session.query(SellerProfileModel).all()     # change Model name
+        name_entries = session.query(SellerProfileModel).all()  # change Model name
         session.close()
         return [entry_name.seller_name for entry_name in name_entries]
+
     def make_capital(self, element):
         element.textChanged.disconnect()
         element.setText(element.text().title())
@@ -146,6 +146,7 @@ class commissionReportPage(QWidget):
                     return data
                 except:
                     return 0
+
             start_date = self.ui.startDateInput.date().toPyDate()
             start_date = start_date - timedelta(days=7)
             end_date = self.ui.endDateInput.date().toPyDate()
@@ -169,7 +170,7 @@ class commissionReportPage(QWidget):
                 self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(seller.date)))
                 self.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(seller.entry_by)))
                 old_amount = custom_int(self.ui.amount.text())
-                self.ui.amount.setText(str(old_amount+custom_int(seller.total_commission)))
+                self.ui.amount.setText(str(old_amount + custom_int(seller.total_commission)))
                 row += 1
 
         except Exception as e:
@@ -271,8 +272,6 @@ class commissionReportPage(QWidget):
 
         except Exception as e:
             print(f"An error occurred during print preview: {e}")
-
-
 
     def save_xlsx(self):
         try:
