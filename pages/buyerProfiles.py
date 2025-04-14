@@ -1,5 +1,4 @@
 import math
-
 from PyQt6 import QtCore, QtGui, QtWidgets
 from PyQt6.QtWidgets import QWidget
 from datetime import datetime, timedelta
@@ -10,6 +9,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from ui.buyerProfiles_ui import buyerProfiles_ui
 from models import UserModel, BuyerProfileModel, SettingModel
+from forms.buyer_profile_edit import Profile_Edit_Form
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
@@ -33,8 +33,8 @@ class buyerProfiles(QWidget):
 
 
     def setup_ui(self):
-        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(135)
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(135)
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(120)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(120)
         self.ui.tableWidget.verticalHeader().setVisible(False)
 
         # Set current date ****************
@@ -190,6 +190,16 @@ class buyerProfiles(QWidget):
                 view_button.clicked.connect(lambda _, buyer_name=buyer.buyer_name: self.view_profile(buyer_name, buyer.phone))
                 self.ui.tableWidget.setCellWidget(row, 8, view_button)
 
+                # Add a edit button
+                edit_button = QtWidgets.QPushButton("")
+                edit_icon = QtGui.QIcon("./images/edit.png")  # Path to your delete icon
+                edit_button.setIcon(edit_icon)
+                edit_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                edit_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                edit_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                edit_button.clicked.connect(lambda _, buyer_name=buyer.buyer_name: self.profile_edit(buyer_name))
+                self.ui.tableWidget.setCellWidget(row, 9, edit_button)
+
                 delete_button = QtWidgets.QPushButton("")
                 delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
                 delete_button.setIcon(delete_icon)
@@ -197,7 +207,7 @@ class buyerProfiles(QWidget):
                 delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
-                self.ui.tableWidget.setCellWidget(row, 9, delete_button)
+                self.ui.tableWidget.setCellWidget(row, 10, delete_button)
                 row += 1
 
         except Exception as e:
@@ -235,6 +245,78 @@ class buyerProfiles(QWidget):
         except Exception as e:
             print(f' err o : {str(e)}')
 
+    def profile_edit(self, buyer_name):
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
+            return
+        try:
+            # Create and show the SellerInformation dialog
+            self.profile_edit_form_ui = Profile_Edit_Form(buyer_name)
+            self.profile_edit_form_ui.setWindowTitle("Profile Edit")
+
+            # Connect buttons with proper lambda or partial
+            self.profile_edit_form_ui.ui.update.clicked.connect(
+                lambda: self.handle_profile_edit_information(buyer_name))
+            self.profile_edit_form_ui.ui.cancel.clicked.connect(self.profile_edit_form_ui.close)
+
+            # Show the dialog
+            self.profile_edit_form_ui.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in profile_edit: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(None, "Error", f"An unexpected error occurred: {e}")
+
+    def handle_profile_edit_information(self, buyer_name):
+        try:
+            success, error_message = self.profile_edit_form_ui.handle_entry()
+            if success:
+                self.accept_profile_edit_information(buyer_name)
+            else:
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText(error_message)
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in handle_profile_edit_information: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(self.profile_edit_form_ui, "Error", f"An unexpected error occurred: {e}")
+
+    def accept_profile_edit_information(self, buyer_name):
+        try:
+            # Retrieve the data from the input fields
+            name = self.profile_edit_form_ui.ui.name.text().strip()
+            phone = self.profile_edit_form_ui.ui.phone.text().strip()
+            if name and phone:
+                with self.Session() as session:
+                    profile = session.query(BuyerProfileModel).filter(BuyerProfileModel.buyer_name == buyer_name).first()
+                    if profile:
+                        profile.buyer_name = name
+                        profile.phone = phone
+                        session.commit()
+                        self.filter_data()
+                        self.profile_edit_form_ui.close()
+                    else:
+                        error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                        error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                        error_dialog.setWindowTitle("Not Found")
+                        error_dialog.setText("Profile not found.")
+                        error_dialog.exec()
+            else:
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText("All fields must be filled.")
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in accept_information: {traceback.format_exc()}")
+            error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+            error_dialog.setWindowTitle("Error")
+            error_dialog.setText("Invalid input.")
+            error_dialog.exec()
+
 
 
     def openPrintMemo(self):
@@ -264,7 +346,7 @@ class buyerProfiles(QWidget):
                 self.ui_print_form.ui.label_14.setVisible(False)
 
                 # ✅ Define columns to exclude
-                excluded_columns = {0, 2, 3, 7, 8, 9, 11}
+                excluded_columns = {0, 3, 7, 8, 9, 10, 11}
                 column_count = self.ui.tableWidget.columnCount()
                 headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
                            i not in excluded_columns]

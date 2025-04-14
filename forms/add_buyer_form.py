@@ -138,6 +138,13 @@ class AddBuyer_Form(QDialog):
         session.close()
 
     def calculate_price(self):
+        def custom_round_weight(value):
+            try:
+                return round(float(value) + 0.01)
+            except ValueError:
+                return 0
+            # Determine the weight type based on the selected index
+
         def custom_round(value):
             try:
                 number = float(value)
@@ -162,7 +169,7 @@ class AddBuyer_Form(QDialog):
         rate = self.ui.fishRate.text().strip()
         raw_weight = self.ui.rawWeight.text().strip()
 
-        if custom_round(rate) == 0 or custom_round(raw_weight) == 0:
+        if custom_round(rate) == 0 or custom_round_weight(raw_weight) == 0:
             self.dialog = QtWidgets.QDialog()
             error_dialog = QtWidgets.QMessageBox(self.dialog)
             error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
@@ -178,7 +185,7 @@ class AddBuyer_Form(QDialog):
             raw_weight = 0
         fish_rate = custom_round(rate)
 
-        raw_weight_for_dhol = custom_round(raw_weight)
+        raw_weight_for_dhol = custom_round_weight(raw_weight)
         dhol = raw_weight_for_dhol * self.dhol_amount  # Deduction for dhol (wastage)
         final_weight = round(raw_weight - dhol, 3)  # take digit
         if weight_type == "kg":
@@ -194,10 +201,14 @@ class AddBuyer_Form(QDialog):
     def final_weight_change(self):
         def custom_round(value):
             try:
-                return round(float(value) + 0.01)
+                number = float(value)
+                fractional_part = number - int(number)
+                if fractional_part >= 0.7:
+                    return math.ceil(number)
+                else:
+                    return math.floor(number)
             except ValueError:
                 return 0
-            # Determine the weight type based on the selected index
 
         weight_index = self.ui.weightType.currentIndex()
         weight_type = {0: 'kg', 1: 'mann', 2: 'thuya'}.get(weight_index, 'thuya')
@@ -207,7 +218,7 @@ class AddBuyer_Form(QDialog):
             return
         rate = self.ui.fishRate.text().strip()
         final_weight_raw = self.ui.finalWeight.text().strip()
-        if custom_round(rate) == 0 or custom_round(final_weight_raw) == 0:
+        if custom_round(rate) == 0 or custom_round(final_weight_raw) == 0: # apply custom_round to check non zero
             self.dialog = QtWidgets.QDialog()
             error_dialog = QtWidgets.QMessageBox(self.dialog)
             error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)

@@ -191,7 +191,7 @@ class sellerProfiles(QWidget):
                 view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name, seller.phone, seller.address))
                 self.ui.tableWidget.setCellWidget(row, 10, view_button)
 
-                # Add a delete button in the last column
+                # Add a edit button
                 edit_button = QtWidgets.QPushButton("")
                 edit_icon = QtGui.QIcon("./images/edit.png")  # Path to your delete icon
                 edit_button.setIcon(edit_icon)
@@ -352,7 +352,7 @@ class sellerProfiles(QWidget):
                 self.ui_print_form.ui.recevied_frame.setVisible(False)
 
                 # ✅ Define columns to exclude
-                excluded_columns = {0,2, 3, 4, 8, 9, 10, 12}
+                excluded_columns = {0,2, 3, 4, 8, 9, 10,11, 12}
                 column_count = self.ui.tableWidget.columnCount()
                 headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
                            i not in excluded_columns]

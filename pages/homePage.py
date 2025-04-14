@@ -27,15 +27,16 @@ class homepage(QWidget):
         self.session = self.Session()
 
     def setup_ui(self):
-        # Set current date ****************
         self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
         self.ui.endDateInput.setDisplayFormat("dd/MM/yyyy")
         self.today_date_raw = datetime.now()
-        self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
-        self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
-        self.ui.startDateInput.setDate(self.qdate_today)
-        self.ui.endDateInput.setDate(self.qdate_today)
-
+        seven_days_ago = self.today_date_raw - timedelta(days=7)
+        # Convert both dates to QDate
+        qdate_today = QDate(self.today_date_raw.year, self.today_date_raw.month, self.today_date_raw.day)
+        qdate_seven_days_ago = QDate(seven_days_ago.year, seven_days_ago.month, seven_days_ago.day)
+        # Set the dates
+        self.ui.startDateInput.setDate(qdate_seven_days_ago)
+        self.ui.endDateInput.setDate(qdate_today)
         data_save_signals.data_saved.connect(self.filter_data)
         self.filter_data()
         self.ui.filterBtn.clicked.connect(self.filter_data)
@@ -70,7 +71,6 @@ class homepage(QWidget):
         try:
             # Get the start and end dates from the input fields
             start_date = self.ui.startDateInput.date().toPyDate()
-            start_date = start_date - timedelta(days=7)
             end_date = self.ui.endDateInput.date().toPyDate()
 
             # Retrieve data from the database

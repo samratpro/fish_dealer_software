@@ -11,6 +11,7 @@ def custom_round(value):
     except ValueError:
         return 0
 
-# Example usage:
-print(custom_round(5.7))  # Output: 6
-print(custom_round(5.6))  # Output: 5
+
+
+
+print(round(3.1415926, 3))

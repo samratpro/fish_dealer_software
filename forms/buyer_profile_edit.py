@@ -1,5 +1,7 @@
 from PyQt6.QtWidgets import QDialog
-from sqlalchemy.orm import declarative_base
+from models import BuyerProfileModel
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 from ui.profile_edit_ui import Ui_ProfileEdit
 from models import *
 from PyQt6.QtGui import QFont, QFontDatabase
@@ -21,9 +23,10 @@ class Profile_Edit_Form(QDialog):
 
     def setup_ui(self):
         session = self.Session()
-        profile = session.query(SellerProfileModel).filter(SellerProfileModel.seller_name == self.name).first()
-        self.ui.name.setText(profile.seller_name)
-        self.ui.address.setText(profile.address)
+        profile = session.query(BuyerProfileModel).filter(BuyerProfileModel.buyer_name == self.name).first()
+        self.ui.name.setText(profile.buyer_name)
+        self.ui.address.setDisabled(True)
+        self.ui.address.setStyleSheet("background-color: #F0F0F0;")
         self.ui.phone.setText(profile.phone)
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
@@ -31,13 +34,10 @@ class Profile_Edit_Form(QDialog):
     def handle_entry(self):
         name = self.ui.name.text().strip()  # Change input field
         phone = self.ui.phone.text().strip()
-        address = self.ui.address.text().strip()
         if not name:
             return False, "নাম ফাঁকা থাকা যাবেনা .."
         if not phone:
             return False, "ফোন নম্বর ফাঁকা থাকা যাবেনা .."
-        if not address:
-            return False, "এড্রেস ফাঁকা থাকা যাবেনা.."
         return True, None
 
     def update_setting_font(self):
@@ -61,9 +61,7 @@ class Profile_Edit_Form(QDialog):
 
         from bangla_typing import enable_bangla_typing
         self.ui.name.setFont(custom_font)
-        self.ui.address.setFont(custom_font)
         enable_bangla_typing(self.ui.name, setting.font)
-        enable_bangla_typing(self.ui.address, setting.font)
 
 
 

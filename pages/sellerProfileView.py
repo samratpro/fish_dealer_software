@@ -168,7 +168,7 @@ class SellerProfileView(QtWidgets.QWidget):
             for page in range(total_pages):
                 # ✅ Create the print window
                 self.ui_print_form = Print_Form()
-                self.ui_print_form.ui.tableWidget.horizontalHeader().setMinimumSectionSize(125)
+                self.ui_print_form.ui.tableWidget.horizontalHeader().setMinimumSectionSize(121)
                 self.ui_print_form.ui.tableWidget.horizontalHeader().setSectionResizeMode(
                     QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
@@ -245,7 +245,7 @@ class SellerProfileView(QtWidgets.QWidget):
                 self.ui_print_form.ui.recevied_frame.setVisible(False)
 
                 # ✅ Define columns to exclude
-                excluded_columns = {0, 6}
+                excluded_columns = {0, 6, 7}
                 column_count = self.ui.tableWidget.columnCount()
                 headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
                            i not in excluded_columns]

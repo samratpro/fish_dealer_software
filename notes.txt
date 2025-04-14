@@ -37,7 +37,7 @@
 27. auto increment
 28. make capital in add buyer form
 29. bangla font from models.py
-30. Profile Edit(pages/buyerProfiles.py  )
+30. Profile Edit(pages/buyerProfiles.py -- 195, 252 lines )
 pip install --no-deps auto-py-to-exe
 
 

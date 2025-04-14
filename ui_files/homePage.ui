@@ -475,7 +475,7 @@ color: rgb(255, 255, 255);
               </font>
              </property>
              <property name="text">
-              <string>মোট ঋণ </string>
+              <string>মোট ঋণ গ্রহণ</string>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -1622,7 +1622,7 @@ color: rgb(255, 255, 255);</string>
             </font>
            </property>
            <property name="text">
-            <string>ক্রেতাদের কাছে মোট পাওনা</string>
+            <string>মোট অফিস খরচ </string>
            </property>
           </widget>
          </item>
@@ -1636,6 +1636,7 @@ color: rgb(255, 255, 255);</string>
  </widget>
  <resources>
   <include location="../resource.qrc"/>
+  <include location="../../../.designer/resource.qrc"/>
  </resources>
  <connections/>
 </ui>

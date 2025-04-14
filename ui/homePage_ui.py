@@ -776,7 +776,7 @@ class Ui_HomePageMain(object):
         self.label_27.setText(_translate("HomePageMain", "ক্রেতাদের কাছে মোট পাওনা"))
         self.earnLabel_11.setText(_translate("HomePageMain", "মোট খরচ"))
         self.costAmount.setText(_translate("HomePageMain", "1269055"))
-        self.label_32.setText(_translate("HomePageMain", "ক্রেতাদের কাছে মোট পাওনা"))
+        self.label_32.setText(_translate("HomePageMain", "মোট অফিস খরচ"))
 
 
 if __name__ == "__main__":
