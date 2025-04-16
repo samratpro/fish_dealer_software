@@ -57,7 +57,7 @@ class Ui_LoanPayingPage(object):
                                                                             text-align: center;
                                                                             }""")
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(6)
+        self.tableWidget.setColumnCount(7)
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -71,6 +71,8 @@ class Ui_LoanPayingPage(object):
         self.tableWidget.setHorizontalHeaderItem(4, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(5, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, item)
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         font = QtGui.QFont()
@@ -107,14 +109,16 @@ class Ui_LoanPayingPage(object):
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("costExpenseMain", "গ্রহণ কারীর নাম"))
         item = self.tableWidget.horizontalHeaderItem(3)
-        item.setText(_translate("costExpenseMain", "পরিমান"))
+        item.setText(_translate("costExpenseMain", "ফোন"))
         item = self.tableWidget.horizontalHeaderItem(4)
-        item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+        item.setText(_translate("costExpenseMain", "পরিমান"))
         item = self.tableWidget.horizontalHeaderItem(5)
+        item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+        item = self.tableWidget.horizontalHeaderItem(6)
         item.setText(_translate("costExpenseMain", "এডিট"))
 
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(220)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(220)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(195)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(195)
         self.tableWidget.verticalHeader().setVisible(False)
         self.filter_data()
         data_save_signals.data_saved.connect(self.filter_data)
@@ -152,8 +156,9 @@ class Ui_LoanPayingPage(object):
                 self.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(entry.date)))
                 self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem("ঋণ প্রদান"))
                 self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(entry.loan_receiver_name)))
-                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(entry.amount)))
-                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
+                self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(entry.phone)))
+                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.amount)))
+                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
 
                 # Add a edit button
                 edit_button = QtWidgets.QPushButton("")
@@ -165,7 +170,7 @@ class Ui_LoanPayingPage(object):
                 edit_button.clicked.connect(
                     lambda _, receiver_name=entry.loan_receiver_name, username=entry.entry_by: self.profile_edit(
                         receiver_name, username))
-                self.tableWidget.setCellWidget(row, 5, edit_button)
+                self.tableWidget.setCellWidget(row, 6, edit_button)
 
                 row += 1
         except Exception as e:
@@ -173,11 +178,11 @@ class Ui_LoanPayingPage(object):
 
     def profile_edit(self, receiver_name, username):
         session = self.Session()
-        user = session.query(UserModel).filter(UserModel.username==username).one()
-        self.user_role = user.role
-        if self.user_role == "editor":
-            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
-            return
+        # user = session.query(UserModel).filter(UserModel.username==username).one()
+        # self.user_role = user.role
+        # if self.user_role == "editor":
+        #     QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
+        #     return
         try:
             # Create and show the SellerInformation dialog
             self.profile_edit_form_ui = Profile_Edit_Form(receiver_name)
@@ -214,11 +219,13 @@ class Ui_LoanPayingPage(object):
     def accept_profile_edit_information(self, receiver_name):
         try:
             name = self.profile_edit_form_ui.ui.name.text().strip()
+            phone = self.profile_edit_form_ui.ui.phone.text().strip()
             if name:
                 with self.Session() as session:
                     profile = session.query(PayingLoanModel).filter(PayingLoanModel.loan_receiver_name == receiver_name).first()
                     if profile:
                         profile.loan_receiver_name = name
+                        profile.phone = phone
                         session.commit()
                         self.filter_data()
                         self.profile_edit_form_ui.close()

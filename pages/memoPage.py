@@ -58,7 +58,7 @@ class memoPage(QWidget):
         self.ui.sellingDateInput.setDate(self.ui.qdate_today)
 
         # open seller dialog
-        self.ui.addBuyerBtn.clicked.connect(self.open_seller_information)
+        self.ui.addBuyerBtn.clicked.connect(self.open_buyer_information)
 
         # Update Cost change by user interact    **********************************
         self.ui.commissionInput.textChanged.connect(self.change_in_cost_section)
@@ -214,7 +214,7 @@ class memoPage(QWidget):
 
 
     ## Open dialog to get seller information *************
-    def open_seller_information(self):
+    def open_buyer_information(self):
         # Create and show the SellerInformation dialog
         self.seller_form_ui = AddBuyer_Form(self.username)
         self.seller_form_ui.setWindowTitle("Add Buyer")
@@ -271,7 +271,15 @@ class memoPage(QWidget):
                     self.ui.tableWidget.setCellWidget(row_position, 6, delete_button)
 
                     # Close the dialog
-                    self.seller_form_ui.close()
+                    # self.seller_form_ui.close()
+                    # Clear the input fields after successful entry
+                    self.seller_form_ui.ui.buyerName.clear()
+                    self.seller_form_ui.ui.mobile.clear()
+                    self.seller_form_ui.ui.fishName.clear()
+                    self.seller_form_ui.ui.fishRate.setText("1")
+                    self.seller_form_ui.ui.rawWeight.setText("1")
+                    self.seller_form_ui.ui.finalWeight.clear()
+                    self.seller_form_ui.ui.totalPrice.clear()
                 else:
                     # print("Total price is not a digit.")
                     # Show error message if total_price is not a digit
@@ -296,7 +304,6 @@ class memoPage(QWidget):
             # error_dialog.setText(f"An unexpected error occurred: {e}")
             error_dialog.setText(f"ইনভ্যালিড ইনপুট")
             error_dialog.exec()
-
 
 
 

@@ -165,7 +165,10 @@ class costExpensePage(QWidget):
             if entry_name != 'all_accounting':
                 query = query.filter(DealerModel.entry_name.ilike(f"%{entry_name}%"))
             if entry_name:
-                query = query.filter(DealerModel.name.ilike(f"%{search_name}%"))
+                query = query.filter(
+                    DealerModel.name.ilike(f"%{search_name}%") |
+                    DealerModel.description.ilike(f"%{search_name}%")
+                )
             query = query.order_by(desc(DealerModel.id))
             all_entries = query.all()
 
@@ -528,6 +531,7 @@ class costExpensePage(QWidget):
                 else:
                     loan_entry = PayingLoanModel(
                         loan_receiver_name=receiverName,
+                        phone="+8801000000000",
                         date=entry_date,
                         amount=amount,
                         entry_by=entry_by
@@ -597,7 +601,13 @@ class costExpensePage(QWidget):
                 self.show_error_message("অবৈধ এন্ট্রি নাম।")
                 return
             session.commit()
-            self.cost_form.close()
+            # self.cost_form.close()
+            self.cost_form.ui.payerName.clear()
+            self.cost_form.ui.receiverName.clear()
+            self.cost_form.ui.amount.clear()
+            self.cost_form.ui.description.clear()
+
+
             data_save_signals.data_saved.emit()
         except Exception as e:
             print(f"Error in seller info: {e}")

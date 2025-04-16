@@ -98,6 +98,7 @@ class PayingLoanModel(Base):
     __tablename__ = 'paying_loan_model'
     id = Column(Integer, primary_key=True)
     loan_receiver_name = Column(String)
+    phone = Column(String)
     date = Column(Date, nullable=False)
     amount = Column(Integer)
     entry_by = Column(String)

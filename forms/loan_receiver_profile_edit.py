@@ -25,15 +25,16 @@ class Profile_Edit_Form(QDialog):
         self.ui.name.setText(profile.loan_receiver_name)
         self.ui.address.setDisabled(True)
         self.ui.address.setStyleSheet("background-color: #F0F0F0;")
-        self.ui.phone.setDisabled(True)
-        self.ui.phone.setStyleSheet("background-color: #F0F0F0;")
         self.update_setting_font()
         data_save_signals.data_saved.connect(self.update_setting_font)
 
     def handle_entry(self):
-        name = self.ui.name.text().strip()  # Change input field
+        name = self.ui.name.text().strip()
+        phone = self.ui.phone.text().strip()
         if not name:
             return False, "নাম ফাঁকা থাকা যাবেনা .."
+        if not phone:
+            return False, "ফোন নম্বর ফাঁকা থাকা যাবেনা .."
         return True, None
 
     def update_setting_font(self):

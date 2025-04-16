@@ -150,8 +150,8 @@ class settingsPage(QWidget):
                 self.ui.downloadProgress.setValue(0)
 
                 # List of models to back up
-                models = [SellerProfileModel, SellingModel, BuyerProfileModel, BuyingModel,
-                          DealerModel, LoanModel, CostModel, SettingModel, UserModel, FinalAccounting]
+                models = [VoucherNoModel, SellerProfileModel, SellingModel, BuyerProfileModel, BuyingModel,
+                          DealerModel, LoanModel, PayingLoanModel, CostModel, SettingModel, UserModel, FinalAccounting]
 
                 # Create a persistent directory for CSV files
                 temp_dir = os.path.join(os.getcwd(), "temp_backup")
@@ -260,12 +260,14 @@ class settingsPage(QWidget):
                         table_name = "_".join(filename.split("_")[:-1])  # Remove the date part
 
                         model_mapping = {
+                            "voucher_model": VoucherNoModel,
                             "seller_profile_model": SellerProfileModel,
                             "selling_model": SellingModel,
                             "buyer_profile_model": BuyerProfileModel,
                             "buying_model": BuyingModel,
                             "dealer_model": DealerModel,
                             "loan_model": LoanModel,
+                            "paying_loan_model": PayingLoanModel,
                             "cost_model": CostModel,
                             "setting_model": SettingModel,
                             "user_model": UserModel,

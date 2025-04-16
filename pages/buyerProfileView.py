@@ -90,6 +90,14 @@ class BuyerProfileView(QtWidgets.QWidget):
 
             # Retrieve data from the database
             # buyers= self.session.query(BuyingModel).filter_by(buyer_name=self.buyer_name).all()
+            print("Buyer name : ", self.buyer_name)
+            buyers = (self.session.query(BuyingModel).filter(
+                    BuyingModel.buyer_name == self.buyer_name
+                )
+                .all()
+            )
+            print("buyers 0 : ", buyers)
+
             buyers = (self.session.query(BuyingModel).filter(
                     BuyingModel.buyer_name == self.buyer_name,  # Match buyer name
                     BuyingModel.date.between(start_date, end_date)  # Date range filter
@@ -98,6 +106,8 @@ class BuyerProfileView(QtWidgets.QWidget):
             )
 
             # Log retrieved data for debugging
+
+            print("Buyers : ", buyers)
 
             # Clear existing table data
             self.ui.tableWidget.clearContents()
