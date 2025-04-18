@@ -423,7 +423,7 @@ class costReport_ui(object):
         self.accountNameLabel.setText(_translate("costExpenseMain", "হিসাবের নাম"))
         self.accountNameSelect.setItemText(0, _translate("costExpenseMain", "সব হিসাব"))
         self.accountNameSelect.setItemText(1, _translate("costExpenseMain", "বেতন/মজুরি প্রদান"))
-        self.accountNameSelect.setItemText(2, _translate("costExpenseMain", "অন্যান্য খরচ"))
+        self.accountNameSelect.setItemText(2, _translate("costExpenseMain", "অফিস খরচ"))
         self.accountNameSelect.setItemText(3, _translate("costExpenseMain", "মসজিদ/মাদ্রাসা"))
         self.accountNameSelect.setItemText(4, _translate("costExpenseMain", "সমিতি"))
         self.accountNameSelect.setItemText(5, _translate("costExpenseMain", "অন্যান্য(ভাউচার)"))

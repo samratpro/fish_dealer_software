@@ -50,7 +50,7 @@ class CostReport(QWidget):
         self.filter_data()
         self.ui.filterBtn.clicked.connect(self.filter_data)
 
-        self.ui.filterNameInput.textChanged.connect(lambda: self.make_capital(self.ui.filterNameInput))
+        # self.ui.filterNameInput.textChanged.connect(lambda: self.make_capital(self.ui.filterNameInput))
         self.auto_completer()
 
         self.ui.printBtn.clicked.connect(self.openPrintMemo)
@@ -138,6 +138,8 @@ class CostReport(QWidget):
                     return data
                 except:
                     return 0
+
+            search_name = self.ui.filterNameInput.text()
             entry_index = self.ui.accountNameSelect.currentIndex()
             entry_name = {0: 'all_accounting', 1: 'salary',
                           2: 'other_cost', 3: 'mosque',
@@ -161,6 +163,8 @@ class CostReport(QWidget):
                     query = query.filter(or_(*conditions))
                 else:
                     query = query.filter(DealerModel.entry_name.ilike(f"%{entry_name}%"))
+                if search_name:
+                    query = query.filter(DealerModel.name.ilike(f"%{search_name}%"))
                 all_entries = query.all()
 
 
@@ -173,9 +177,9 @@ class CostReport(QWidget):
             row = 0
             for entry in all_entries:
                 entry_name = {
-                              'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অন্যান্য খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
+                              'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অফিস খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
                               'somiti': 'সমিতি', 'other_cost_voucher': 'অন্যান্য(ভাউচার)'
-                              }.get(entry.entry_name.strip(), "অন্যান্য খরচ")
+                              }.get(entry.entry_name.strip(), "অফিস খরচ")
                 self.ui.tableWidget.insertRow(row)
                 self.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(entry.id)))
                 self.ui.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(entry.date)))
