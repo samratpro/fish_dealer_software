@@ -158,7 +158,7 @@ class AddBuyer_Form(QDialog):
 
         # Determine the weight type based on the selected index
         weight_index = self.ui.weightType.currentIndex()
-        weight_type = {0: 'kg', 1: 'mann', 2: 'thuya'}.get(weight_index, 'thuya')
+        weight_type = {0: 'mann', 1: 'kg', 2: 'thuya'}.get(weight_index, 'thuya')
 
         # If the weight type is 'thuya', no calculation is needed
         if weight_type == 'thuya':
