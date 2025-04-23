@@ -118,8 +118,8 @@ class CostEntry_Form(QDialog):
         session = self.Session()
         try:
             buyer_names = [name_entry.buyer_name for name_entry in session.query(BuyerProfileModel).all()]
-            loan_receiver_names = [name_entry.loan_receiver_name for name_entry in session.query(PayingLoanModel).filter(PayingLoanModel.amount > 0)]
-            unique_names = set(buyer_names + loan_receiver_names)
+            loan_payer_names = [name_entry.loan_payer_name for name_entry in session.query(LoanModel).filter(LoanModel.amount > 0)]
+            unique_names = set(buyer_names + loan_payer_names)
             return list(unique_names)  # Convert set back to list
         finally:
             session.close()

@@ -153,7 +153,6 @@ class buyerProfiles(QWidget):
     def filter_data(self):
         try:
             start_date = self.ui.startDateInput.date().toPyDate()
-            start_date = start_date - timedelta(days=7)
             end_date = self.ui.endDateInput.date().toPyDate()
             buyer_filter = self.ui.buyerFilterInput.text()
 

@@ -249,10 +249,10 @@ class costExpensePage(QWidget):
                 elif entry.entry_name == "loan_repayment":  # loan_repayment
                     self.update_loan_model(entry.name, entry.paying_amount, 'add')
                 elif entry.entry_name == "giving_loan":  # giving_loan
-                    self.update_paying_loan_model(entry.name, entry.paying_amount, 'sub')  # Fix: Use paying_amount
+                    self.update_paying_loan_model(entry.name, entry.paying_amount, 'add')  # Fix: Use paying_amount
                 elif entry.entry_name == "receiving_loan":  # receiving_loan
                     self.update_paying_loan_model(entry.name, entry.receiving_amount,
-                                                  'add')  # Fix: Use receiving_amount
+                                                  'sub')  # Fix: Use receiving_amount
                 elif entry.entry_name == "mosque":  # mosque
                     cost = session.query(CostModel).first()
                     cost.mosque += entry.paying_amount
@@ -489,24 +489,33 @@ class costExpensePage(QWidget):
                 session.commit()
 
             elif entry_name == 'borrowing':
+                loan_payer = session.query(LoanModel).filter_by(loan_payer_name=payerName).first()
+                if loan_payer:
+                    loan_payer.amount += amount
+                    session.commit()
+                    print("Loan payer already exists. Amount added to the existing payer.")
+                else:
+                    loan_entry = LoanModel(
+                        loan_payer_name=payerName,
+                        date=entry_date,
+                        amount=amount,
+                        entry_by=entry_by
+                    )
+                    session.add(loan_entry)
+                    session.commit()
+                    print("New loan payer created.")
+
                 dealer_entry = DealerModel(
                     entry_name=entry_name,
                     name=payerName,
                     date=entry_date,
-                    receiving_amount=amount,
+                    paying_amount=amount,
                     entry_by=entry_by,
                     description=description
                 )
                 session.add(dealer_entry)
                 accounting = session.query(FinalAccounting).first()
                 accounting.capital += amount
-                loan_entry = LoanModel(
-                    loan_payer_name=payerName,
-                    date=entry_date,
-                    amount=amount,
-                    entry_by=entry_by
-                )
-                session.add(loan_entry)
                 session.commit()
 
 
@@ -606,7 +615,6 @@ class costExpensePage(QWidget):
             self.cost_form.ui.receiverName.clear()
             self.cost_form.ui.amount.clear()
             self.cost_form.ui.description.clear()
-
 
             data_save_signals.data_saved.emit()
         except Exception as e:

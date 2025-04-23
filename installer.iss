@@ -1,10 +1,10 @@
 ; Define installer name and output directory
 [Setup]
 AppName=Fish Dealer Software
-AppVersion=1.0
-DefaultDirName={localappdata}\FishDealerSoftware
-DefaultGroupName=Fish Dealer Software
-OutputBaseFilename=FishDealerSetup
+AppVersion=5.0
+DefaultDirName={localappdata}\FishDealerSoftware_5
+DefaultGroupName=Fish Dealer Software 5.0
+OutputBaseFilename=FishDealerSetup_5
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\logo.ico
@@ -37,13 +37,14 @@ Root: HKCU; Subkey: "Software\FishDealerSoftware2"; Flags: uninsdeletekey
 
 ; Shortcuts
 [Icons]
-Name: "{group}\Fish Dealer Software"; Filename: "{app}\run.vbs"; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"
+[Icons]
+Name: "{group}\Fish Dealer Software"; Filename: "{app}\python\app.exe"; Parameters: """{app}\app.py"""; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"
 Name: "{group}\Uninstall Fish Dealer Software"; Filename: "{uninstallexe}"; IconFilename: "{app}\static\logo.ico"
-Name: "{commondesktop}\Fish Dealer Software"; Filename: "{app}\run.vbs"; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"; Tasks: desktopicon
+Name: "{commondesktop}\Fish Dealer Software"; Filename: "{app}\python\app.exe"; Parameters: """{app}\app.py"""; WorkingDir: "{app}"; IconFilename: "{app}\static\logo.ico"
 
 ; Run the application after installation
 [Run]
-Filename: "{app}\run.vbs"; Description: "{cm:LaunchProgram, Fish Dealer Software}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\python\app.exe"; Parameters: """{app}\app.py"""; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
 
 ; Uninstaller (removes everything)
 [UninstallDelete]
