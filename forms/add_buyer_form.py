@@ -45,8 +45,10 @@ class AddBuyer_Form(QDialog):
         self.fishNameCompleter.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         self.ui.fishName.setCompleter(self.fishNameCompleter)
 
-        # final weight change
+        # any change
+        self.ui.fishRate.textEdited.connect(self.rate_and_raw_weight_change)
         self.ui.finalWeight.textEdited.connect(self.final_weight_change)
+        self.ui.rawWeight.textEdited.connect(self.rate_and_raw_weight_change)
 
         self.dhol_amount = ''
         self.dhol_amount_calculation()
@@ -198,6 +200,23 @@ class AddBuyer_Form(QDialog):
         self.ui.finalWeight.setText(str(final_weight))  # Rounded to 2 decimal places
         self.ui.totalPrice.setText(str(total_price))  # Rounded to 2 decimal places
 
+    def rate_and_raw_weight_change(self):
+        rate = self.ui.fishRate.text().strip()
+        raw_weight = self.ui.rawWeight.text().strip()
+        final_weight = self.ui.finalWeight.text().strip()
+
+        # Check if all values are valid numbers
+        if self.is_valid_number(rate) and self.is_valid_number(raw_weight) and self.is_valid_number(final_weight):
+            self.calculate_price()
+
+    def is_valid_number(self, value):
+        try:
+            float(value)  # Try converting the value to a float
+            return True
+        except ValueError:
+            return False
+
+
     def final_weight_change(self):
         def custom_round(value):
             try:
@@ -211,7 +230,7 @@ class AddBuyer_Form(QDialog):
                 return 0
 
         weight_index = self.ui.weightType.currentIndex()
-        weight_type = {0: 'kg', 1: 'mann', 2: 'thuya'}.get(weight_index, 'thuya')
+        weight_type = {0: 'mann', 1: 'kg', 2: 'thuya'}.get(weight_index, 'thuya')
 
         # If the weight type is 'thuya', no calculation is needed
         if weight_type == 'thuya':
