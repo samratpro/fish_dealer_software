@@ -93,16 +93,14 @@ class BuyerProfileView(QtWidgets.QWidget):
             print("Buyer name : ", self.buyer_name)
             buyers = (self.session.query(BuyingModel).filter(
                     BuyingModel.buyer_name == self.buyer_name
-                )
-                .all()
+                ).all()
             )
             print("buyers 0 : ", buyers)
 
             buyers = (self.session.query(BuyingModel).filter(
                     BuyingModel.buyer_name == self.buyer_name,  # Match buyer name
                     BuyingModel.date.between(start_date, end_date)  # Date range filter
-                )
-                .all()
+                ).all()
             )
 
             # Log retrieved data for debugging
@@ -131,7 +129,7 @@ class BuyerProfileView(QtWidgets.QWidget):
                 self.ui.amount.setText(str(old_amount+custom_int(buyer.buying_amount)))
                 row += 1
         except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "seller Profile View Error", f"An error occurred while filtering data: {e}")
+            QtWidgets.QMessageBox.critical(None, "Buyer Profile View Error", f"An error occurred while filtering data: {e}")
 
     def openPrintMemo(self):
         total_rows = self.ui.tableWidget.rowCount()

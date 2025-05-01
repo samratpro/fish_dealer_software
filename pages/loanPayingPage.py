@@ -3,6 +3,7 @@ from models import *
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 from forms.loan_receiver_profile_edit import Profile_Edit_Form
+from pages.loanPayingView import LoanProfileView
 from PyQt6.QtWidgets import QHeaderView
 import os
 
@@ -57,7 +58,7 @@ class Ui_LoanPayingPage(object):
                                                                             text-align: center;
                                                                             }""")
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(7)
+        self.tableWidget.setColumnCount(8)
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -73,6 +74,8 @@ class Ui_LoanPayingPage(object):
         self.tableWidget.setHorizontalHeaderItem(5, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(6, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(7, item)
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         font = QtGui.QFont()
@@ -113,12 +116,14 @@ class Ui_LoanPayingPage(object):
         item = self.tableWidget.horizontalHeaderItem(4)
         item.setText(_translate("costExpenseMain", "পরিমান"))
         item = self.tableWidget.horizontalHeaderItem(5)
-        item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+        item.setText(_translate("costExpenseMain", "ভিউ"))
         item = self.tableWidget.horizontalHeaderItem(6)
+        item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+        item = self.tableWidget.horizontalHeaderItem(7)
         item.setText(_translate("costExpenseMain", "এডিট"))
 
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(195)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(195)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(170)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(170)
         self.tableWidget.verticalHeader().setVisible(False)
         self.filter_data()
         data_save_signals.data_saved.connect(self.filter_data)
@@ -144,8 +149,7 @@ class Ui_LoanPayingPage(object):
         try:
             # Retrieve data from the database
             session = self.Session()
-            query = session.query(PayingLoanModel).filter(PayingLoanModel.amount > 0)
-            all_entries = query.all()
+            all_entries = session.query(PayingLoanProfileModel).all()
             # Clear existing table data
             self.tableWidget.clearContents()
             self.tableWidget.setRowCount(0)
@@ -160,6 +164,17 @@ class Ui_LoanPayingPage(object):
                 self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.amount)))
                 self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
 
+                # Add a delete button in the last column
+                view_button = QtWidgets.QPushButton("")
+                view_icon = QtGui.QIcon("./images/view.png")  # Path to your delete icon
+                view_button.setIcon(view_icon)
+                view_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                view_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+
+                view_button.clicked.connect(lambda _, name=entry.loan_receiver_name, phone=entry.phone: self.view_profile(name, phone))
+                self.tableWidget.setCellWidget(row, 6, view_button)
+
                 # Add a edit button
                 edit_button = QtWidgets.QPushButton("")
                 edit_icon = QtGui.QIcon("./images/edit.png")  # Path to your delete icon
@@ -168,21 +183,24 @@ class Ui_LoanPayingPage(object):
                 edit_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 edit_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
                 edit_button.clicked.connect(
-                    lambda _, receiver_name=entry.loan_receiver_name, username=entry.entry_by: self.profile_edit(
-                        receiver_name, username))
-                self.tableWidget.setCellWidget(row, 6, edit_button)
+                    lambda _, receiver_name=entry.loan_receiver_name: self.profile_edit(
+                        receiver_name))
+                self.tableWidget.setCellWidget(row, 7, edit_button)
 
                 row += 1
         except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
+            QtWidgets.QMessageBox.critical(None, "Loan Paying Profile Error", f"An error occurred while filtering data: {e}")
 
-    def profile_edit(self, receiver_name, username):
-        session = self.Session()
-        # user = session.query(UserModel).filter(UserModel.username==username).one()
-        # self.user_role = user.role
-        # if self.user_role == "editor":
-        #     QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
-        #     return
+    def view_profile(self, payer_name, phone):
+        try:
+            session = self.Session()
+            self.transactions_window = LoanProfileView(payer_name, phone, session)
+            self.transactions_window.show()
+        except Exception as e:
+            print(f' err o : {str(e)}')
+
+
+    def profile_edit(self, receiver_name):
         try:
             # Create and show the SellerInformation dialog
             self.profile_edit_form_ui = Profile_Edit_Form(receiver_name)
@@ -222,7 +240,7 @@ class Ui_LoanPayingPage(object):
             phone = self.profile_edit_form_ui.ui.phone.text().strip()
             if name:
                 with self.Session() as session:
-                    profile = session.query(PayingLoanModel).filter(PayingLoanModel.loan_receiver_name == receiver_name).first()
+                    profile = session.query(PayingLoanProfileModel).filter(PayingLoanProfileModel.loan_receiver_name == receiver_name).first()
                     if profile:
                         profile.loan_receiver_name = name
                         profile.phone = phone

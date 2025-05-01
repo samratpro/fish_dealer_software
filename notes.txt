@@ -8,6 +8,7 @@
     - Autocomplete with setup_ui connection (forms/cost_entry.py -- approx 36 line )
     - Autofill different way (forms/cost_entry.py -- approx 48 line )
     - Autofill (forms/cost_entry.py -- approx 52 line )
+    - Autofill after autocomplete
 4. Make capital of inputted text (forms/cost_entry.py -- approx 62 line )
 4. Page connection
 5. authentication - login signal, username pass
@@ -15,7 +16,7 @@
 7. Logging
 8. data save, field clear and setText
 9. Signal  (pysignal, shared_signal)
-10. current date update, Date formating, icon, calender setup, CSS, date filter, date subtraction
+10. current date update, Date formating, set 7 days ago, (pages/homePage.py fn: setup_ui) icon, calender setup, CSS, date filter, date subtraction
 11. signal, click event should be in retranslateUi method
 12. Open Form Accept form
 13. single profile view with session pass

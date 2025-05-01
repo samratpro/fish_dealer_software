@@ -21,8 +21,8 @@ class Profile_Edit_Form(QDialog):
 
     def setup_ui(self):
         session = self.Session()
-        profile = session.query(PayingLoanProfileModel).filter(PayingLoanProfileModel.loan_receiver_name == self.name).first()
-        self.ui.name.setText(profile.loan_receiver_name)
+        profile = session.query(LoanProfileModel).filter(LoanProfileModel.loan_payer_name == self.name).first()
+        self.ui.name.setText(profile.loan_payer_name)
         self.ui.address.setDisabled(True)
         self.ui.address.setStyleSheet("background-color: #F0F0F0;")
         self.update_setting_font()

@@ -3,17 +3,25 @@ from PyQt6.QtWidgets import QHeaderView
 from models import *
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
+from forms.loan_profile_edit import Profile_Edit_Form
+from pages.loanView import LoanProfileView
 import os
 
 class Ui_LoanPage(object):
-    def setupUi(self, costExpenseMain):
+    def setupUi(self, costExpenseMain, username):
 
         # ****************** Declear database ************************
         self.Base = declarative_base()
         self.engine = create_engine('sqlite:///business.db')    # change db url
         self.Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
+
+        self.username = username
+        user = session.query(UserModel).filter(UserModel.username==self.username).one()
+        self.user_role = user.role
         # ******************* end db ***************************
+
+
 
         costExpenseMain.setObjectName("costExpenseMain")
         costExpenseMain.resize(944, 650)
@@ -55,7 +63,7 @@ class Ui_LoanPage(object):
                                                                             text-align: center;
                                                                             }""")
         self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(5)
+        self.tableWidget.setColumnCount(9)
         self.tableWidget.setRowCount(0)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
@@ -67,6 +75,14 @@ class Ui_LoanPage(object):
         self.tableWidget.setHorizontalHeaderItem(3, item)
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(4, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(5, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(7, item)
+        item = QtWidgets.QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(8, item)
         self.tableWidget.horizontalHeader().setVisible(True)
         self.tableWidget.horizontalHeader().setCascadingSectionResizes(False)
         font = QtGui.QFont()
@@ -107,10 +123,18 @@ class Ui_LoanPage(object):
         item = self.tableWidget.horizontalHeaderItem(3)
         item.setText(_translate("costExpenseMain", "পরিমান"))
         item = self.tableWidget.horizontalHeaderItem(4)
+        item.setText(_translate("costExpenseMain", "মোবাইল"))
+        item = self.tableWidget.horizontalHeaderItem(5)
         item.setText(_translate("costExpenseMain", "এন্ট্রি বাই"))
+        item = self.tableWidget.horizontalHeaderItem(6)
+        item.setText(_translate("costExpenseMain", "ভিউ"))
+        item = self.tableWidget.horizontalHeaderItem(7)
+        item.setText(_translate("costExpenseMain", "এডিট"))
+        item = self.tableWidget.horizontalHeaderItem(8)
+        item.setText(_translate("costExpenseMain", "অ্যাকশন"))
 
-        self.tableWidget.horizontalHeader().setDefaultSectionSize(240)
-        self.tableWidget.horizontalHeader().setMinimumSectionSize(240)
+        self.tableWidget.horizontalHeader().setDefaultSectionSize(170)
+        self.tableWidget.horizontalHeader().setMinimumSectionSize(170)
         self.tableWidget.verticalHeader().setVisible(False)
         self.filter_data()
         data_save_signals.data_saved.connect(self.filter_data)
@@ -140,8 +164,7 @@ class Ui_LoanPage(object):
         try:
             # Retrieve data from the database
             session = self.Session()
-            query = session.query(LoanModel).filter(LoanModel.amount > 0)
-            all_entries = query.all()
+            all_entries = session.query(LoanProfileModel).all()
             # Clear existing table data
             self.tableWidget.clearContents()
             self.tableWidget.setRowCount(0)
@@ -153,13 +176,147 @@ class Ui_LoanPage(object):
                 self.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem("ঋণ গ্রহণ"))
                 self.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(entry.loan_payer_name)))
                 self.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(entry.amount)))
-                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
+                self.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.phone)))
+                self.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
 
+                # Add a delete button in the last column
+                view_button = QtWidgets.QPushButton("")
+                view_icon = QtGui.QIcon("./images/view.png")  # Path to your delete icon
+                view_button.setIcon(view_icon)
+                view_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                view_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+
+                view_button.clicked.connect(lambda _, name=entry.loan_payer_name, phone=entry.phone: self.view_profile(name, phone))
+                self.tableWidget.setCellWidget(row, 6, view_button)
+
+                # Add a edit button
+                edit_button = QtWidgets.QPushButton("")
+                edit_icon = QtGui.QIcon("./images/edit.png")  # Path to your delete icon
+                edit_button.setIcon(edit_icon)
+                edit_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                edit_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                edit_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                edit_button.clicked.connect(lambda _, name=entry.loan_payer_name: self.profile_edit(name))
+                self.tableWidget.setCellWidget(row, 7, edit_button)
+
+                delete_button = QtWidgets.QPushButton("")
+                delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
+                delete_button.setIcon(delete_icon)
+                delete_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+                self.tableWidget.setCellWidget(row, 8, delete_button)
                 row += 1
         except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
+            QtWidgets.QMessageBox.critical(None, "Loan Page Error", f"An error occurred while filtering data: {e}")
 
 
+    def delete_row(self, row):
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে ডিলিট করার একসেস নেই..")
+            return
+        try:
+            reply = QtWidgets.QMessageBox.question(
+                None,
+                'মুছে ফেলা নিশ্চিত করুন',
+                'আপনি কি নিশ্চিত যে আপনি এই প্রোফাইল মুছে ফেলতে চান?',
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No
+            )
+
+            # If the user confirms, proceed with deletion
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                payer_name = self.tableWidget.item(row, 2).text()
+                session = self.Session()
+                session.query(LoanProfileModel).filter(LoanProfileModel.loan_payer_name == payer_name).delete()
+                session.commit()
+                self.tableWidget.removeRow(row)
+        except Exception as ops:
+            print(f'error in delete of buyer profile: ({ops})')
+        data_save_signals.data_saved.emit()
+
+    def view_profile(self, payer_name, phone):
+        try:
+            session = self.Session()
+            self.transactions_window = LoanProfileView(payer_name, phone, session)
+            self.transactions_window.show()
+        except Exception as e:
+            print(f' err o : {str(e)}')
+
+    def profile_edit(self, buyer_name):
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
+            return
+        try:
+            # Create and show the SellerInformation dialog
+            self.profile_edit_form_ui = Profile_Edit_Form(buyer_name)
+            self.profile_edit_form_ui.setWindowTitle("Profile Edit")
+
+            # Connect buttons with proper lambda or partial
+            self.profile_edit_form_ui.ui.update.clicked.connect(
+                lambda: self.handle_profile_edit_information(buyer_name))
+            self.profile_edit_form_ui.ui.cancel.clicked.connect(self.profile_edit_form_ui.close)
+
+            # Show the dialog
+            self.profile_edit_form_ui.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in profile_edit: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(None, "Error", f"An unexpected error occurred: {e}")
+
+    def handle_profile_edit_information(self, payer_name):
+        try:
+            success, error_message = self.profile_edit_form_ui.handle_entry()
+            if success:
+                self.accept_profile_edit_information(payer_name)
+            else:
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText(error_message)
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in handle_profile_edit_information: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(self.profile_edit_form_ui, "Error", f"An unexpected error occurred: {e}")
+
+    def accept_profile_edit_information(self, payer_name):
+        try:
+            # Retrieve the data from the input fields
+            name = self.profile_edit_form_ui.ui.name.text().strip()
+            phone = self.profile_edit_form_ui.ui.phone.text().strip()
+            if name and phone:
+                with self.Session() as session:
+                    profile = session.query(LoanProfileModel).filter(
+                        LoanProfileModel.loan_payer_name == payer_name).first()
+                    if profile:
+                        profile.loan_payer_name = name
+                        profile.phone = phone
+                        session.commit()
+                        self.filter_data()
+                        self.profile_edit_form_ui.close()
+                    else:
+                        error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                        error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                        error_dialog.setWindowTitle("Not Found")
+                        error_dialog.setText("Profile not found.")
+                        error_dialog.exec()
+            else:
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText("All fields must be filled.")
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in accept_information: {traceback.format_exc()}")
+            error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+            error_dialog.setWindowTitle("Error")
+            error_dialog.setText("Invalid input.")
+            error_dialog.exec()
 
 if __name__ == "__main__":
     import sys

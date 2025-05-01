@@ -77,10 +77,10 @@ class homepage(QWidget):
             session = self.Session()
             capital = session.query(FinalAccounting).first()
 
-            received_loan_all = session.query(LoanModel).filter(LoanModel.amount > 0)
+            received_loan_all = session.query(LoanProfileModel).filter(LoanProfileModel.amount > 0)
             received_loan_amount = sum(loan.amount for loan in received_loan_all)
 
-            paid_loan_all = session.query(PayingLoanModel).filter(PayingLoanModel.amount > 0)
+            paid_loan_all = session.query(PayingLoanProfileModel).filter(PayingLoanProfileModel.amount > 0)
             paid_loan_amount = sum(loan.amount for loan in paid_loan_all)
 
             # Filter received amounts within the date range

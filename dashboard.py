@@ -72,7 +72,7 @@ class DashboardPage(QMainWindow):
         self.loanStack.setObjectName("Loan Report Page")
         self.ui.stackedWidget.addWidget(self.loanStack)
         self.loanPage = Ui_LoanPage()
-        self.loanPage.setupUi(self.loanStack)
+        self.loanPage.setupUi(self.loanStack, self.username)
 
         # ************ loan page
         print("debug loanPage")

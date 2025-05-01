@@ -151,7 +151,7 @@ class settingsPage(QWidget):
 
                 # List of models to back up
                 models = [VoucherNoModel, SellerProfileModel, SellingModel, BuyerProfileModel, BuyingModel,
-                          DealerModel, LoanModel, PayingLoanModel, CostModel, SettingModel, UserModel, FinalAccounting]
+                          DealerModel, LoanProfileModel, PayingLoanProfileModel, CostModel, SettingModel, UserModel, FinalAccounting]
 
                 # Create a persistent directory for CSV files
                 temp_dir = os.path.join(os.getcwd(), "temp_backup")
@@ -266,8 +266,8 @@ class settingsPage(QWidget):
                             "buyer_profile_model": BuyerProfileModel,
                             "buying_model": BuyingModel,
                             "dealer_model": DealerModel,
-                            "loan_model": LoanModel,
-                            "paying_loan_model": PayingLoanModel,
+                            "loan_model": LoanProfileModel,
+                            "paying_loan_model": PayingLoanProfileModel,
                             "cost_model": CostModel,
                             "setting_model": SettingModel,
                             "user_model": UserModel,
@@ -336,4 +336,3 @@ class settingsPage(QWidget):
 
             # Commit the session to save changes
             session.commit()
-

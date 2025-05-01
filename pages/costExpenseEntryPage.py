@@ -249,10 +249,10 @@ class costExpensePage(QWidget):
                 elif entry.entry_name == "loan_repayment":  # loan_repayment
                     self.update_loan_model(entry.name, entry.paying_amount, 'add')
                 elif entry.entry_name == "giving_loan":  # giving_loan
-                    self.update_paying_loan_model(entry.name, entry.paying_amount, 'add')  # Fix: Use paying_amount
+                    self.update_paying_loan_model(entry.name, entry.paying_amount, 'sub')  # Fix: Use paying_amount
                 elif entry.entry_name == "receiving_loan":  # receiving_loan
                     self.update_paying_loan_model(entry.name, entry.receiving_amount,
-                                                  'sub')  # Fix: Use receiving_amount
+                                                  'add')  # Fix: Use receiving_amount
                 elif entry.entry_name == "mosque":  # mosque
                     cost = session.query(CostModel).first()
                     cost.mosque += entry.paying_amount
@@ -284,18 +284,45 @@ class costExpensePage(QWidget):
         session.commit()
 
     def update_loan_model(self, name, amount, param):
+        """Update loan model based on the operation type (add or subtract)."""
         session = self.Session()
-        payer_name = session.query(LoanModel).filter_by(loan_payer_name=name).first()
-        if param == 'sub':
-            payer_name.amount -= amount
-        else:
-            payer_name.amount += amount
-        session.commit()
+        try:
+            # Debugging: Log the inputs
+            print(f"Updating loan model for name: {name}, amount: {amount}, param: {param}")
 
+            # Query the loan profile
+            payer_name = session.query(LoanProfileModel).filter_by(loan_payer_name=name).first()
+
+            # Check if the entry exists
+            if not payer_name:
+                print(f"No LoanProfileModel entry found for payer: {name}")
+                return  # Exit if no matching entry is found
+
+            # Update the amount based on the operation
+            if param == 'sub':
+                payer_name.amount -= amount
+            elif param == 'add':
+                payer_name.amount += amount
+            else:
+                print(f"Invalid param value: {param}")
+                return
+
+            # Commit the changes
+            session.commit()
+
+            # Debugging: Log success
+            print(f"Loan model updated successfully for name: {name}, new amount: {payer_name.amount}")
+        except Exception as e:
+            # Handle exceptions and rollback
+            print(f"Error updating LoanProfileModel: {e}")
+            session.rollback()
+        finally:
+            # Ensure session is closed
+            session.close()
     def update_paying_loan_model(self, name, amount, param):
         session = self.Session()
         try:
-            payer_name = session.query(PayingLoanModel).filter_by(loan_receiver_name=name).first()
+            payer_name = session.query(PayingLoanProfileModel).filter_by(loan_receiver_name=name).first()
             if payer_name:
                 if param == 'sub':
                     payer_name.amount -= amount  # Subtract the amount
@@ -489,27 +516,27 @@ class costExpensePage(QWidget):
                 session.commit()
 
             elif entry_name == 'borrowing':
-                loan_payer = session.query(LoanModel).filter_by(loan_payer_name=payerName).first()
-                if loan_payer:
-                    loan_payer.amount += amount
-                    session.commit()
+                loan_payer_profile = session.query(LoanProfileModel).filter_by(loan_payer_name=payerName).first()
+                if loan_payer_profile:
+                    loan_payer_profile.amount += amount
+                    loan_payer_profile.date = entry_date
                     print("Loan payer already exists. Amount added to the existing payer.")
                 else:
-                    loan_entry = LoanModel(
+                    loan_payer_profile_entry = LoanProfileModel(
                         loan_payer_name=payerName,
+                        phone="+8801000000000",
                         date=entry_date,
                         amount=amount,
                         entry_by=entry_by
-                    )
-                    session.add(loan_entry)
-                    session.commit()
-                    print("New loan payer created.")
+                       )
+                    session.add(loan_payer_profile_entry)
+                    print("Create loan profile")
 
                 dealer_entry = DealerModel(
                     entry_name=entry_name,
                     name=payerName,
                     date=entry_date,
-                    paying_amount=amount,
+                    receiving_amount=amount,
                     entry_by=entry_by,
                     description=description
                 )
@@ -520,7 +547,7 @@ class costExpensePage(QWidget):
 
 
             elif entry_name == 'loan_repayment':
-                loan_receiver = session.query(LoanModel).filter_by(loan_payer_name=receiverName).first()
+                loan_receiver = session.query(LoanProfileModel).filter_by(loan_payer_name=receiverName).first()
                 if not loan_receiver:
                     self.show_error_message("ঋণ গ্রহণকারী কে পাওয়া যায়নি")
                     return
@@ -532,13 +559,13 @@ class costExpensePage(QWidget):
                 session.commit()
 
             elif entry_name == 'giving_loan':
-                loan_receiver = session.query(PayingLoanModel).filter_by(loan_receiver_name=receiverName).first()
+                loan_receiver = session.query(PayingLoanProfileModel).filter_by(loan_receiver_name=receiverName).first()
                 if loan_receiver:
                     loan_receiver.amount += amount
                     session.commit()
                     print("Loan receiver already exists. Amount added to the existing receiver.")
                 else:
-                    loan_entry = PayingLoanModel(
+                    loan_entry = PayingLoanProfileModel(
                         loan_receiver_name=receiverName,
                         phone="+8801000000000",
                         date=entry_date,
@@ -563,7 +590,7 @@ class costExpensePage(QWidget):
                 session.commit()
 
             elif entry_name == 'receiving_loan':
-                loan_receiver = session.query(PayingLoanModel).filter_by(loan_receiver_name=payerName).first()
+                loan_receiver = session.query(PayingLoanProfileModel).filter_by(loan_receiver_name=payerName).first()
                 if not loan_receiver:
                     self.show_error_message("ঋণ প্রদানকারী কে পাওয়া যায়নি")
                     return

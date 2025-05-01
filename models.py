@@ -86,21 +86,23 @@ class DealerModel(Base):
     description = Column(String, nullable=True)
 
 
-class LoanModel(Base):
-    __tablename__ = 'loan_model'
+class LoanProfileModel(Base):
+    __tablename__ = 'loan_profile_model'
     id = Column(Integer, primary_key=True)
     loan_payer_name = Column(String)
+    phone = Column(String)
     date = Column(Date, nullable=False)
     amount = Column(Integer)
     entry_by = Column(String)
 
-class PayingLoanModel(Base):
-    __tablename__ = 'paying_loan_model'
+class PayingLoanProfileModel(Base):
+    __tablename__ = 'paying_loan_profile_model'
     id = Column(Integer, primary_key=True)
     loan_receiver_name = Column(String)
     phone = Column(String)
     date = Column(Date, nullable=False)
     amount = Column(Integer)
+    received_amount = Column(Integer)
     entry_by = Column(String)
 
 class CostModel(Base):
@@ -112,6 +114,14 @@ class CostModel(Base):
     somiti_get_paid = Column(Integer, default=0)
     other_cost = Column(Integer, default=0)
     other_cost_paid = Column(Integer, default=0)
+
+class CostProfileModel(Base):
+    __tablename__ = 'cost_profile_model'
+    id = Column(Integer, primary_key=True, default=1)
+    cost_type = Column(String)
+    name = Column(String)
+    amount = Column(Integer, default=0)
+    date = Column(Date, nullable=False)
 
 class SettingModel(Base):
     __tablename__ = 'setting_model'
