@@ -14,7 +14,7 @@ class VoucherNoModel(Base):
 # Seller Model
 class SellerProfileModel(Base):
     __tablename__ = "seller_profile_model"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     seller_name = Column(String, unique=True, nullable=False)
     address = Column(String, nullable=True)
     phone = Column(String, nullable=True)
@@ -29,7 +29,7 @@ class SellerProfileModel(Base):
 
 class SellingModel(Base):
     __tablename__ = "selling_model"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     vouchar_no = Column(String, nullable=False)
     seller_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
@@ -44,7 +44,7 @@ class SellingModel(Base):
 # Buyer Model
 class BuyerProfileModel(Base):
     __tablename__ = "buyer_profile_model"
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     buyer_name = Column(String, unique=True, nullable=False)
     phone = Column(String, nullable=True)
     buyer_rank = Column(Integer, default=0)
@@ -56,7 +56,7 @@ class BuyerProfileModel(Base):
 
 class BuyingModel(Base):
     __tablename__ = 'buying_model'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     vouchar_no = Column(String, nullable=False)
     buyer_name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
@@ -74,7 +74,7 @@ class BuyingModel(Base):
 # Dealer Model
 class DealerModel(Base):
     __tablename__ = 'dealer_model'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     entry_name = Column(String, nullable=False)  # all_accounting, paid_to_seller, get_paid_from_buyer,
     # capital_withdrawal, capital_deposit, borrowing, loan_repayment,salary, other_cost, mosque, somiti, other_cost_voucher
     # giving_loan, receiving_loan
@@ -88,7 +88,7 @@ class DealerModel(Base):
 
 class LoanProfileModel(Base):
     __tablename__ = 'loan_profile_model'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     loan_payer_name = Column(String)
     phone = Column(String)
     date = Column(Date, nullable=False)
@@ -97,7 +97,7 @@ class LoanProfileModel(Base):
 
 class PayingLoanProfileModel(Base):
     __tablename__ = 'paying_loan_profile_model'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     loan_receiver_name = Column(String)
     phone = Column(String)
     date = Column(Date, nullable=False)
@@ -107,7 +107,7 @@ class PayingLoanProfileModel(Base):
 
 class CostModel(Base):
     __tablename__ = 'cost_model'
-    id = Column(Integer, primary_key=True, default=1)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     mosque = Column(Integer, default=0)
     mosque_get_paid = Column(Integer, default=0)
     somiti = Column(Integer, default=0)
@@ -117,7 +117,7 @@ class CostModel(Base):
 
 class CostProfileModel(Base):
     __tablename__ = 'cost_profile_model'
-    id = Column(Integer, primary_key=True, default=1)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     cost_type = Column(String)
     name = Column(String)
     amount = Column(Integer, default=0)

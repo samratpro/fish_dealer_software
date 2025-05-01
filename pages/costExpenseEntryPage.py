@@ -3,7 +3,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget
 from features.data_save_signals import data_save_signals
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy import desc
 from ui.costExpenseEntryPage_ui import Ui_costExpenseMain
 from models import *
@@ -609,6 +609,22 @@ class costExpensePage(QWidget):
                 session.commit()
 
             elif entry_name == 'salary' or entry_name == 'other_cost' or entry_name == 'mosque' or entry_name == 'somiti' or entry_name == 'other_cost_voucher':
+                costProfile = session.query(CostProfileModel).filter(
+                    and_(CostProfileModel.cost_type == entry_name, CostProfileModel.name == receiverName)
+                ).first()
+                if costProfile:
+                    costProfile.amount += amount
+                    costProfile.date = entry_date
+                    session.commit()
+                else:
+                    cost_profile_entry = CostProfileModel(
+                        cost_type=entry_name,
+                        name=receiverName,
+                        amount=amount,
+                        date=entry_date
+                    )
+                    session.add(cost_profile_entry)
+
                 dealer_entry = DealerModel(
                     entry_name=entry_name,
                     name=receiverName,
@@ -645,7 +661,7 @@ class costExpensePage(QWidget):
 
             data_save_signals.data_saved.emit()
         except Exception as e:
-            print(f"Error in seller info: {e}")
+            print(f"Error in cost entry info: {e}")
             self.show_error_message("ডাটা প্রক্রিয়াকরণের সময় সমস্যা হয়েছে।")
         self.filter_data()
         data_save_signals.data_saved.emit()  # send signal after save data

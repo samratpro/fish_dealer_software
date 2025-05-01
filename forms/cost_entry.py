@@ -39,6 +39,8 @@ class CostEntry_Form(QDialog):
 
         # Connect signals to dynamically update completers
         self.ui.entryName.currentIndexChanged.connect(self.update_autocomplete)
+        self.ui.payerName.textChanged.connect(self.update_autocomplete)
+        self.ui.receiverName.textChanged.connect(self.update_autocomplete)
 
         # Connect completer activated signals to autofill_amount
         self.ui.payerName.textChanged.connect(self.handle_payer_autocomplete)
@@ -123,10 +125,19 @@ class CostEntry_Form(QDialog):
                 return [name_entry.loan_receiver_name for name_entry in session.query(PayingLoanProfileModel).all()]
             elif selected_entry == 6:  # Salary Receiver
                 return [name_entry.name for name_entry in
-                        session.query(DealerModel).filter_by(entry_name="salary").all()]
+                        session.query(CostProfileModel).filter_by(cost_type="salary").all()]
             elif selected_entry == 7:  # Other Cost Receiver
                 return [name_entry.name for name_entry in
-                        session.query(DealerModel).filter_by(entry_name="other_cost").all()]
+                        session.query(CostProfileModel).filter_by(cost_type="other_cost").all()]
+            elif selected_entry == 8:  # mosque
+                return [name_entry.name for name_entry in
+                        session.query(CostProfileModel).filter_by(cost_type="mosque").all()]
+            elif selected_entry == 9:  # somiti
+                return [name_entry.name for name_entry in
+                        session.query(CostProfileModel).filter_by(cost_type="somiti").all()]
+            elif selected_entry == 10:  # other_cost vouchar
+                return [name_entry.name for name_entry in
+                        session.query(CostProfileModel).filter_by(cost_type="other_cost_voucher").all()]
             else:
                 return []
         except Exception as e:
