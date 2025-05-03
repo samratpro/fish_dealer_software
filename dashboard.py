@@ -89,7 +89,7 @@ class DashboardPage(QMainWindow):
 
         # ************ cost report
         print("debug costreportPage")
-        self.costreportPage = CostReport()
+        self.costreportPage = CostReport(self.username)
         self.ui.stackedWidget.addWidget(self.costreportPage)
 
         # ************ Users Pages

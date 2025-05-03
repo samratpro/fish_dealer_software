@@ -118,7 +118,7 @@ class CostModel(Base):
 class CostProfileModel(Base):
     __tablename__ = 'cost_profile_model'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    cost_type = Column(String)
+    cost_type = Column(String) # salary, other_cost, mosque, somiti, other_cost_voucher
     name = Column(String)
     amount = Column(Integer, default=0)
     date = Column(Date, nullable=False)

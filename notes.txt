@@ -25,7 +25,7 @@
 15. Dynamic make capital or others event pass, editingFinihed or many event
 16. Row delete with many database delete
 17. confirm dialog, entry dialog before delete
-18. single page views, delete row and models entry
+18. single page views, delete row and models entry, best example in costreport.py
 19. entry disable
 20. show_error_method setup, Different type of error, info, warning, criticalerror
 21. floating toggle widget

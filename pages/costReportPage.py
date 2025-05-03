@@ -6,7 +6,7 @@ from datetime import datetime
 from PyQt6.QtCore import QDate
 from sqlalchemy.orm import sessionmaker, declarative_base
 from models import *
-from sqlalchemy import or_
+from sqlalchemy import and_
 from features.data_save_signals import data_save_signals
 from ui.costReportPage_ui import costReport_ui
 from features.printmemo import Print_Form
@@ -14,12 +14,17 @@ from PyQt6 import QtWidgets, QtGui, QtPrintSupport, QtCore
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase
+from forms.cost_profile_edit import Profile_Edit_Form
+from pages.CostProfileView import CostProfileView
 import os
 
 
 class CostReport(QWidget):
-    def __init__(self):
+    def __init__(self, username):
         super().__init__()
+        self.username = username
+        user = session.query(UserModel).filter(UserModel.username == self.username).one()
+        self.user_role = user.role
         self.setup_database()  # First setup database
         self.ui = costReport_ui()
         self.ui.setupUi(self)
@@ -33,8 +38,8 @@ class CostReport(QWidget):
 
     def setup_ui(self):
 
-        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(165)
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(165)
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(145)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(145)
         self.ui.tableWidget.verticalHeader().setVisible(False)
 
         # Set current date ****************
@@ -149,24 +154,14 @@ class CostReport(QWidget):
 
             # Retrieve data from the database
             with self.Session() as session:
-                query = session.query(DealerModel).filter(DealerModel.date.between(start_date, end_date))
+                query = session.query(CostProfileModel).filter(CostProfileModel.date.between(start_date, end_date))
 
-                if entry_name == 'all_accounting':
-                    # Use or_ to combine multiple conditions
-                    conditions = [
-                        DealerModel.entry_name.ilike(f"%salary%"),
-                        DealerModel.entry_name.ilike(f"%other_cost%"),
-                        DealerModel.entry_name.ilike(f"%mosque%"),
-                        DealerModel.entry_name.ilike(f"%somiti%"),
-                        DealerModel.entry_name.ilike(f"%other_cost_voucher%")
-                    ]
-                    query = query.filter(or_(*conditions))
-                else:
-                    query = query.filter(DealerModel.entry_name.ilike(f"%{entry_name}%"))
+                if entry_name != 'all_accounting':
+                    query = query.filter(CostProfileModel.cost_type.ilike(f"%{entry_name}%"))
                 if search_name:
-                    query = query.filter(DealerModel.name.ilike(f"%{search_name}%"))
-                all_entries = query.all()
+                    query = query.filter(CostProfileModel.name.ilike(f"%{search_name}%"))
 
+                all_entries = query.all()
 
             # Clear existing table data
             self.ui.tableWidget.clearContents()
@@ -176,23 +171,245 @@ class CostReport(QWidget):
             self.ui.amount.setText(str(0))
             row = 0
             for entry in all_entries:
-                entry_name = {
+                cost_type = {
                               'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অফিস খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
                               'somiti': 'সমিতি', 'other_cost_voucher': 'অন্যান্য(ভাউচার)'
-                              }.get(entry.entry_name.strip(), "অফিস খরচ")
+                              }.get(entry.cost_type.strip(), "অফিস খরচ")
                 self.ui.tableWidget.insertRow(row)
                 self.ui.tableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(str(entry.id)))
                 self.ui.tableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(str(entry.date)))
-                self.ui.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(entry_name)))
+                self.ui.tableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(str(cost_type)))
                 self.ui.tableWidget.setItem(row, 3, QtWidgets.QTableWidgetItem(str(entry.name)))
-                self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.paying_amount)))
-                self.ui.tableWidget.setItem(row, 5, QtWidgets.QTableWidgetItem(str(entry.entry_by)))
+                self.ui.tableWidget.setItem(row, 4, QtWidgets.QTableWidgetItem(str(entry.amount)))
+
+                # View button
+                view_button = QtWidgets.QPushButton("")
+                view_icon = QtGui.QIcon("./images/view.png")
+                view_button.setIcon(view_icon)
+                view_button.setIconSize(QtCore.QSize(24, 24))
+                view_button.setStyleSheet("background-color: white; border: none; padding: 5px;")
+                view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                view_button.clicked.connect(
+                    (lambda _, name=entry.name, cost_type=entry.cost_type: self.view_profile(name, cost_type)))
+                self.ui.tableWidget.setCellWidget(row, 5, view_button)
+
+                # Edit button
+                edit_button = QtWidgets.QPushButton("")
+                edit_icon = QtGui.QIcon("./images/edit.png")
+                edit_button.setIcon(edit_icon)
+                edit_button.setIconSize(QtCore.QSize(24, 24))
+                edit_button.setStyleSheet("background-color: white; border: none; padding: 5px;")
+                edit_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                edit_button.clicked.connect(
+                    (lambda _, name=entry.name, cost_type=entry.cost_type: self.profile_edit(name, cost_type))
+                )
+                self.ui.tableWidget.setCellWidget(row, 6, edit_button)
+
+                # Delete button
+                delete_button = QtWidgets.QPushButton("")
+                delete_icon = QtGui.QIcon("./images/delete.png")
+                delete_button.setIcon(delete_icon)
+                delete_button.setIconSize(QtCore.QSize(24, 24))
+                delete_button.setStyleSheet("background-color: white; border: none; padding: 5px;")
+                delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                delete_button.clicked.connect((lambda _, r=row: self.delete_row(r)))
+                self.ui.tableWidget.setCellWidget(row, 7, delete_button)
 
                 old_amount = custom_int(self.ui.amount.text())
-                self.ui.amount.setText(str(old_amount+custom_int(entry.paying_amount)))
+                self.ui.amount.setText(str(old_amount+custom_int(entry.amount)))
                 row += 1
         except Exception as e:
             QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
+
+    def delete_row(self, row):
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", "এই প্রোফাইলে ডিলিট করার একসেস নেই..")
+            return
+
+        try:
+            # Confirm deletion
+            reply = QtWidgets.QMessageBox.question(
+                None,
+                'মুছে ফেলা নিশ্চিত করুন',
+                'আপনি কি নিশ্চিত যে আপনি এই প্রোফাইল মুছে ফেলতে চান?',
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No
+            )
+
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                # Retrieve name, cost_type, and amount from the table
+                name = self.ui.tableWidget.item(row, 3).text()
+                cost_type = self.ui.tableWidget.item(row, 2).text()
+                amount = int(self.ui.tableWidget.item(row, 4).text())
+
+                # Map cost_type to database format
+                cost_type_mapping = {
+                    "বেতন / মজুরি প্রদান": "salary",
+                    "অফিস খরচ": "other_cost",
+                    "মসজিদ/মাদ্রাসা": "mosque",
+                    "সমিতি": "somiti",
+                    "অন্যান্য(ভাউচার)": "other_cost_voucher"
+                }
+                cost_type_db = cost_type_mapping.get(cost_type.strip(), None)
+                if not cost_type_db:
+                    print(f"Error: Unable to map cost_type '{cost_type}' to a database value.")
+                    QtWidgets.QMessageBox.critical(None, "Delete Error", f"Invalid cost type: {cost_type}")
+                    return
+
+                with self.Session() as session:
+                    try:
+                        # Retrieve and delete the CostProfileModel entry
+                        cost_profile = session.query(CostProfileModel).filter(
+                            and_(
+                                CostProfileModel.name.ilike(name.strip()),
+                                CostProfileModel.cost_type.ilike(cost_type_db.strip())
+                            )
+                        ).first()
+
+                        if not cost_profile:
+                            print(f"No CostProfileModel entry found for name: {name}, cost_type: {cost_type_db}")
+                            QtWidgets.QMessageBox.critical(None, "Delete Error", "No matching profile found.")
+                            return
+
+                        # Retrieve and update the FinalAccounting model
+                        final_accounting = session.query(FinalAccounting).first()
+                        if not final_accounting:
+                            # If FinalAccounting entry does not exist, create one
+                            final_accounting = FinalAccounting(capital=0)
+                            session.add(final_accounting)
+
+                        # Add the amount to the FinalAccounting capital
+                        final_accounting.capital += cost_profile.amount
+
+                        # Delete the CostProfileModel entry
+                        session.delete(cost_profile)
+
+                        # Delete from DealerModel if applicable
+                        session.query(DealerModel).filter(
+                            and_(
+                                DealerModel.name.ilike(name.strip()),
+                                DealerModel.entry_name.ilike(cost_type_db.strip())
+                            )
+                        ).delete()
+
+                        # Commit changes
+                        session.commit()
+                        print(
+                            f"Deleted CostProfileModel entry and updated FinalAccounting capital by {cost_profile.amount}.")
+
+                        # Remove row from the table
+                        self.ui.tableWidget.removeRow(row)
+                        data_save_signals.data_saved.emit()
+                    except Exception as e:
+                        print(f"Error during deletion: {e}")
+                        QtWidgets.QMessageBox.critical(None, "Delete Error", f"An error occurred while deleting: {e}")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            QtWidgets.QMessageBox.critical(None, "Delete Error", f"Unexpected error: {e}")
+
+    def view_profile(self, name, cost_type):
+        try:
+            session = self.Session()
+            self.transactions_window = CostProfileView(name, cost_type, session)
+            self.transactions_window.show()
+        except Exception as e:
+            print(f' err o : {str(e)}')
+
+    def profile_edit(self, receiver_name, cost_type):
+        print(" receiver_name : ", receiver_name)
+        print(" cost_type : ", cost_type)
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", f"এই প্রোফাইলে এডিট করার একসেস নেই..")
+            return
+        try:
+            # Create and show the SellerInformation dialog
+            self.profile_edit_form_ui = Profile_Edit_Form(receiver_name, cost_type)
+            self.profile_edit_form_ui.setWindowTitle("Profile Edit")
+
+            # Connect buttons with proper lambda or partial
+            self.profile_edit_form_ui.ui.update.clicked.connect(
+                lambda: self.handle_profile_edit_information(receiver_name, cost_type))
+            self.profile_edit_form_ui.ui.cancel.clicked.connect(self.profile_edit_form_ui.close)
+
+            # Show the dialog
+            self.profile_edit_form_ui.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in profile_edit: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(None, "Error", f"An unexpected error occurred: {e}")
+
+    def handle_profile_edit_information(self, receiver_name, cost_type):
+        try:
+            success, error_message = self.profile_edit_form_ui.handle_entry()
+            if success:
+                self.accept_profile_edit_information(receiver_name, cost_type)
+            else:
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText(error_message)
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in handle_profile_edit_information: {traceback.format_exc()}")
+            QtWidgets.QMessageBox.critical(self.profile_edit_form_ui, "Error", f"An unexpected error occurred: {e}")
+
+    def accept_profile_edit_information(self, receiver_name, cost_type):
+        try:
+            # Retrieve the data from the input fields
+            name = self.profile_edit_form_ui.ui.name.text().strip()
+            if name:
+                with self.Session() as session:
+                    # Query CostProfileModel
+                    profile = session.query(CostProfileModel).filter(
+                        and_(
+                            CostProfileModel.name.ilike(receiver_name.strip()),
+                            CostProfileModel.cost_type.ilike(cost_type.strip())
+                        )
+                    ).first()
+
+                    # Query DealerModel and fetch all matching profiles
+                    dealer_profiles = session.query(DealerModel).filter(
+                        and_(
+                            DealerModel.name.ilike(receiver_name.strip()),
+                            DealerModel.entry_name.ilike(cost_type.strip())
+                        )
+                    ).all()
+
+                    # Update profiles if found
+                    if profile:
+                        profile.name = name
+                    if dealer_profiles:
+                        for dealer_profile in dealer_profiles:
+                            dealer_profile.name = name
+
+                    # Commit changes if any profile is found
+                    if profile or dealer_profiles:
+                        session.commit()
+                        self.filter_data()
+                        self.profile_edit_form_ui.close()
+                    else:
+                        # No profiles found
+                        error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                        error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                        error_dialog.setWindowTitle("Not Found")
+                        error_dialog.setText("No profiles found to update.")
+                        error_dialog.exec()
+            else:
+                # Input validation error
+                error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+                error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Warning)
+                error_dialog.setWindowTitle("Input Error")
+                error_dialog.setText("All fields must be filled.")
+                error_dialog.exec()
+        except Exception as e:
+            import traceback
+            print(f"Error in accept_profile_edit_information: {traceback.format_exc()}")
+            error_dialog = QtWidgets.QMessageBox(self.profile_edit_form_ui)
+            error_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+            error_dialog.setWindowTitle("Error")
+            error_dialog.setText("An unexpected error occurred while updating profiles.")
+            error_dialog.exec()
 
     def openPrintMemo(self):
         total_rows = self.ui.tableWidget.rowCount()
@@ -222,7 +439,7 @@ class CostReport(QWidget):
                 self.ui_print_form.ui.recevied_frame.setVisible(False)
 
                 # ✅ Define columns to exclude
-                excluded_columns = {0, 5}
+                excluded_columns = {0, 5, 6, 7}
                 column_count = self.ui.tableWidget.columnCount()
                 headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
                            i not in excluded_columns]
