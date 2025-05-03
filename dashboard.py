@@ -12,6 +12,7 @@ from pages.commissionReportPage import commissionReportPage
 from pages.costReportPage import CostReport
 from pages.usersPage import userPage
 from pages.loanPayingPage import Ui_LoanPayingPage
+from pages.yearlyreportpage import Ui_yearlyReportPage
 from ui.dashboard_ui import Ui_MainWindow
 from PyQt6.QtWidgets import QMainWindow
 
@@ -92,6 +93,15 @@ class DashboardPage(QMainWindow):
         self.costreportPage = CostReport(self.username)
         self.ui.stackedWidget.addWidget(self.costreportPage)
 
+        # ************ Yearly report
+        print("debug yearly report")
+        self.yearlyReportStack = QtWidgets.QWidget()
+        self.yearlyReportStack.setObjectName("Yearly mn Report Page")
+        self.ui.stackedWidget.addWidget(self.yearlyReportStack)
+        self.yearlyReportPage = Ui_yearlyReportPage()
+        self.yearlyReportPage.setupUi(self.yearlyReportStack)
+
+
         # ************ Users Pages
         print("debug userPage")
         self.userPage = userPage(self.username)
@@ -138,8 +148,12 @@ class DashboardPage(QMainWindow):
             self.ui.costIconBtn.clicked.connect(lambda: self.switch_page("cost_report"))
             self.ui.costBtn.clicked.connect(lambda: self.switch_page("cost_report"))
 
+            self.ui.yearlyReportBtn.clicked.connect(lambda: self.switch_page("yearly_report_page"))
+            self.ui.yearlyReportIconBtn.clicked.connect(lambda: self.switch_page("yearly_report_page"))
+
             self.ui.settingsBtn.clicked.connect(lambda: self.switch_page("settings_page"))
             self.ui.settingsIconBtn.clicked.connect(lambda: self.switch_page("settings_page"))
+
             self.ui.userBtn.clicked.connect(lambda: self.switch_page("user_page"))
 
         except AttributeError as e:
@@ -169,6 +183,8 @@ class DashboardPage(QMainWindow):
                 self.ui.stackedWidget.setCurrentWidget(self.commissionReportPage)
             elif page_name == "cost_report":
                 self.ui.stackedWidget.setCurrentWidget(self.costreportPage)
+            elif page_name == "yearly_report_page":
+                self.ui.stackedWidget.setCurrentWidget(self.yearlyReportStack)
             elif page_name == "settings_page":
                 self.ui.stackedWidget.setCurrentWidget(self.settingsPage)
             elif page_name == "user_page":

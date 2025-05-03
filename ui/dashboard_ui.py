@@ -1,8 +1,8 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+
 class Ui_MainWindow:
     def setupUi(self, MainWindow):
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(969, 600)
         MainWindow.setStyleSheet("""*{background:none;border:none;margin:0;padding:0;}
@@ -30,7 +30,7 @@ class Ui_MainWindow:
         self.centralwidget_Layout.setSpacing(0)
         self.centralwidget_Layout.setObjectName("centralwidget_Layout")
 
-        # ***************** Icon Menu ******************
+        # *************************** Icon Menu *********************************
         self.IconMenu = QtWidgets.QWidget(parent=self.centralwidget)
         self.IconMenu.setMaximumSize(QtCore.QSize(80, 16777215))
         font = QtGui.QFont()
@@ -80,6 +80,8 @@ class Ui_MainWindow:
         self.IconMenuItems.setObjectName("IconMenuItems")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.IconMenuItems)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+
+        # *** Home Icon Button ****
         self.homeIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -98,6 +100,8 @@ class Ui_MainWindow:
         self.homeIconBtn.setFlat(False)
         self.homeIconBtn.setObjectName("homeIconBtn")
         self.verticalLayout_2.addWidget(self.homeIconBtn)
+
+        # *** Cash Memo Icon Button ****
         self.memoIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -115,6 +119,8 @@ class Ui_MainWindow:
         self.memoIconBtn.setFlat(False)
         self.memoIconBtn.setObjectName("memoIconBtn")
         self.verticalLayout_2.addWidget(self.memoIconBtn)
+
+        # *** Cost Entry Icon Button ****
         self.costEntryIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -133,6 +139,7 @@ class Ui_MainWindow:
         self.costEntryIconBtn.setObjectName("costEntryIconBtn")
         self.verticalLayout_2.addWidget(self.costEntryIconBtn)
 
+        # *** Buyer Profile Icon Button ****
         self.buyerProfileIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -151,6 +158,7 @@ class Ui_MainWindow:
         self.buyerProfileIconBtn.setObjectName("buyerProfileIconBtn")
         self.verticalLayout_2.addWidget(self.buyerProfileIconBtn)
 
+        # *** Seller Profile Icon Button ****
         self.sellerProfileIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -167,6 +175,7 @@ class Ui_MainWindow:
         self.sellerProfileIconBtn.setObjectName("buyerProfileIconBtn")
         self.verticalLayout_2.addWidget(self.sellerProfileIconBtn)
 
+        # *** receivable icon Icon Button ****
         self.receivableIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -186,6 +195,7 @@ class Ui_MainWindow:
         self.receivableIconBtn.setObjectName("receivableIconBtn")
         self.verticalLayout_2.addWidget(self.receivableIconBtn)
 
+        # *** payable icon Icon Button ****
         self.payableIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -205,6 +215,7 @@ class Ui_MainWindow:
         self.payableIconBtn.setObjectName("payableIconBtn")
         self.verticalLayout_2.addWidget(self.payableIconBtn)
 
+        # *** loan Icon Button ****
         self.loanIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -223,7 +234,7 @@ class Ui_MainWindow:
         self.loanIconBtn.setObjectName("payableIconBtn")
         self.verticalLayout_2.addWidget(self.loanIconBtn)
 
-
+        # *** loan paying Icon Button ****
         self.loanPayingIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -242,6 +253,7 @@ class Ui_MainWindow:
         self.loanPayingIconBtn.setObjectName("loanPayingIconBtn")
         self.verticalLayout_2.addWidget(self.loanPayingIconBtn)
 
+        # *** commission Icon Button ****
         self.commissionIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -260,6 +272,7 @@ class Ui_MainWindow:
         self.commissionIconBtn.setObjectName("commissionIconBtn")
         self.verticalLayout_2.addWidget(self.commissionIconBtn)
 
+        # *** Cost Icon Button ****
         self.costIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -278,9 +291,31 @@ class Ui_MainWindow:
         self.costIconBtn.setObjectName("costIconBtn")
         self.verticalLayout_2.addWidget(self.costIconBtn)
 
+        # *** loan paying Icon Button ****
+        self.yearlyReportIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.yearlyReportIconBtn.setFont(font)
+        self.yearlyReportIconBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.loanPayingIconBtn.setText("")
+        loanIcon = QtGui.QIcon()
+        loanIcon.addPixmap(QtGui.QPixmap("./icons/clock.svg"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.yearlyReportIconBtn.setIcon(loanIcon)
+        self.yearlyReportIconBtn.setIconSize(QtCore.QSize(28, 28))
+        self.yearlyReportIconBtn.setCheckable(True)
+        self.yearlyReportIconBtn.setAutoExclusive(True)
+        self.yearlyReportIconBtn.setAutoRepeatDelay(100)
+        self.yearlyReportIconBtn.setAutoDefault(False)
+        self.yearlyReportIconBtn.setFlat(False)
+        self.yearlyReportIconBtn.setObjectName("loanPayingIconBtn")
+        self.verticalLayout_2.addWidget(self.yearlyReportIconBtn)
+
+        # *** space ****
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
                                            QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout_2.addItem(spacerItem)
+
+        # *** settings Icon Button ****
         self.settingsIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -298,6 +333,8 @@ class Ui_MainWindow:
         self.settingsIconBtn.setFlat(False)
         self.settingsIconBtn.setObjectName("settingsIconBtn")
         self.verticalLayout_2.addWidget(self.settingsIconBtn)
+
+        # *** Logout Icon Button ****
         self.logoutIconBtn = QtWidgets.QPushButton(parent=self.IconMenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -317,6 +354,8 @@ class Ui_MainWindow:
         self.verticalLayout_2.addWidget(self.logoutIconBtn)
         self.IconMenu_Layout.addWidget(self.IconMenuItems)
         self.centralwidget_Layout.addWidget(self.IconMenu)
+
+        # *************************** end Icon Menu **********************************************
         self.SideMenu = QtWidgets.QWidget(parent=self.centralwidget)
         self.SideMenu.setMinimumSize(QtCore.QSize(200, 0))
         self.SideMenu.setMaximumSize(QtCore.QSize(200, 16777215))
@@ -363,6 +402,9 @@ class Ui_MainWindow:
         self.MenuItems.setObjectName("MenuItems")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.MenuItems)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
+
+        # *************************** Menu Item ************************************************
+        # *** home button ***
         self.homeBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -379,6 +421,8 @@ class Ui_MainWindow:
         self.homeBtn.setFlat(False)
         self.homeBtn.setObjectName("homeBtn")
         self.verticalLayout_3.addWidget(self.homeBtn)
+
+        # *** cash memo button ***
         self.memoBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -394,6 +438,8 @@ class Ui_MainWindow:
         self.memoBtn.setFlat(False)
         self.memoBtn.setObjectName("memoBtn")
         self.verticalLayout_3.addWidget(self.memoBtn)
+
+        # *** Cost Entry button ***
         self.costEntryBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -410,6 +456,7 @@ class Ui_MainWindow:
         self.costEntryBtn.setObjectName("costEntryBtn")
         self.verticalLayout_3.addWidget(self.costEntryBtn)
 
+        # *** Buyer Profile button ***
         self.buyerProfileBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -426,6 +473,7 @@ class Ui_MainWindow:
         self.buyerProfileBtn.setObjectName("buyerProfileBtn")
         self.verticalLayout_3.addWidget(self.buyerProfileBtn)
 
+        # *** Seller Profile button ***
         self.sellerProfileBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -442,6 +490,7 @@ class Ui_MainWindow:
         self.sellerProfileBtn.setObjectName("sellerProfileBtn")
         self.verticalLayout_3.addWidget(self.sellerProfileBtn)
 
+        # *** Receivable button ***
         self.receivableBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -458,6 +507,7 @@ class Ui_MainWindow:
         self.receivableBtn.setObjectName("receivableBtn")
         self.verticalLayout_3.addWidget(self.receivableBtn)
 
+        # *** payable button ***
         self.payableBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -474,6 +524,7 @@ class Ui_MainWindow:
         self.payableBtn.setObjectName("payableBtn")
         self.verticalLayout_3.addWidget(self.payableBtn)
 
+        # *** Loan button ***
         self.loanBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -490,7 +541,7 @@ class Ui_MainWindow:
         self.loanBtn.setObjectName("payableBtn")
         self.verticalLayout_3.addWidget(self.loanBtn)
 
-
+        # *** Loan paying ***
         self.loanPayingBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -507,6 +558,7 @@ class Ui_MainWindow:
         self.loanPayingBtn.setObjectName("loanPayingBtn")
         self.verticalLayout_3.addWidget(self.loanPayingBtn)
 
+        # *** commission button ***
         self.commissionBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -523,6 +575,7 @@ class Ui_MainWindow:
         self.commissionBtn.setObjectName("commissionBtn")
         self.verticalLayout_3.addWidget(self.commissionBtn)
 
+        # *** Cost button ***
         self.costBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -539,9 +592,29 @@ class Ui_MainWindow:
         self.costBtn.setObjectName("costBtn")
         self.verticalLayout_3.addWidget(self.costBtn)
 
+        # *** Loan paying ***
+        self.yearlyReportBtn = QtWidgets.QPushButton(parent=self.MenuItems)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.yearlyReportBtn.setFont(font)
+        self.yearlyReportBtn.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+        self.yearlyReportBtn.setIcon(loanIcon)
+        self.yearlyReportBtn.setIconSize(QtCore.QSize(28, 28))
+        self.yearlyReportBtn.setCheckable(True)
+        self.yearlyReportBtn.setAutoExclusive(True)
+        self.yearlyReportBtn.setAutoRepeatDelay(100)
+        self.yearlyReportBtn.setAutoDefault(False)
+        self.yearlyReportBtn.setFlat(False)
+        self.yearlyReportBtn.setObjectName("loanPayingBtn")
+        self.verticalLayout_3.addWidget(self.yearlyReportBtn)
+
+        # *** space ***
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum,
                                             QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout_3.addItem(spacerItem1)
+
+        # *** settings button ***
         self.settingsBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -557,6 +630,8 @@ class Ui_MainWindow:
         self.settingsBtn.setFlat(False)
         self.settingsBtn.setObjectName("settingsBtn")
         self.verticalLayout_3.addWidget(self.settingsBtn)
+
+        # *** Logout button ***
         self.logoutBtn = QtWidgets.QPushButton(parent=self.MenuItems)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -572,6 +647,8 @@ class Ui_MainWindow:
         self.logoutBtn.setFlat(False)
         self.logoutBtn.setObjectName("logoutBtn")
         self.verticalLayout_3.addWidget(self.logoutBtn)
+
+        # *************************** Menu Item end *********************************
         self.SideMenu_Layout.addWidget(self.MenuItems)
         self.centralwidget_Layout.addWidget(self.SideMenu)
         self.MainBody = QtWidgets.QWidget(parent=self.centralwidget)
@@ -608,7 +685,10 @@ class Ui_MainWindow:
         font.setFamily("Arial")
         self.logo.setFont(font)
         self.logo.setText("")
+
+        # ****** Logo Icon *****
         self.logo.setPixmap(QtGui.QPixmap("./images/logo.png"))
+
         self.logo.setScaledContents(True)
         self.logo.setObjectName("logo")
         self.LeftHeader_Layout.addWidget(self.logo)
@@ -669,10 +749,7 @@ class Ui_MainWindow:
         self.stackedWidget.setFont(font)
         self.stackedWidget.setObjectName("stackedWidget")
 
-
         ## ************* Pages will add here *****************
-
-
 
         self.horizontalLayout.addWidget(self.stackedWidget)
         self.MainBody_Layout.addWidget(self.Body)
@@ -684,31 +761,46 @@ class Ui_MainWindow:
         self.ToggleBtn.clicked.connect(self.SideMenu.hide)  # type: ignore
         self.IconToggleBtn.clicked.connect(self.SideMenu.show)  # type: ignore
         self.IconToggleBtn.clicked.connect(self.IconMenu.hide)  # type: ignore
+
         self.homeBtn.toggled['bool'].connect(self.homeIconBtn.setChecked)  # type: ignore
         self.homeIconBtn.toggled['bool'].connect(self.homeBtn.setChecked)  # type: ignore
+
         self.memoBtn.toggled['bool'].connect(self.memoIconBtn.setChecked)  # type: ignore
         self.memoIconBtn.toggled['bool'].connect(self.memoBtn.setChecked)  # type: ignore
+
         self.costEntryBtn.toggled['bool'].connect(self.costEntryIconBtn.setChecked)  # type: ignore
         self.costEntryIconBtn.toggled['bool'].connect(self.costEntryBtn.setChecked)  # type: ignore
+
         self.buyerProfileBtn.toggled['bool'].connect(self.buyerProfileIconBtn.setChecked)  # type: ignore
         self.buyerProfileIconBtn.toggled['bool'].connect(self.buyerProfileBtn.setChecked)  # type: ignore
+
         self.sellerProfileBtn.toggled['bool'].connect(self.sellerProfileIconBtn.setChecked)  # type: ignore
         self.sellerProfileIconBtn.toggled['bool'].connect(self.sellerProfileBtn.setChecked)  # type: ignore
+
         self.receivableBtn.toggled['bool'].connect(self.receivableIconBtn.setChecked)  # type: ignore
         self.receivableIconBtn.toggled['bool'].connect(self.receivableBtn.setChecked)  # type: ignore
+
         self.payableBtn.toggled['bool'].connect(self.payableIconBtn.setChecked)  # type: ignore
         self.payableIconBtn.toggled['bool'].connect(self.payableBtn.setChecked)  # type: ignore
+
         self.loanBtn.toggled['bool'].connect(self.loanIconBtn.setChecked)  # type: ignore
         self.loanIconBtn.toggled['bool'].connect(self.loanBtn.setChecked)  # type: ignore
+
         self.loanPayingBtn.toggled['bool'].connect(self.loanPayingIconBtn.setChecked)  # type: ignore
         self.loanPayingIconBtn.toggled['bool'].connect(self.loanPayingBtn.setChecked)  # type: ignore
+
         self.commissionBtn.toggled['bool'].connect(self.commissionIconBtn.setChecked)
         self.commissionIconBtn.toggled['bool'].connect(self.commissionBtn.setChecked)
+
         self.costBtn.toggled['bool'].connect(self.costIconBtn.setChecked)
         self.costIconBtn.toggled['bool'].connect(self.costBtn.setChecked)
 
+        self.yearlyReportBtn.toggled['bool'].connect(self.yearlyReportIconBtn.setChecked)  # type: ignore
+        self.yearlyReportIconBtn.toggled['bool'].connect(self.yearlyReportBtn.setChecked)  # type: ignore
+
         self.settingsBtn.toggled['bool'].connect(self.settingsBtn.setChecked)  # type: ignore
         self.settingsIconBtn.toggled['bool'].connect(self.settingsBtn.setChecked)  # type: ignore
+
         self.logoutBtn.toggled['bool'].connect(self.logoutIconBtn.setChecked)  # type: ignore
         self.logoutIconBtn.toggled['bool'].connect(self.logoutBtn.setChecked)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -717,36 +809,56 @@ class Ui_MainWindow:
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.IconToggleBtn.setToolTip(_translate("MainWindow", "Expand Menu"))
+
         self.homeIconBtn.setToolTip(_translate("MainWindow", "হোম "))
         self.memoIconBtn.setToolTip(_translate("MainWindow", "ক্যাশ মেমো "))
         # self.cashReportIconBtn.setToolTip(_translate("MainWindow", "ক্যাশ রিপোর্ট"))
+
         self.costEntryIconBtn.setToolTip(_translate("MainWindow", "খরচের এন্ট্রি"))
+
         self.settingsIconBtn.setToolTip(_translate("MainWindow", "সেটিংস "))
         self.logoutIconBtn.setToolTip(_translate("MainWindow", "লগ আউট"))
         self.ToggleBtn.setToolTip(_translate("MainWindow", "Narrow"))
+
         self.homeBtn.setToolTip(_translate("MainWindow", "হোম"))
         self.homeBtn.setText(_translate("MainWindow", "হোম "))
+
         self.memoBtn.setToolTip(_translate("MainWindow", "ক্যাশ মেমো "))
         self.memoBtn.setText(_translate("MainWindow", "ক্যাশ মেমো "))
+
         self.costEntryBtn.setToolTip(_translate("MainWindow", "খরচের এন্ট্রি"))
         self.costEntryBtn.setText(_translate("MainWindow", "আড়ৎ-এর এন্ট্রি"))
+
         self.buyerProfileBtn.setToolTip(_translate("MainWindow", "ক্রেতা প্রোফাইল"))
         self.buyerProfileBtn.setText(_translate("MainWindow", "ক্রেতা প্রোফাইল"))
+
         self.sellerProfileBtn.setToolTip(_translate("MainWindow", "বিক্রেতা প্রোফাইল"))
         self.sellerProfileBtn.setText(_translate("MainWindow", "বিক্রেতা প্রোফাইল"))
+
         self.receivableBtn.setText(_translate("MainWindow", "পাওনা"))
         self.receivableBtn.setToolTip(_translate("MainWindow", "পাওনা"))
+
         self.payableBtn.setText(_translate("MainWindow", "দেনা"))
         self.payableBtn.setToolTip(_translate("MainWindow", "দেনা"))
+
         self.loanBtn.setText(_translate("MainWindow", "ঋণ গ্রহণ"))
         self.loanBtn.setToolTip(_translate("MainWindow", "ঋণ গ্রহণ"))
+
         self.loanPayingBtn.setText(_translate("MainWindow", "ঋণ প্রদান"))
         self.loanPayingBtn.setToolTip(_translate("MainWindow", "ঋণ প্রদান"))
+
         self.commissionBtn.setText(_translate("MainWindow", "কমিশন রিপোর্ট"))
         self.commissionBtn.setToolTip(_translate("MainWindow", "কমিশন রিপোর্ট"))
+
         self.costBtn.setText(_translate("MainWindow", "খরচের রিপোর্ট"))
+        self.costBtn.setToolTip(_translate("MainWindow", "খরচের রিপোর্ট"))
+
+        self.yearlyReportBtn.setText(_translate("MainWindow", "বছরের রিপোর্ট"))
+        self.yearlyReportBtn.setToolTip(_translate("MainWindow", "বছরের রিপোর্ট"))
+
         self.settingsBtn.setToolTip(_translate("MainWindow", "সেটিংস "))
         self.settingsBtn.setText(_translate("MainWindow", "সেটিংস "))
+
         self.logoutBtn.setToolTip(_translate("MainWindow", "লগ আউট"))
         self.logoutBtn.setText(_translate("MainWindow", "লগ আউট"))
         self.tag.setText(_translate("MainWindow", "মেসার্স ওসমান ফিশ "))

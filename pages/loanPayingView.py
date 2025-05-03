@@ -134,7 +134,7 @@ class LoanProfileView(QtWidgets.QWidget):
             try:
                 # ✅ Create the print window
                 self.ui_print_form = Print_Form(min_section_size=120)
-                self.ui_print_form.ui.memoLabel.setText("ঋণের ট্রানজেকশন")
+                self.ui_print_form.ui.memoLabel.setText("ঋণের প্রদানের ট্রানজেকশন")
                 self.ui_print_form.ui.name.setText(self.receiver_name)
                 self.ui_print_form.ui.date.setText(str(self.ui.startDateInput.text()))
                 self.ui_print_form.ui.mobile.setText(str(self.phone))

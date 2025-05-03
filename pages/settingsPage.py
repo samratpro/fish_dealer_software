@@ -151,7 +151,7 @@ class settingsPage(QWidget):
 
                 # List of models to back up
                 models = [VoucherNoModel, SellerProfileModel, SellingModel, BuyerProfileModel, BuyingModel,
-                          DealerModel, LoanProfileModel, PayingLoanProfileModel, CostModel, SettingModel, UserModel, FinalAccounting]
+                          DealerModel, LoanProfileModel, PayingLoanProfileModel, CostModel, CostProfileModel, SettingModel, UserModel, FinalAccounting]
 
                 # Create a persistent directory for CSV files
                 temp_dir = os.path.join(os.getcwd(), "temp_backup")
@@ -266,9 +266,10 @@ class settingsPage(QWidget):
                             "buyer_profile_model": BuyerProfileModel,
                             "buying_model": BuyingModel,
                             "dealer_model": DealerModel,
-                            "loan_model": LoanProfileModel,
-                            "paying_loan_model": PayingLoanProfileModel,
+                            "loan_profile_model": LoanProfileModel,  # Fix this mapping
+                            "paying_loan_profile_model": PayingLoanProfileModel,  # Fix this mapping
                             "cost_model": CostModel,
+                            "cost_profile_model": CostProfileModel,
                             "setting_model": SettingModel,
                             "user_model": UserModel,
                             "final_accounting": FinalAccounting,
@@ -316,16 +317,24 @@ class settingsPage(QWidget):
                     # Convert the value based on the column type
                     if isinstance(column_type, Date):
                         # Convert to Python date object
-                        data[column] = datetime.strptime(value, "%Y-%m-%d").date()
+                        data[column] = datetime.strptime(value, "%Y-%m-%d").date() if value else None
                     elif isinstance(column_type, Integer):
-                        # Convert to integer
-                        data[column] = int(value)
+                        # Safely convert to integer (use 0 for invalid/empty values)
+                        try:
+                            data[column] = int(value) if value.strip() else 0
+                        except ValueError:
+                            print(f"Warning: Invalid integer value '{value}' for column '{column}'. Defaulting to 0.")
+                            data[column] = 0
                     elif isinstance(column_type, Float):
-                        # Convert to float
-                        data[column] = float(value)
+                        # Safely convert to float (use 0.0 for invalid/empty values)
+                        try:
+                            data[column] = float(value) if value.strip() else 0.0
+                        except ValueError:
+                            print(f"Warning: Invalid float value '{value}' for column '{column}'. Defaulting to 0.0.")
+                            data[column] = 0.0
                     elif isinstance(column_type, Boolean):
-                        # Convert to boolean
-                        data[column] = value.lower() == "true"
+                        # Convert to boolean (interpret 'true'/'false')
+                        data[column] = value.lower() == "true" if value else False
                     else:
                         # Keep the value as is (e.g., String)
                         data[column] = value
@@ -336,3 +345,4 @@ class settingsPage(QWidget):
 
             # Commit the session to save changes
             session.commit()
+
