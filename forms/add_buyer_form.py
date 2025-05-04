@@ -151,7 +151,7 @@ class AddBuyer_Form(QDialog):
             try:
                 number = float(value)
                 fractional_part = number - int(number)
-                if fractional_part >= 0.7:
+                if fractional_part >= 0.69999:
                     return math.ceil(number)
                 else:
                     return math.floor(number)
@@ -181,11 +181,8 @@ class AddBuyer_Form(QDialog):
             return
 
         # Perform calculations
-        try:
-            raw_weight = float(raw_weight)
-        except:
-            raw_weight = 0
-        fish_rate = custom_round(rate)
+        raw_weight = float(raw_weight)
+        fish_rate = float(rate)
 
         raw_weight_for_dhol = custom_round_weight(raw_weight)
         dhol = raw_weight_for_dhol * self.dhol_amount  # Deduction for dhol (wastage)
@@ -222,7 +219,7 @@ class AddBuyer_Form(QDialog):
             try:
                 number = float(value)
                 fractional_part = number - int(number)
-                if fractional_part >= 0.7:
+                if fractional_part >= 0.69999:
                     return math.ceil(number)
                 else:
                     return math.floor(number)
@@ -245,7 +242,7 @@ class AddBuyer_Form(QDialog):
             error_dialog.setText("দর এবং পাকা জিরো থেকে বড় যেকোনো সংখ্যা হতে হবে..")  # Rate and weight must be numeric
             error_dialog.exec()
             return
-        fish_rate = custom_round(rate)
+        fish_rate = float(rate)
         final_weight = float(final_weight_raw)
         if weight_type == "kg":
             total_price = custom_round((fish_rate * final_weight) / 10) * 10  # 10 is doing for round figure base 10

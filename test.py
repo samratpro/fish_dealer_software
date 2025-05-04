@@ -4,7 +4,7 @@ def custom_round(value):
     try:
         number = float(value)
         fractional_part = number - int(number)
-        if fractional_part >= 0.7:
+        if fractional_part >= 0.6999999:
             return math.ceil(number)
         else:
             return math.floor(number)
@@ -14,4 +14,4 @@ def custom_round(value):
 
 
 
-print(round(3.1415926, 3))
+print(custom_round(380.7))
