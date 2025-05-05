@@ -178,7 +178,7 @@ class Ui_CostEntry(object):
         self.label_3.setText(_translate("CostEntry", " এন্ট্রি নাম"))
         self.entryName.setItemText(0, _translate("CostEntry", "বিক্রেতা কে প্রদান"))
         self.entryName.setItemText(1, _translate("CostEntry", "ক্রেতা থেকে গ্রহণ"))
-        self.entryName.setItemText(2, _translate("CostEntry", "মুনাফা উত্তোলন"))
+        self.entryName.setItemText(2, _translate("CostEntry", "মূলধন ফেরৎ"))
         self.entryName.setItemText(3, _translate("CostEntry", "মূলধন জমা"))
         self.entryName.setItemText(4, _translate("CostEntry", "ঋণ গ্রহণ"))
         self.entryName.setItemText(5, _translate("CostEntry", "ঋণ পরিশোধ"))

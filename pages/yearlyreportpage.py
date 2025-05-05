@@ -2,7 +2,7 @@ from PyQt6 import QtCore
 from models import *
 from features.data_save_signals import data_save_signals
 from PyQt6.QtGui import QFont, QFontDatabase
-from sqlalchemy.sql import extract, func
+from sqlalchemy.sql import extract, func, case
 from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
@@ -183,41 +183,53 @@ class Ui_yearlyReportPage(object):
             # Start a new session
             session = self.Session()
 
-            # Query data from SellingModel (for Commission) grouped by year
+            # Define fiscal year calculation for SellingModel
+            selling_fiscal_year = case(
+                (extract('month', SellingModel.date) >= 7, extract('year', SellingModel.date)),
+                else_=extract('year', SellingModel.date) - 1
+            ).label('fiscal_year')
+
+            # Query data from SellingModel (for Commission) grouped by fiscal year
             commission_data = (
                 session.query(
-                    extract('year', SellingModel.date).label('year'),
+                    selling_fiscal_year,
                     func.sum(SellingModel.commission_amount).label('total_commission')
                 )
-                .group_by(extract('year', SellingModel.date))
+                .group_by(selling_fiscal_year)
                 .all()
             )
 
-            # Query data from DealerModel (for Cost) grouped by year
+            # Define fiscal year calculation for DealerModel
+            dealer_fiscal_year = case(
+                (extract('month', DealerModel.date) >= 7, extract('year', DealerModel.date)),
+                else_=extract('year', DealerModel.date) - 1
+            ).label('fiscal_year')
+
+            # Query data from DealerModel (for Cost) grouped by fiscal year
             cost_data = (
                 session.query(
-                    extract('year', DealerModel.date).label('year'),
+                    dealer_fiscal_year,
                     func.sum(DealerModel.paying_amount).label('total_cost')
                 )
-                .group_by(extract('year', DealerModel.date))
+                .group_by(dealer_fiscal_year)
                 .all()
             )
 
             # Combine the data from both queries into a dictionary for easier handling
             yearly_data = {}
             for row in commission_data:
-                year = int(row.year)
-                if year not in yearly_data:
-                    yearly_data[year] = {"commission": 0, "cost": 0}
-                yearly_data[year]["commission"] = row.total_commission or 0
+                fiscal_year = int(row.fiscal_year)
+                if fiscal_year not in yearly_data:
+                    yearly_data[fiscal_year] = {"commission": 0, "cost": 0}
+                yearly_data[fiscal_year]["commission"] = row.total_commission or 0
 
             for row in cost_data:
-                year = int(row.year)
-                if year not in yearly_data:
-                    yearly_data[year] = {"commission": 0, "cost": 0}
-                yearly_data[year]["cost"] = row.total_cost or 0
+                fiscal_year = int(row.fiscal_year)
+                if fiscal_year not in yearly_data:
+                    yearly_data[fiscal_year] = {"commission": 0, "cost": 0}
+                yearly_data[fiscal_year]["cost"] = row.total_cost or 0
 
-            # Sort data by year
+            # Sort data by fiscal year
             sorted_years = sorted(yearly_data.keys())
 
             # Clear the table
@@ -225,18 +237,21 @@ class Ui_yearlyReportPage(object):
             self.tableWidget.setRowCount(0)
 
             # Populate the table with the combined data
-            for row_index, year in enumerate(sorted_years):
+            for row_index, fiscal_year in enumerate(sorted_years):
                 self.tableWidget.insertRow(row_index)
-                self.tableWidget.setItem(row_index, 0, QtWidgets.QTableWidgetItem(str(year)))  # Year
+                fiscal_year_label = f"{fiscal_year}-{fiscal_year + 1}"  # Format as "2024-2025"
+                self.tableWidget.setItem(row_index, 0, QtWidgets.QTableWidgetItem(fiscal_year_label))  # Fiscal Year
                 self.tableWidget.setItem(row_index, 1,
-                                         QtWidgets.QTableWidgetItem(str(yearly_data[year]["commission"])))  # Commission
+                                         QtWidgets.QTableWidgetItem(
+                                             str(yearly_data[fiscal_year]["commission"])))  # Commission
                 self.tableWidget.setItem(row_index, 2,
-                                         QtWidgets.QTableWidgetItem(str(yearly_data[year]["cost"])))  # Cost
+                                         QtWidgets.QTableWidgetItem(str(yearly_data[fiscal_year]["cost"])))  # Cost
 
             # Commit and close the session
             session.close()
         except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "Yearly Report Error", f"An error occurred while filtering data: {e}")
+            QtWidgets.QMessageBox.critical(None, "Yearly Report Error",
+                                           f"An error occurred while filtering data: {str(e)}")
 
     def openPrintMemo(self):
         total_rows = self.tableWidget.rowCount()

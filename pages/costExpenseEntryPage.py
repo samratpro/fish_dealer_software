@@ -8,7 +8,6 @@ from sqlalchemy import desc
 from ui.costExpenseEntryPage_ui import Ui_costExpenseMain
 from models import *
 from forms.cost_entry import CostEntry_Form
-from datetime import datetime
 from PyQt6.QtCore import QDate
 from features.printmemo import Print_Form
 from PyQt6 import QtPrintSupport
@@ -16,6 +15,7 @@ from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
 from PyQt6.QtGui import QFont, QFontDatabase  # for font file load
 import math
+import datetime
 
 class costExpensePage(QWidget):
     def __init__(self, username):
@@ -43,7 +43,7 @@ class costExpensePage(QWidget):
         self.ui.tableWidget.verticalHeader().setVisible(False)
         self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
         self.ui.endDateInput.setDisplayFormat("dd/MM/yyyy")
-        self.today_date_raw = datetime.now()
+        self.today_date_raw = datetime.datetime.now()
         self.today_date = self.today_date_raw.strftime("%d/%m/%Y").lstrip('0').replace('/0', '/')
         self.qdate_today = QDate.fromString(self.today_date, "d/M/yyyy")
         self.ui.startDateInput.setDate(self.qdate_today)
@@ -182,7 +182,7 @@ class costExpensePage(QWidget):
             row = 0
             for entry in all_entries:
                 entry_name = {'paid_to_seller': "বিক্রেতা কে প্রদান", 'get_paid_from_buyer': "ক্রেতা থেকে গ্রহণ",
-                              'capital_withdrawal': "মুনাফা উত্তোলন", 'capital_deposit': "মূলধন জমা",
+                              'capital_withdrawal': "মূলধন ফেরৎ", 'capital_deposit': "মূলধন জমা",
                               'borrowing': "ঋণ গ্রহণ", 'loan_repayment': "ঋণ পরিশোধ",
                               'salary': "বেতন / মজুরি প্রদান", 'other_cost': "অফিস খরচ", 'mosque': 'মসজিদ/মাদ্রাসা',
                               'somiti': 'সমিতি', 'other_cost_voucher': 'অন্যান্য খরচ(ভাউচার)',
@@ -385,6 +385,17 @@ class costExpensePage(QWidget):
             description = self.cost_form.ui.description.text().strip()
             if not description:
                 description = " "
+
+            print(f"Selected entry date: {entry_date}")
+            # Validate entry_date
+            if not entry_date:
+                self.show_error_message("অবশ্যই একটি তারিখ নির্বাচন করতে হবে।")
+                return
+
+            # Check if the selected date is in the future (if not allowed)
+            if entry_date > datetime.date.today():
+                self.show_error_message("ভবিষ্যতের তারিখ নির্বাচন করা যাবে না।")
+                return
 
             # Define a mapping for required fields per entry_name
             required_fields = {

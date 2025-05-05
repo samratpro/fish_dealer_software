@@ -27,7 +27,7 @@
 17. confirm dialog, entry dialog before delete
 18. single page views, delete row and models entry, best example in costreport.py
 19. entry disable
-20. show_error_method setup, Different type of error, info, warning, criticalerror
+20. show_error_method (costExpenseentrypage ), Different type of error, info, warning, criticalerror
 21. floating toggle widget
 22. xlsxwriter
 23. Font, dynamic font (memopage) add in table data

@@ -39,8 +39,8 @@ class CostEntry_Form(QDialog):
 
         # Connect signals to dynamically update completers
         self.ui.entryName.currentIndexChanged.connect(self.update_autocomplete)
-        self.ui.payerName.textChanged.connect(self.update_autocomplete)
-        self.ui.receiverName.textChanged.connect(self.update_autocomplete)
+        self.ui.payerName.textEdited.connect(self.update_autocomplete)
+        self.ui.receiverName.textEdited.connect(self.update_autocomplete)
 
         # Connect completer activated signals to autofill_amount
         self.ui.payerName.textChanged.connect(self.handle_payer_autocomplete)

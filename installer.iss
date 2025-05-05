@@ -1,10 +1,10 @@
 ; Define installer name and output directory
 [Setup]
-AppName=Fish Dealer Software
-AppVersion=5.0
-DefaultDirName={localappdata}\FishDealerSoftware_5
-DefaultGroupName=Fish Dealer Software 5.0
-OutputBaseFilename=FishDealerSetup_5
+AppName=Fish Dealer Software 6.2
+AppVersion=6.2
+DefaultDirName={localappdata}\FishDealerSoftware_6.2
+DefaultGroupName=Fish Dealer Software 6.2
+OutputBaseFilename=FishDealerSetup_6.2
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\logo.ico
@@ -24,7 +24,6 @@ Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\python\*"; DestDir: "{a
 Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\font\*"; DestDir: "{app}\font"; Flags: recursesubdirs
 Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\icons\*"; DestDir: "{app}\icons"; Flags: recursesubdirs
 Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\images\*"; DestDir: "{app}\images"; Flags: recursesubdirs
-Source: "C:\Users\pc\Desktop\pyhton\fish_dealer_software\run.vbs"; DestDir: "{app}"
 
 ; Create necessary folders
 [Dirs]
