@@ -8,7 +8,7 @@ from ui.homePage_ui import Ui_HomePageMain
 from PyQt6 import QtWidgets
 from models import *
 from PyQt6.QtGui import QFont, QFontDatabase
-import os
+from datetime import date, timedelta
 
 
 class homepage(QWidget):
@@ -35,7 +35,7 @@ class homepage(QWidget):
         qdate_today = QDate(self.today_date_raw.year, self.today_date_raw.month, self.today_date_raw.day)
         qdate_seven_days_ago = QDate(seven_days_ago.year, seven_days_ago.month, seven_days_ago.day)
         # Set the dates
-        self.ui.startDateInput.setDate(qdate_seven_days_ago)
+        self.ui.startDateInput.setDate(qdate_today)
         self.ui.endDateInput.setDate(qdate_today)
         data_save_signals.data_saved.connect(self.filter_data)
         self.filter_data()
@@ -83,43 +83,48 @@ class homepage(QWidget):
             paid_loan_all = session.query(PayingLoanProfileModel).filter(PayingLoanProfileModel.amount > 0)
             paid_loan_amount = sum(loan.amount for loan in paid_loan_all)
 
-            # Filter received amounts within the date range
+            # Calculate the start and end dates for the fiscal year (July 1 to June 30)
+            from datetime import date
+            today = date.today()
+            fiscal_year_start = date(today.year if today.month >= 7 else today.year - 1, 7, 1)
+            fiscal_year_end = date(fiscal_year_start.year + 1, 6, 30)
+
+            # Filter commission_amount within the fiscal year (July 1 to June 30)
             commission_all = session.query(SellerProfileModel).filter(
                 SellerProfileModel.total_commission != 0,
-                SellerProfileModel.date.between(start_date, end_date)
+                SellerProfileModel.date.between(fiscal_year_start, fiscal_year_end)
             ).all()
             commission_amount = sum(commision.total_commission for commision in commission_all)
 
-            # Filter commission
+            # Filter cost_amount within the fiscal year (July 1 to June 30)
             cost_all = session.query(DealerModel).filter(
                 DealerModel.paying_amount != 0,
                 DealerModel.entry_name.in_(['salary', 'other_cost']),
-                DealerModel.date.between(start_date, end_date)
+                DealerModel.date.between(fiscal_year_start, fiscal_year_end)
             ).all()
             cost_amount = sum(cost.paying_amount for cost in cost_all)
 
-            # Filter received amounts within the date range
+            # Filter received amounts within the input date range
             received_all = session.query(DealerModel).filter(
                 DealerModel.receiving_amount != 0,
                 not_(DealerModel.entry_name.in_(['capital_deposit', 'borrowing'])),
                 DealerModel.date.between(start_date, end_date)
             ).all()
-
             received_amount = sum(received.receiving_amount for received in received_all)
 
-
-            # Get total payable amounts within the date range
+            # Get total payable amounts within the input date range
             cost_entry = session.query(CostModel).first()
             total_payable = session.query(SellerProfileModel).filter(
                 SellerProfileModel.date.between(start_date, end_date)).all()
             payable_amount = sum(payable.total_receivable for payable in total_payable)
             payable_amount += (cost_entry.other_cost + cost_entry.somiti + cost_entry.mosque)
 
-            # Get total receivable amounts within the date range
+            # Get total receivable amounts within the input date range
             total_receivable = session.query(BuyerProfileModel).filter(
                 BuyerProfileModel.date.between(start_date, end_date)).all()
             receivable_amount = sum(receivable.total_payable for receivable in total_receivable)
 
+            # Update the UI with the filtered data
             self.ui.capitalAmount.setText(str(capital.capital))
             self.ui.receivedLoanAmount.setText(str(received_loan_amount))
             self.ui.receivedAmount.setText(str(received_amount))
@@ -129,10 +134,8 @@ class homepage(QWidget):
             self.ui.commisionAmount.setText(str(commission_amount))
             self.ui.costAmount.setText(str(cost_amount))
 
-
         except Exception as e:
-            QtWidgets.QMessageBox.critical(None, "seller Profile Error", f"An error occurred while filtering data: {e}")
-
+            QtWidgets.QMessageBox.critical(None, "Seller Profile Error", f"An error occurred while filtering data: {e}")
 
 if __name__ == "__main__":
     import sys
