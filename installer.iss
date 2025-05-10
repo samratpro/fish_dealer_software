@@ -1,10 +1,10 @@
 ; Define installer name and output directory
 [Setup]
-AppName=Fish Dealer Software 6.2
-AppVersion=6.2
-DefaultDirName={localappdata}\FishDealerSoftware_6.2
-DefaultGroupName=Fish Dealer Software 6.2
-OutputBaseFilename=FishDealerSetup_6.2
+AppName=Fish Dealer Software 6.4
+AppVersion=6.4
+DefaultDirName={localappdata}\FishDealerSoftware_6.4
+DefaultGroupName=Fish Dealer Software 6.4
+OutputBaseFilename=FishDealerSetup_6.4
 Compression=lzma
 SolidCompression=yes
 SetupIconFile=C:\Users\pc\Desktop\pyhton\fish_dealer_software\static\logo.ico

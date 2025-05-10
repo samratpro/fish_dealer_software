@@ -216,6 +216,10 @@ class SellerProfileView(QtWidgets.QWidget):
 
                 # Delete related SellingModel records
                 session.query(SellingModel).filter(SellingModel.vouchar_no == vouchar_no).delete()
+                cost_model = session.query(CostModel).first()
+                if cost_model:
+                    cost_model.somiti -=10
+                    cost_model.mosque -=10
 
                 session.commit()
                 self.ui.tableWidget.removeRow(row)
