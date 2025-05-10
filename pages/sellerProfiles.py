@@ -20,6 +20,7 @@ from features.printmemo import Print_Form
 from PyQt6 import QtWidgets, QtGui, QtPrintSupport
 from PyQt6.QtWidgets import QFileDialog, QHeaderView
 import xlsxwriter
+
 from PyQt6.QtGui import QFont, QFontDatabase
 
 
@@ -187,7 +188,7 @@ class sellerProfiles(QWidget):
                 view_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
                 view_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
                 view_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
-                view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name, seller.phone, seller.address))
+                view_button.clicked.connect(lambda _, seller_name=seller.seller_name: self.view_profile(seller_name, seller.phone, seller.address, self.user_role))
                 self.ui.tableWidget.setCellWidget(row, 10, view_button)
 
                 # Add a edit button
@@ -238,10 +239,11 @@ class sellerProfiles(QWidget):
         except Exception as ops:
             print(f'error in delete of buyer profile: ({ops})')
         data_save_signals.data_saved.emit()
+        self.filter_data()
 
-    def view_profile(self, seller_name, phone, address):
+    def view_profile(self, seller_name, phone, address, user_role):
         try:
-            self.transactions_window = SellerProfileView(seller_name, phone, address, self.session)
+            self.transactions_window = SellerProfileView(seller_name, phone, address, self.session, user_role)
             self.transactions_window.show()
         except Exception as e:
             print(f'Error: {str(e)}')

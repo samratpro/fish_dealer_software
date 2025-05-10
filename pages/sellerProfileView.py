@@ -1,6 +1,6 @@
 import math
 from PyQt6 import QtCore
-from models import SellingModel, BuyingModel, SellerProfileModel
+from models import *
 from datetime import datetime
 from PyQt6.QtCore import QDate
 from features.data_save_signals import data_save_signals
@@ -16,7 +16,7 @@ from ui.sellerProfileView_ui import UI_sellerprofileView  # Make sure to import 
 
 class SellerProfileView(QtWidgets.QWidget):
 
-    def __init__(self, seller_name, phone, address, session, parent=None):
+    def __init__(self, seller_name, phone, address, session, user_role, parent=None):
         super(SellerProfileView, self).__init__(parent)
         self.setup_database()  # First setup database
         self.seller_name = seller_name
@@ -26,6 +26,7 @@ class SellerProfileView(QtWidgets.QWidget):
         self.ui = UI_sellerprofileView()  # Instantiate the UI class
         self.ui.setupUi(self)
         self.setup_ui()
+        self.user_role = user_role
 
 
 
@@ -40,8 +41,8 @@ class SellerProfileView(QtWidgets.QWidget):
     def setup_ui(self):
         self.setWindowTitle(f"{self.seller_name} - এর জন্য লেনদেন")
         self.setWindowIcon(QIcon("images/logo.png"))
-        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(190)
-        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(190)
+        self.ui.tableWidget.horizontalHeader().setDefaultSectionSize(170)
+        self.ui.tableWidget.horizontalHeader().setMinimumSectionSize(170)
         self.ui.tableWidget.verticalHeader().setVisible(False)
         # Set current date ****************
         self.ui.startDateInput.setDisplayFormat("dd/MM/yyyy")
@@ -144,11 +145,87 @@ class SellerProfileView(QtWidgets.QWidget):
 
                 old_amount = custom_int(self.ui.amount.text())
                 self.ui.amount.setText(str(old_amount + custom_int(seller.sell_amount)))
+
+                delete_button = QtWidgets.QPushButton("")
+                delete_icon = QtGui.QIcon("./images/delete.png")  # Path to your delete icon
+                delete_button.setIcon(delete_icon)
+                delete_button.setIconSize(QtCore.QSize(24, 24))  # Set icon size if needed
+                delete_button.setStyleSheet("background-color: white; border: none;margin-left:50px;")  # Set wh
+                delete_button.setCursor(QtGui.QCursor(QtCore.Qt.CursorShape.PointingHandCursor))
+                delete_button.clicked.connect(lambda _, r=row: self.delete_row(r))
+                self.ui.tableWidget.setCellWidget(row, 8, delete_button)
                 row += 1
         except Exception as e:
             print(f"seller Profile View Error in filter_data: {e}")
             QtWidgets.QMessageBox.critical(None, "seller Profile View Error",
                                            f"An error occurred while filtering data: {e}")
+
+    def delete_row(self, row):
+        def custom_int(data):
+            try:
+                data = int(data)
+                return data
+            except:
+                return 0
+        if self.user_role == "editor":
+            QtWidgets.QMessageBox.warning(None, "Delete Error", "এই প্রোফাইলে ডিলিট করার একসেস নেই..")
+            return
+
+        try:
+            reply = QtWidgets.QMessageBox.question(
+                None,
+                'মুছে ফেলা নিশ্চিত করুন',
+                'আপনি কি নিশ্চিত মুছে ফেলতে চান?',
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No
+            )
+
+            # If the user confirms, proceed with deletion
+            if reply == QtWidgets.QMessageBox.StandardButton.Yes:
+                session = self.Session()
+                vouchar_no = self.ui.tableWidget.item(row, 0).text()
+                seller_name = self.ui.tableWidget.item(row, 1).text()
+                sell_amount = int(self.ui.tableWidget.item(row, 3).text())
+                commission = int(self.ui.tableWidget.item(row, 4).text())
+                total_cost_amount = int(self.ui.tableWidget.item(row, 5).text())
+
+                # Fetch the seller profile
+                seller_profile = session.query(SellerProfileModel).filter(
+                    SellerProfileModel.seller_name == seller_name).first()
+
+                if seller_profile:
+                    seller_profile.total_commission -= commission
+                    seller_profile.total_receivable -= (sell_amount - total_cost_amount)
+                else:
+                    QtWidgets.QMessageBox.warning(None, "Not Found", "Seller Profile Not Found")
+                    return
+
+                # Delete related BuyingModel records and update BuyerProfileModel.total_payable
+                buying_model = session.query(BuyingModel).filter(BuyingModel.vouchar_no == vouchar_no).all()
+                for buying in buying_model:
+                    buyer_profile = session.query(BuyerProfileModel).filter(
+                        BuyerProfileModel.buyer_name == buying.buyer_name).first()
+
+                    if buyer_profile:
+                        buyer_profile.total_payable -= buying.buying_amount
+                    else:
+                        QtWidgets.QMessageBox.warning(None, "Not Found",
+                                                      f"Buyer Profile Not Found for {buying.buyer_name}")
+
+                    session.delete(buying)
+
+                # Delete related SellingModel records
+                session.query(SellingModel).filter(SellingModel.vouchar_no == vouchar_no).delete()
+
+                session.commit()
+                self.ui.tableWidget.removeRow(row)
+                old_amount = custom_int(self.ui.amount.text())
+                self.ui.amount.setText(str(old_amount - sell_amount))
+
+        except Exception as ops:
+            print(f'Error in delete of buyer profile: ({ops})')
+        finally:
+            data_save_signals.data_saved.emit()
 
     def print_cash_memo(self, vouchar_no, seller_name, sell_amount, commission_amount, total_cost_amount, date):
         print(vouchar_no, seller_name, sell_amount, commission_amount, total_cost_amount)
@@ -245,7 +322,7 @@ class SellerProfileView(QtWidgets.QWidget):
                 self.ui_print_form.ui.recevied_frame.setVisible(False)
 
                 # ✅ Define columns to exclude
-                excluded_columns = {0, 6, 7}
+                excluded_columns = {0, 6, 7, 8}
                 column_count = self.ui.tableWidget.columnCount()
                 headers = [self.ui.tableWidget.horizontalHeaderItem(i).text() for i in range(column_count) if
                            i not in excluded_columns]

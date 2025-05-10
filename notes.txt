@@ -21,6 +21,7 @@
 12. Open Form Accept form
 13. single profile view with session pass
 14. how to handle data save with validation before accept form information in another page,
+    data_save_singnal with filter update
     handle_and_accept_information with error message
 15. Dynamic make capital or others event pass, editingFinihed or many event
 16. Row delete with many database delete
