@@ -423,7 +423,7 @@ class Ui_costExpenseMain(object):
         self.accountNameSelect.setItemText(0, _translate("costExpenseMain", "সব হিসাব"))
         self.accountNameSelect.setItemText(1, _translate("costExpenseMain", "বিক্রেতা কে প্রদান"))
         self.accountNameSelect.setItemText(2, _translate("costExpenseMain", "ক্রেতা থেকে গ্রহণ"))
-        self.accountNameSelect.setItemText(3, _translate("costExpenseMain", "মুনাফা উত্তোলন"))
+        self.accountNameSelect.setItemText(3, _translate("costExpenseMain", "মূলধন ফেরৎ"))
         self.accountNameSelect.setItemText(4, _translate("costExpenseMain", "মূলধন জমা"))
         self.accountNameSelect.setItemText(5, _translate("costExpenseMain", "ঋণ গ্রহণ"))
         self.accountNameSelect.setItemText(6, _translate("costExpenseMain", "ঋণ পরিশোধ"))
