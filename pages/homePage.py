@@ -90,11 +90,19 @@ class homepage(QWidget):
             fiscal_year_end = date(fiscal_year_start.year + 1, 6, 30)
 
             # Filter commission_amount within the fiscal year (July 1 to June 30)
-            commission_all = session.query(SellerProfileModel).filter(
-                SellerProfileModel.total_commission != 0,
-                SellerProfileModel.date.between(fiscal_year_start, fiscal_year_end)
+
+
+            # commission_all = session.query(SellerProfileModel).filter(
+            #     SellerProfileModel.total_commission != 0,
+            #     SellerProfileModel.date.between(fiscal_year_start, fiscal_year_end)
+            # ).all()
+            # commission_amount = sum(commision.total_commission for commision in commission_all)
+
+            commission_all = session.query(SellingModel).filter(
+                SellingModel.commission_amount != 0,
+                SellingModel.date.between(fiscal_year_start, fiscal_year_end)
             ).all()
-            commission_amount = sum(commision.total_commission for commision in commission_all)
+            commission_amount = sum(commision.commission_amount for commision in commission_all)
 
             # Filter cost_amount within the fiscal year (July 1 to June 30)
             cost_all = session.query(DealerModel).filter(
