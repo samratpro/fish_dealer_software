@@ -15,7 +15,7 @@
 6. DB Query
 7. Logging
 8. data save, field clear and setText
-9. Signal  (pysignal, shared_signal)
+9. Signal  (pysignal, shared_signal) - > homePage.py
 10. current date update, Date formating, set 7 days ago, (pages/homePage.py fn: setup_ui) icon, calender setup, CSS, date filter, date subtraction
 11. signal, click event should be in retranslateUi method
 12. Open Form Accept form
@@ -66,4 +66,5 @@ pip install --no-deps auto-py-to-exe
 	|ui/
 	  homepage_ui.py
 	  task_page_ui.py	
+
 	  settings_page_ui.py
