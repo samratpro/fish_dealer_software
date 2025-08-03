@@ -37,9 +37,9 @@ class homepage(QWidget):
         # Set the dates
         self.ui.startDateInput.setDate(qdate_today)
         self.ui.endDateInput.setDate(qdate_today)
-        data_save_signals.data_saved.connect(self.filter_data)
+        data_save_signals.data_saved.connect(self.filter_data) # self.filter_data
         self.filter_data()
-        self.ui.filterBtn.clicked.connect(self.filter_data)
+        self.ui.filterBtn.clicked.connect(self.filter_data) # self.filter_data
         self.apply_bangla_font()
 
     def apply_bangla_font(self):
@@ -154,3 +154,4 @@ if __name__ == "__main__":
     ui.setupUi(HomePageMain)
     HomePageMain.show()
     sys.exit(exec())
+
