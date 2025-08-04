@@ -18,22 +18,36 @@ class homepage(QWidget):
         self.ui = Ui_HomePageMain()
         self.ui.setupUi(self)
         self.setup_ui()
-        self.setup_fonts()
+        # self.setup_fonts()
     
-    def setup_fonts(self):
-        font_id = QFontDatabase.addApplicationFont("font/Poppins-Medium.ttf") # Ensure font in location
-        if font_id != -1:
-            family = QFontDatabase.applicationFontFamilies(font_id)[0]
-            app_font = QFont(family, 10)
-            self.setFont(app_font)                        # Root widget font
-            self.apply_font_to_all_widgets(app_font)      # All children
-            print(f"✅ Font '{family}' applied to all widgets.")
-        else:
-            print("❌ Failed to load font.")
+    # def setup_fonts(self):
+    #     font_bold_id = QFontDatabase.addApplicationFont("font/Inter_18pt-Bold.ttf")
+    #     font_regular_id = QFontDatabase.addApplicationFont("font/OpenSans-Regular.ttf")
+    #     font_light_id = QFontDatabase.addApplicationFont("font/Inter_24pt-Light.ttf")
 
-    def apply_font_to_all_widgets(self, font: QFont):
-        for widget in self.findChildren(QWidget):
-            widget.setFont(font)
+    #     family_bold = QFontDatabase.applicationFontFamilies(font_bold_id)[0]
+    #     family_regular = QFontDatabase.applicationFontFamilies(font_regular_id)[0]
+    #     family_light = QFontDatabase.applicationFontFamilies(font_light_id)[0]
+
+    #     # Create fonts
+    #     font_bold = QFont(family_bold, 13)
+    #     font_regular = QFont(family_regular, 11)
+    #     font_light = QFont(family_light, 10)
+
+    #     self.apply_font_to_all_widgets(font_regular)
+
+    #     # Apply fonts by widget name
+    #     self.apply_fonts_by_object_names(font_bold, ["explore_leb", "label_10", "label", "credit","label_2","mac",
+    #                                                     "label_3","ip","label_4","location"])
+    #     self.apply_fonts_by_object_names(font_light, ["reset_time_status"])
+
+    # def apply_font_to_all_widgets(self, font: QFont):
+    #     for widget in self.findChildren(QWidget):
+    #         widget.setFont(font)
+    # def apply_fonts_by_object_names(self, font: QFont, object_names: list):
+    #     for name in object_names:
+    #         widget = self.findChild(QWidget, name)
+    #         widget.setFont(font)
 
     def setup_database(self):
         self.Base = declarative_base()
@@ -170,5 +184,6 @@ if __name__ == "__main__":
     ui.setupUi(HomePageMain)
     HomePageMain.show()
     sys.exit(exec())
+
 
 
