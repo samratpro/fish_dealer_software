@@ -2,6 +2,7 @@
     - Configure Data : (pages/homePage.py -- Approx 31-37 lines)
     -
 2. table operation, row vertical header disable, tablewidget,, itemChanged event,, set size, font, css, vartical header disabe
+   (font -> homePage.py)
 3. autoCompleted:
     - Autocomplete with setup_ui signal connection (forms/add_buyer_form.py -- approx 111 line )
     - Autocomplete with static list (forms/add_buyer_form.py -- approx 44 line )
@@ -68,3 +69,4 @@ pip install --no-deps auto-py-to-exe
 	  task_page_ui.py	
 
 	  settings_page_ui.py
+
