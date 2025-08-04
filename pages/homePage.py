@@ -18,6 +18,22 @@ class homepage(QWidget):
         self.ui = Ui_HomePageMain()
         self.ui.setupUi(self)
         self.setup_ui()
+        self.setup_fonts()
+    
+    def setup_fonts(self):
+        font_id = QFontDatabase.addApplicationFont("font/Poppins-Medium.ttf") # Ensure font in location
+        if font_id != -1:
+            family = QFontDatabase.applicationFontFamilies(font_id)[0]
+            app_font = QFont(family, 10)
+            self.setFont(app_font)                        # Root widget font
+            self.apply_font_to_all_widgets(app_font)      # All children
+            print(f"✅ Font '{family}' applied to all widgets.")
+        else:
+            print("❌ Failed to load font.")
+
+    def apply_font_to_all_widgets(self, font: QFont):
+        for widget in self.findChildren(QWidget):
+            widget.setFont(font)
 
     def setup_database(self):
         self.Base = declarative_base()
@@ -154,4 +170,5 @@ if __name__ == "__main__":
     ui.setupUi(HomePageMain)
     HomePageMain.show()
     sys.exit(exec())
+
 
