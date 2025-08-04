@@ -19,16 +19,16 @@
 9. Signal  (pysignal, shared_signal) - > homePage.py, buyerProfiles.py 237 send signal
 10. current date update, Date formating, set 7 days ago, (pages/homePage.py fn: setup_ui) icon, calender setup, CSS, date filter, date subtraction
 11. signal, click event should be in retranslateUi method
-12. Open Form Accept form
+12. Open Form Accept form   - > page/memoPage.py 217, 
 13. single profile view with session pass
 14. how to handle data save with validation before accept form information in another page,
     data_save_singnal with filter update
-    handle_and_accept_information with error message
-15. Dynamic make capital or others event pass, editingFinihed or many event
+    handle_and_accept_information with error message  -> page/memoPage.py 405, Custom Warning -> 230 , Short Warning -> 447 
+15. Dynamic make capital or others event pass, editingFinihed or many event -> autocomplete forms/add_buyer_form.py 45, forms/cost_entry.py 38
 16. Row delete with many database delete
-17. confirm dialog, entry dialog before delete
-18. single page views, delete row and models entry, best example in costreport.py
-19. entry disable
+17. confirm dialog, entry dialog before delete -> pages/sellerProfileView.py 163
+18. single page views, delete row and models entry, best example in -> costreport.py
+19. entry disable - > form /costentry.py 149, 177
 20. show_error_method (costExpenseentrypage ), Different type of error, info, warning, criticalerror
 21. floating toggle widget
 22. xlsxwriter
@@ -69,5 +69,6 @@ pip install --no-deps auto-py-to-exe
 	  task_page_ui.py	
 
 	  settings_page_ui.py
+
 
 
